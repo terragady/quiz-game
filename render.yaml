@@ -1,0 +1,18 @@
+# Render Blueprint (https://render.com/docs/blueprint-spec)
+# Deploys the quiz app as a single free-tier web service that serves both the
+# built client and the Socket.IO backend from one origin.
+services:
+  - type: web
+    name: quiz-game
+    runtime: node
+    plan: free
+    # Build the client bundle; the server runs from TypeScript via tsx (no build).
+    # --include=dev is required: Render sets NODE_ENV=production, which would
+    # otherwise omit build tools (vite) and the runtime runner (tsx).
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # PORT is provided by Render automatically; the server reads process.env.PORT.

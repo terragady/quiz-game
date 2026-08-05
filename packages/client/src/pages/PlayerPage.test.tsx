@@ -1,0 +1,150 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import type { PublicGameState } from '@quiz/shared';
+import { PlayerPage } from './PlayerPage.js';
+import { SocketProvider } from '../SocketContext.js';
+import { FakeSocket } from '../test/fakeSocket.js';
+
+function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
+  return {
+    code: 'WXYZ',
+    phase: 'lobby',
+    settings: {
+      questionCount: 3,
+      secondsPerQuestion: 20,
+      category: null,
+      difficulty: null,
+    },
+    players: [],
+    currentQuestion: null,
+    revealedCorrectIndex: null,
+    endsAt: null,
+    answeredCount: 0,
+    playerCount: 1,
+    leaderboard: [],
+    ...overrides,
+  };
+}
+
+function questionState(options: string[]): PublicGameState {
+  return baseState({
+    phase: 'question',
+    currentQuestion: {
+      id: 'q1',
+      number: 1,
+      total: 3,
+      category: 'Science',
+      difficulty: 'easy',
+      text: 'What is the answer?',
+      options,
+    },
+    endsAt: Date.now() + 20_000,
+  });
+}
+
+function renderPlayer(fake: FakeSocket, entry = '/play') {
+  return render(
+    <MemoryRouter initialEntries={[entry]}>
+      <SocketProvider socket={fake.asSocket()}>
+        <PlayerPage />
+      </SocketProvider>
+    </MemoryRouter>,
+  );
+}
+
+describe('PlayerPage join flow', () => {
+  let fake: FakeSocket;
+
+  beforeEach(() => {
+    fake = new FakeSocket();
+  });
+
+  it('prefills the code from the URL and joins successfully', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    renderPlayer(fake, '/play?code=wxyz');
+
+    const codeInput = screen.getByLabelText('Game code') as HTMLInputElement;
+    expect(codeInput.value).toBe('WXYZ');
+
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+
+    expect(fake.emittedArgs('playerJoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      nickname: 'Alice',
+    });
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+  });
+
+  it('shows an error when the join is rejected', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: false,
+      error: 'Game not found.',
+    }));
+    renderPlayer(fake, '/play?code=ZZZZ');
+
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Bob');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+
+    expect(await screen.findByText('Game not found.')).toBeInTheDocument();
+  });
+
+  it('requires a nickname before joining', async () => {
+    renderPlayer(fake, '/play?code=WXYZ');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    expect(
+      screen.getByText(/Enter a game code and a nickname/i),
+    ).toBeInTheDocument();
+    expect(fake.emittedArgs('playerJoin')).toHaveLength(0);
+  });
+});
+
+describe('PlayerPage answering', () => {
+  let fake: FakeSocket;
+
+  beforeEach(async () => {
+    fake = new FakeSocket();
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    renderPlayer(fake, '/play?code=WXYZ');
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    await screen.findByText(/You're in/i);
+  });
+
+  it('renders one button per option for a four-option question', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    await waitFor(() =>
+      expect(screen.getAllByRole('button')).toHaveLength(4),
+    );
+  });
+
+  it('renders two buttons for a true/false question', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['True', 'False'])));
+    await waitFor(() =>
+      expect(screen.getAllByRole('button')).toHaveLength(2),
+    );
+  });
+
+  it('locks the buttons after an answer is submitted', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    const first = await screen.findByRole('button', { name: /A/ });
+    await userEvent.click(first);
+
+    expect(fake.emittedArgs('submitAnswer')[0]?.[0]).toEqual({
+      optionIndex: 0,
+    });
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toBeDisabled();
+    }
+  });
+});

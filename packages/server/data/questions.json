@@ -1,0 +1,654 @@
+[
+  {
+    "id": "otdb-f1b39abf70",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "In No Man's Sky (as of the Beyond update), what two resources do you need to craft Antimatter?",
+    "options": [
+      "Condensed Carbon and Chromatic Metal",
+      "Starship Launch Fuel and Condensed Carbon",
+      "Pure Ferrite and Sodium",
+      "Storm Crystal and Antimatter Housing"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-ebb49ca617",
+    "category": "Entertainment: Television",
+    "difficulty": "medium",
+    "text": "What year was Netflix founded?",
+    "options": [
+      "2001",
+      "2004",
+      "1999",
+      "1997"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-a92548e236",
+    "category": "Entertainment: Music",
+    "difficulty": "medium",
+    "text": "Which of these is the name of an American psychedelic rock band formed in 2002 by Benjamin Goldwasser and Andrew VanWyngarden?",
+    "options": [
+      "STRFKR",
+      "MGMT",
+      "SBTRKT",
+      "MSTRKRFT"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-463b0bc690",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "In the original DOOM games, which of the following demons is a recolor of the Baron of Hell, but is weaker than the Baron?",
+    "options": [
+      "Hell Knight",
+      "Pinky",
+      "Arch-Vile",
+      "Mancubus"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-8810fca198",
+    "category": "Science & Nature",
+    "difficulty": "easy",
+    "text": "Which is the most abundant element in the universe?",
+    "options": [
+      "Oxygen",
+      "Helium",
+      "Hydrogen",
+      "Lithium"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-72ddb15bb8",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "Which country is featured in Ace Combat 5: The Unsung War?",
+    "options": [
+      "Osea",
+      "Japan",
+      "Australia",
+      "Aurelia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-bbd6ecc1be",
+    "category": "Science: Computers",
+    "difficulty": "hard",
+    "text": "The Harvard architecture for micro-controllers added which additional bus?",
+    "options": [
+      "Instruction",
+      "Control",
+      "Address",
+      "Data"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-70ef4c8569",
+    "category": "Entertainment: Music",
+    "difficulty": "easy",
+    "text": "Sting, the lead vocalist of The Police, primarily plays what instrument?",
+    "options": [
+      "Bass Guitar",
+      "Guitar",
+      "Drums",
+      "Keyboards"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-c9e7cb8f30",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "hard",
+    "text": "What is the last line muttered in the anime film \"The End of Evangelion\"?",
+    "options": [
+      "\"Goddammit, Shinji.\"",
+      "\"Idiot, I won't let you kill me!\"",
+      "\"Nothing.\"",
+      "\"How disgusting.\""
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-d6ae6c406b",
+    "category": "General Knowledge",
+    "difficulty": "medium",
+    "text": "What is the largest rapid transit system in the world by number of stations, with 472 stations in operation?",
+    "options": [
+      "Berlin U-Bahn",
+      "Shanghai Metro",
+      "New York City Subway",
+      "London Underground"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-c994759855",
+    "category": "Entertainment: Video Games",
+    "difficulty": "hard",
+    "text": "In the game \"Super Hang-On\" which is the top speed WITH the use of turbo?",
+    "options": [
+      "320 km/h",
+      "280 km/h",
+      "286 km/h",
+      "324 km/h"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-5779887274",
+    "category": "Science: Gadgets",
+    "difficulty": "medium",
+    "text": "This former Air Force and NASA engineer is the inventor of the Super Soaker water gun.",
+    "options": [
+      "Bruce D'Andrade",
+      "Lonnie Johnson",
+      "Frances Northcutt",
+      "Ashitey Trebi-Ollennu"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-1df1830466",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "The emblem on the flag of the Republic of Tajikistan features a sunrise over mountains below what symbol?",
+    "options": [
+      "Bird",
+      "Crown",
+      "Sickle",
+      "Tree"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-2abe1ae318",
+    "category": "Science & Nature",
+    "difficulty": "medium",
+    "text": "The \"Tibia\" is found in which part of the body?",
+    "options": [
+      "Hand",
+      "Arm",
+      "Leg",
+      "Head"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-0bb2aad995",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "What is the capital of the US state Nevada?",
+    "options": [
+      "Henderson",
+      "Las Vegas",
+      "Carson City",
+      "Reno"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-14a6adfe70",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "easy",
+    "text": "Who is the main heroine of the anime, Full Metal Panic!",
+    "options": [
+      "Teletha Testarossa",
+      "Melissa Mao",
+      "Kaname Chidori",
+      "Kyoko Tokiwa"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-d301f1b9a0",
+    "category": "Entertainment: Video Games",
+    "difficulty": "easy",
+    "text": "What vehicle in PUBG has the highest top speed?",
+    "options": [
+      "Buggy",
+      "PG-117",
+      "Dacia",
+      "Motorcycle"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-71e0d21f38",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "medium",
+    "text": "Which JoJo's Bizarre Adventure character possesses the Stand named Silver Chariot?",
+    "options": [
+      "Hol Horse",
+      "Jean Pierre Polnareff",
+      "Noriaki Kakyoin",
+      "Hermes Costello"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-04d0857267",
+    "category": "Entertainment: Music",
+    "difficulty": "easy",
+    "text": "'The Safety Dance' was the biggest hit single for which Canadian act?",
+    "options": [
+      "Broken Social Scene",
+      "Crash Test Dummies",
+      "Men Without Hats",
+      "The Tragically Hip"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-3de296ba2c",
+    "category": "Entertainment: Film",
+    "difficulty": "medium",
+    "text": "Mark Wahlberg played the titular character of which 2008 video-game adaptation?",
+    "options": [
+      "Max Payne",
+      "Alan Wake",
+      "God Of War",
+      "Hitman"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-3cbc6ac119",
+    "category": "Entertainment: Television",
+    "difficulty": "medium",
+    "text": "Who plays the character of Dennis Reynolds on It's Always Sunny in Philadelphia?",
+    "options": [
+      "Glenn Howerton",
+      "Danny DeVito",
+      "Rob McElhenney",
+      "Charlie Day"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-8ee79243f7",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "easy",
+    "text": "In \"Future Diary\", what is the name of Yuno Gasai's Phone Diary?",
+    "options": [
+      "Justice Diary ",
+      "Escape Diary ",
+      "Yukiteru Diary",
+      "Murder Diary"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-7695f63330",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "medium",
+    "text": "In JoJo's Bizarre Adventure, who says \"Yare yare daze\"?",
+    "options": [
+      "Koichi Hirose",
+      "Joseph Joestar",
+      "Jotaro Kujo",
+      "Jolyne Cujoh"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-222570781b",
+    "category": "Entertainment: Film",
+    "difficulty": "hard",
+    "text": "What is the name of the supercomputer located in the control room in \"Jurassic Park\" (1993)?",
+    "options": [
+      "Cray XK7",
+      "Thinking Machines CM-5",
+      "Cray X-MP",
+      "IBM Blue Gene/Q"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-a40cf6393c",
+    "category": "Science & Nature",
+    "difficulty": "easy",
+    "text": "What is the standard SI unit for temperature?",
+    "options": [
+      "Celsius",
+      "Rankine",
+      "Kelvin",
+      "Fahrenheit"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-b7f6e9a780",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "In the War of the Pacific (1879 - 1883), Bolivia lost its access to the Pacific Ocean after being defeated by which South American country?",
+    "options": [
+      "Argentina",
+      "Peru",
+      "Brazil",
+      "Chile"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-62be005115",
+    "category": "Entertainment: Video Games",
+    "difficulty": "easy",
+    "text": "What is the name of the world that the MMO \"RuneScape\" takes place in?",
+    "options": [
+      "Gielinor",
+      "Azeroth",
+      "Zaros",
+      "Glindor"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-4a2fb341e9",
+    "category": "General Knowledge",
+    "difficulty": "easy",
+    "text": "Who is considered the \"Father of Modern Philosophy\"?",
+    "options": [
+      "René Descartes",
+      "Albert Einstein",
+      "Plato",
+      "Antoine Lavoiser"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-17f99a3ee8",
+    "category": "General Knowledge",
+    "difficulty": "hard",
+    "text": "Which of these cities does NOT have a United States Minting location?",
+    "options": [
+      "West Point, NY",
+      "Philidelphia, PA",
+      "St. Louis, MO",
+      "San Fransisco, CA"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-ec844a4dff",
+    "category": "Entertainment: Music",
+    "difficulty": "medium",
+    "text": "Which rapper had an album that went double platinum with no features?",
+    "options": [
+      "Kendrick Lamar",
+      "Big Sean",
+      "Drake",
+      "J. Cole"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-bf675b7e9d",
+    "category": "Entertainment: Video Games",
+    "difficulty": "hard",
+    "text": "In the SHMUP series, \"Darius\", what is the name of the antagonist faction you fight against?",
+    "options": [
+      "Belsar",
+      "Bydo",
+      "Orn Empire",
+      "Bacterion"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-0fe29aefc6",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "What happened on June 6, 1944?",
+    "options": [
+      "The Liberation of Paris",
+      "Atomic bombings of Hiroshima and Nagasaki",
+      "D-Day",
+      "Attack on Pearl Harbor"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "otdb-1428729d73",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "hard",
+    "text": "Which animation studio produced \"Log Horizon\"?",
+    "options": [
+      "Sunrise",
+      "Satelite",
+      "Xebec",
+      "Production I.G"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-9b320d0f54",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "What was the first Call of Duty game to include the Zombies gamemode?",
+    "options": [
+      "Call of Duty: Black Ops III",
+      "Call of Duty: Modern Warfare 2",
+      "Call of Duty: Black Ops",
+      "Call of Duty: World at War"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-68bfc73d0d",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "In the \"Neptunia\" series which nation does Neptune rule over?",
+    "options": [
+      "Planeptune",
+      "Leanbox",
+      "Lowee",
+      "Lastation"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-109fda62ac",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "What is the highest mountain in the world?",
+    "options": [
+      "Mt. Everest",
+      "Mount Godwin Austen",
+      "Annapurna",
+      "Kangchenjunga"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-f01e09183b",
+    "category": "Science: Computers",
+    "difficulty": "medium",
+    "text": "What does the DOS in Microsoft's first operating system \"MS-DOS\" stand for?",
+    "options": [
+      "Disk Operating System",
+      "Dumb Operating System",
+      "Diskless Operating System",
+      "Driver Oriented System"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-b59317b03f",
+    "category": "General Knowledge",
+    "difficulty": "easy",
+    "text": "What do sailors call the left side of a boat?",
+    "options": [
+      "Stern",
+      "Port",
+      "Starboard",
+      "Bow"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-89b8852256",
+    "category": "Entertainment: Video Games",
+    "difficulty": "easy",
+    "text": "Which water-type Pokémon starter was introduced in the 4th generation of the series?",
+    "options": [
+      "Mudkip",
+      "Totodile",
+      "Oshawott",
+      "Piplup"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "otdb-8548f1bfb5",
+    "category": "Mythology",
+    "difficulty": "medium",
+    "text": "Hera is god of...",
+    "options": [
+      "Marriage",
+      "Agriculture",
+      "Sea",
+      "War"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-644457dcb3",
+    "category": "Science & Nature",
+    "difficulty": "easy",
+    "text": "The Earth and the Moon roughly have the same mass.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-51beeda55f",
+    "category": "Entertainment: Video Games",
+    "difficulty": "medium",
+    "text": "\"Return to Castle Wolfenstein\" was the only game of the Wolfenstein series where you don't play as William \"B.J.\" Blazkowicz.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-71eec11393",
+    "category": "Entertainment: Japanese Anime & Manga",
+    "difficulty": "easy",
+    "text": "Clefairy was intended to be Ash's starting Pokémon in the pilot episode of the cartoon.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-cf75c6ab79",
+    "category": "Entertainment: Cartoon & Animations",
+    "difficulty": "medium",
+    "text": "Nickelodeon rejected the pilot to Adventure Time.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-e1190f417b",
+    "category": "Celebrities",
+    "difficulty": "hard",
+    "text": "Lady Gaga's real name is Stefani Joanne Angelina Germanotta.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-e154c5638f",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "There is an island in Japan called Ōkunoshima, A.K.A. \"Rabbit Island\", so named because of it's huge population of rabbits.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-864d8b3d2b",
+    "category": "Politics",
+    "difficulty": "easy",
+    "text": "The 2016 United States Presidential Election is the first time Hillary Clinton has run for President.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-e6a661dab0",
+    "category": "Entertainment: Board Games",
+    "difficulty": "medium",
+    "text": "Wooden molding scraps were used to make the original Monopoly houses and hotels.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-3fdf218ac8",
+    "category": "General Knowledge",
+    "difficulty": "easy",
+    "text": "The Great Wall of China is visible from the moon.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-2593e32951",
+    "category": "Science: Computers",
+    "difficulty": "easy",
+    "text": "The Python programming language gets its name from the British comedy group \"Monty Python.\"",
+    "options": [
+      "True",
+      "False"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "otdb-94ccbd7f99",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "Argentina's name comes from the latin name for Silver.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "otdb-81431376a6",
+    "category": "Animals",
+    "difficulty": "easy",
+    "text": "Zebras are white with black stripes.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "correctIndex": 0
+  }
+]
