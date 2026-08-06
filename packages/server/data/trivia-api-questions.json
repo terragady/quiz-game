@@ -9748,5 +9748,2605 @@
       "Egypt"
     ],
     "correctIndex": 1
+  },
+  {
+    "id": "tta-f21b8c23fd",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which influential historical person was leader of the Russian Revolution and new Communist regime from 1917 to 1924?",
+    "options": [
+      "Lenin",
+      "Stalin",
+      "Gorbachev",
+      "St. Paul"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-9bca6a47a7",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "What country was invaded by Iraq in 1990?",
+    "options": [
+      "Saudi Arabia",
+      "Turkey",
+      "Kuwait",
+      "Israel"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-23bb153fc5",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "Which of these languages would you find spoken in Pakistan?",
+    "options": [
+      "Punjabi",
+      "Bengali",
+      "Hausa",
+      "Telugu"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-d343bb5704",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who Established A Communist Government In Cuba in 1959?",
+    "options": [
+      "Pedro Castro",
+      "Fidel Castro",
+      "Raul Castro",
+      "Miguel Castro"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-0437a4cd40",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who Had An 80's Hit With The Song 'Just The Two of Us,'?",
+    "options": [
+      "Marvin Gaye",
+      "Bill Withers",
+      "Luther Vandross",
+      "Michael Jackson"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-682f9df9de",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which animal would you associate with the Porsche logo?",
+    "options": [
+      "Horse",
+      "Penguin",
+      "Elephant",
+      "Bull"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-0467f71526",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Which actor has appeared in both Django Unchained and Moneyball?",
+    "options": [
+      "Warwick Davis",
+      "Javier Bardem",
+      "Jonah Hill",
+      "Hugo Weaving"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-9d77aff08d",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Who had a hit in 1980 with Turning Japanese?",
+    "options": [
+      "M",
+      "The Vapors",
+      "The Proclaimers",
+      "Kajagoogoo"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-c77c0ba099",
+    "category": "Sport And Leisure",
+    "difficulty": "medium",
+    "text": "Which of these is an American Football team based in Miami?",
+    "options": [
+      "Miami Dolphins",
+      "Miami Sharks",
+      "Miami Flyers",
+      "Miami SC"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-45f79cfd20",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "How many red balls are there in a game of snooker?",
+    "options": [
+      "15",
+      "25",
+      "20",
+      "30"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-ef51fa0860",
+    "category": "Film And Tv",
+    "difficulty": "easy",
+    "text": "Which of these quotes is from the film 'Snakes on a Plane'?",
+    "options": [
+      "\"I have had it with these mother—— snakes on this mother—— plane!\"",
+      "\"Oh, Jerry, don't let's ask for the moon. We have the stars.\"",
+      "\"Not my tempo.\"",
+      "\"Tell 'em to go out there with all they got and win just one for the Gipper.\""
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-cdee860530",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What two countries do Tyroleans come from?",
+    "options": [
+      "Estonia and Latvia",
+      "Morocco and Tunisia",
+      "Iran and Iraq",
+      "Austria and Italy"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-dd5b27598e",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "Coquille St Jaques is another name for which seafood?",
+    "options": [
+      "Lobster",
+      "Squid",
+      "Oyster",
+      "Scallop"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-ca8bf4bf18",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Flatbush and Flatlands are neighborhoods located in which New York City borough?",
+    "options": [
+      "Manhattan",
+      "Brooklyn",
+      "Bronx",
+      "Queens"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-ceb5035501",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Which singer-songwriter wrote the song 'Candle in the Wind'?",
+    "options": [
+      "Elton John",
+      "James Blunt",
+      "Bob Dylan",
+      "Eric Clapton"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-060bc9b0af",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which Maurice Sendak classic won the 1964 Caldecott medal for the best picture book for children?",
+    "options": [
+      "Goodnight Moon",
+      "Green Eggs and Ham",
+      "Where the Wild Things Are",
+      "Chicka Chicka Boom Boom"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-8b383ee6f8",
+    "category": "Arts And Literature",
+    "difficulty": "easy",
+    "text": "In which country is the Hagia Sophia located?",
+    "options": [
+      "Egypt",
+      "Turkey",
+      "Greece",
+      "Italy"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-59a976f5f4",
+    "category": "Film And Tv",
+    "difficulty": "easy",
+    "text": "Which actor plays the role of Nick Fury in the Marvel Cinematic Universe?",
+    "options": [
+      "Clark Gregg",
+      "Samuel L. Jackson",
+      "Tom Hiddleston",
+      "Paul Rudd"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-9f2f8b9dfd",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital city of Antigua and Barbuda?",
+    "options": [
+      "Saint John's",
+      "Monaco",
+      "Havana",
+      "Moroni"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-4b93251be3",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "What is the second largest state in the USA?",
+    "options": [
+      "Atlanta",
+      "Texas",
+      "California",
+      "Florida"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-0197241cfa",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Which English rock band released the studio album 'A Moon Shaped Pool'?",
+    "options": [
+      "Girls Aloud",
+      "Radiohead",
+      "Goldfrapp",
+      "Cream"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-7003791f16",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Which Band Was Formed In The 1970's By Fomer Miles Davis Band Members Joe Zawinul & Wayne Shorter?",
+    "options": [
+      "Weather Report",
+      "The Pussycat Dolls",
+      "The Velvet Underground",
+      "Three 6 Mafia"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-0353dc1e38",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which world capital is home to Plaza de Garibaldi, near the Avenida Juarez?",
+    "options": [
+      "Madrid",
+      "Buenos Aires",
+      "Mexico City",
+      "Rome"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-0371377e4c",
+    "category": "General Knowledge",
+    "difficulty": "hard",
+    "text": "Which word is defined as 'having an unfriendly disposition'?",
+    "options": [
+      "Ill-willie",
+      "Oxter",
+      "Octothorpe",
+      "Fipple"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-f5b253a909",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which book contains the character 'Willie Stark'?",
+    "options": [
+      "Love in the Time of Cholera",
+      "All the King's Men",
+      "Gone With the Wind",
+      "Lonesome Dove"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-de9013417b",
+    "category": "General Knowledge",
+    "difficulty": "hard",
+    "text": "KLM Is The National Airline Of Which Country?",
+    "options": [
+      "The Netherlands",
+      "Spain",
+      "Belgium",
+      "Sweden"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-8b9178899b",
+    "category": "Film And Tv",
+    "difficulty": "easy",
+    "text": "What is the plot of the movie Schindler's List?",
+    "options": [
+      "A man becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+      "King Arthur and his Knights embark on a search for a religious relic.",
+      "In order to power the city, beasts have to scare children so that they scream.",
+      "A girl wanders into a world ruled by gods, witches, and spirits, where humans are changed into beasts."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-dcf05903a6",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "Chives are a member of which family of vegetables?",
+    "options": [
+      "Tomato",
+      "Garlic",
+      "Pepper",
+      "Onion"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-8b970f920f",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital city of Ghana?",
+    "options": [
+      "Ashgabat",
+      "Port-au-Prince",
+      "Chisinau",
+      "Accra"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-e9b1a1ba89",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What is the collective noun for a group of whales or seals?",
+    "options": [
+      "Hive",
+      "Flock",
+      "Pod",
+      "School"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-3d105ea2c9",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What are frogs?",
+    "options": [
+      "Mammals",
+      "Marsupials",
+      "Amphibians",
+      "Reptiles"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-225714d828",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "What type of instrument is a trombone?",
+    "options": [
+      "Brass",
+      "Woodwind",
+      "Stringed",
+      "Percussion"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-dd5d5184f2",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Whose real name is Annie Mae Bullock?",
+    "options": [
+      "Tina Turner",
+      "Britney Spears",
+      "Lady Gaga",
+      "Toni Braxton"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-b279820c8a",
+    "category": "Sport And Leisure",
+    "difficulty": "medium",
+    "text": "Which of these is a competition in Golf?",
+    "options": [
+      "The Copa Libertadores",
+      "The Open Championship",
+      "The IAAF World Championships",
+      "Le Mans 24 Hours"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-6a242da2a2",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "Who was the monarch of England during the time period 1377-1399?",
+    "options": [
+      "Elizabeth I",
+      "George V",
+      "Richard I",
+      "Richard II"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-811c7e3672",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which of these colors is included on the flag of Costa Rica?",
+    "options": [
+      "Orange",
+      "Maroon",
+      "Red",
+      "Black"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-519c69337e",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "In which year was The Great Escape released?",
+    "options": [
+      "1969",
+      "1975",
+      "1957",
+      "1963"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-5efb6ef01c",
+    "category": "General Knowledge",
+    "difficulty": "hard",
+    "text": "Which word is defined as 'a sickly or weak person, especially one who is constantly and morbidly concerned with his or her health'?",
+    "options": [
+      "Fudgel",
+      "Lackadaisical",
+      "Groke",
+      "Valetudinarian"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-aa1a9cacf5",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What are the forked sticks sometimes used to locate water, dismissed by scientists as superstition?",
+    "options": [
+      "Divining Rods",
+      "Geomancy Sticks",
+      "Feng Shui Rods",
+      "Magnetic Field Sensors"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-b2254acf36",
+    "category": "Food And Drink",
+    "difficulty": "hard",
+    "text": "Where in the world are lemons originally from?",
+    "options": [
+      "The Middle East",
+      "Southeast Asia",
+      "North America",
+      "India"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-294a01588a",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'Ruslan and Ludmila'?",
+    "options": [
+      "Nikolai Gogol",
+      "Leo Tolstoy",
+      "Alexander Pushkin",
+      "Henryk Sienkiewicz"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-d6a44a0650",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "Which Roman emperor followed Claudius?",
+    "options": [
+      "Justinian",
+      "Hadrian",
+      "Nero",
+      "Augustus"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-d52a7c9a1b",
+    "category": "Arts And Literature",
+    "difficulty": "easy",
+    "text": "In which book does 'Bilbo Baggins' appear?",
+    "options": [
+      "Charlotte's Web",
+      "The Hobbit",
+      "Alice's Adventures in Wonderland",
+      "Bluebeard"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-2ca215d400",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "Which Roman Emperor is said to have fiddled while Rome burned?",
+    "options": [
+      "Claudius",
+      "Caligula",
+      "Nero",
+      "Augustine"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-82fd667ed3",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "What animal rights organization is known for its campaigns against animal testing and meat eating?",
+    "options": [
+      "PETA",
+      "The Humane Society",
+      "WWF",
+      "Greenpeace"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-d5b8737519",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What nickname is given to England's Yeoman Warders of the Tower of London?",
+    "options": [
+      "The Swiss Guard",
+      "The Green Berets",
+      "The SAS",
+      "Beefeaters"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-4dc305c2b8",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'The Happy Prince and Other Tales'?",
+    "options": [
+      "G. K. Chesterton",
+      "Oscar Wilde",
+      "Alphonse Daudet",
+      "Charles Dickens"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-59f4735372",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "Which of these fruits is a citrus fruit?",
+    "options": [
+      "Blueberry",
+      "Strawberry",
+      "Orange",
+      "Apple"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-7a4f755fa5",
+    "category": "Sport And Leisure",
+    "difficulty": "easy",
+    "text": "Which athletics event consists of two hops and a jump?",
+    "options": [
+      "Pole Vault",
+      "Long Jump",
+      "The Triple Jump",
+      "High Jump"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-c2e85e61b0",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Which novel tells the story of Ishmael, who goes to work on a whaler after feeling 'a damp, drizzly November' in his soul?",
+    "options": [
+      "The Old Man and the Sea",
+      "The Sea-Wolf",
+      "20,000 Leagues Under the Sea",
+      "Moby Dick"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-09a745a8b1",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "In What Year Was The Chinese Republic Established?",
+    "options": [
+      "1911",
+      "1945",
+      "1515",
+      "1820"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-6faf37eacd",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "On the TV show Friends, which characters do Courtney Cox and David Schwimmer play?",
+    "options": [
+      "Rachel and Joey",
+      "Phoebe and Chandler",
+      "Monica and Ross",
+      "Monica and Chandler"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-67a48ed3e4",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "Which actor has featured in films including 300 and James Bond: Tomorrow Never Dies?",
+    "options": [
+      "Robert Redford",
+      "Hugh Jackman",
+      "Gerard Butler",
+      "Jim Carrey"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-a91a3ae694",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which animal would you associate with the Qantas logo?",
+    "options": [
+      "Kangaroo",
+      "Eagle",
+      "Panda",
+      "Moose"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-205dfd2056",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which book contains the character 'Marcel'?",
+    "options": [
+      "The Wind in the Willows",
+      "Remembrance of Things Past",
+      "Lucky Jim",
+      "The Stranger"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-639580f48e",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "With Which Instrument Is Earl Scruggs Associated?",
+    "options": [
+      "The Flute",
+      "The Piano",
+      "The Banjo",
+      "The Harp"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-9b89965c31",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Which American musician released the album 'HIStory: Past, Present and Future, Book I'?",
+    "options": [
+      "Michael Jackson",
+      "Nicki Minaj",
+      "Eric Clapton",
+      "Neil Young"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-ca243be25b",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which of these colors is included on the flag of Belgium?",
+    "options": [
+      "Red",
+      "Orange",
+      "Blue",
+      "White"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-97140ce843",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Which American rock band released the song 'God Only Knows'?",
+    "options": [
+      "Swans",
+      "The Beach Boys",
+      "The Velvet Underground",
+      "Three 6 Mafia"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-161fa66d9a",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "What is Oneirology the study of?",
+    "options": [
+      "crop circles",
+      "the interrelationship between an organism's physical functioning and its environment",
+      "drug dosage",
+      "dreams"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-c34663f38c",
+    "category": "Society And Culture",
+    "difficulty": "easy",
+    "text": "What is the name of the founder of Tesla Motors?",
+    "options": [
+      "Mark Zuckerberg",
+      "Jeff Bezos",
+      "Elon Musk",
+      "Bill Gates"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-a2e3f0b14a",
+    "category": "Sport And Leisure",
+    "difficulty": "easy",
+    "text": "In the sport of American football, what is the term for scoring 6 points by carrying the ball into the opponent's end zone?",
+    "options": [
+      "An interception",
+      "A field goal",
+      "A touchdown",
+      "A sack"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-77a76a8ee6",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What is another name for an informal marriage that often comes with some level of legal recognition?",
+    "options": [
+      "Civil",
+      "Common-law",
+      "Arranged",
+      "Religious"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-793d021e54",
+    "category": "Sport And Leisure",
+    "difficulty": "medium",
+    "text": "What 3 Letter Word It The Name Given To A Replayed Point In Tennis?",
+    "options": [
+      "See",
+      "Let",
+      "Dus",
+      "Par"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-325ea90ce3",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Which political leader played a major role in Myanmar's transition from a military junta in the 2010s?",
+    "options": [
+      "Aung San Suu Kyi",
+      "Ho Chi Minh",
+      "Xi Jinping",
+      "Kim Jong-un"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-3d2e926f8b",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital of West Virginia?",
+    "options": [
+      "Wilmington",
+      "Charleston",
+      "Greenville",
+      "Greensboro"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-55d2513ae1",
+    "category": "Society And Culture",
+    "difficulty": "easy",
+    "text": "Which saint is celebrated on February 14th?",
+    "options": [
+      "St. Michael",
+      "St. Valentine",
+      "St. Patrick",
+      "St. Francis"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-287eaa0a5f",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which book contains the character 'T. S. Garp'?",
+    "options": [
+      "The World According to Garp",
+      "Lonesome Dove",
+      "The Sun Also Rises",
+      "The Age of Innocence"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-768c9ec799",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who was the first female prime minister of India?",
+    "options": [
+      "Gauri Khan",
+      "Sarojini Naidu",
+      "Ratan Tata",
+      "Indira Gandhi"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-74dbef63d0",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which of these countries borders Denmark?",
+    "options": [
+      "Ireland",
+      "Kingdom of the Netherlands",
+      "Belgium",
+      "Germany"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-3895b5e199",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "Who was the first European to sight New Zealand in 1642?",
+    "options": [
+      "James Cook",
+      "Abel Tasman",
+      "Christopher Columbus",
+      "John Cabot"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-803e173181",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "What does the flag of Italy look like?",
+    "options": [
+      "Three equal vertical bands of green white and red.",
+      "Red field with a yellow sun in the center.",
+      "Three equal horizontal bands of red white and black.",
+      "Red with a green five-pointed star in the center."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-5842938062",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "What is the plot of the movie The Great Dictator?",
+    "options": [
+      "A weatherman finds himself trapped in a small town as he lives the same day over and over again.",
+      "Two men join in an uneasy alliance against a third to find gold buried in a remote cemetery.",
+      "A leader tries to expand his empire while a poor barber tries to avoid persecution.",
+      "A surgeon rescues a disfigured man who is mistreated while scraping a living as a side-show freak."
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-6a964b7beb",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Which actor played the role of William 'Bill the Butcher' Cutting in Gangs of New York?",
+    "options": [
+      "Robert De Niro",
+      "Sidney Poitier",
+      "Daniel Day-Lewis",
+      "Peter O'Toole"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-3465c1a025",
+    "category": "Sport And Leisure",
+    "difficulty": "medium",
+    "text": "What is the name of the classic board game where players must discover the circumstances of a murder?",
+    "options": [
+      "Backgammon",
+      "Clue",
+      "Scrabble",
+      "Checkers"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-b3a054d1b3",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "What did the Congress of Vienna meet to discuss in 1815?",
+    "options": [
+      "Fossil fuel consumption",
+      "The new European political order",
+      "The fall of the Soviet Union",
+      "African colonisation"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-becae785fb",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "Which Jump Event Did Carl Lewis Specialize In As Well As The Sprint?",
+    "options": [
+      "High Jump",
+      "Long Jump",
+      "Pole Vault",
+      "Triple Jump"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-59bc71ffdd",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What does the word 'rot' mean in German?",
+    "options": [
+      "Nine",
+      "Blue",
+      "White",
+      "Red"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-decc7960be",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Which Archduchess of Austria became Queen of France in 1774?",
+    "options": [
+      "Marie de' Medici",
+      "Marie Antoinette",
+      "Diane de Poitiers",
+      "Eleanor of Aquitaine"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-28444e2e8c",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "On which day of the week does Lent begin?",
+    "options": [
+      "Palm Sunday",
+      "Easter Sunday",
+      "Good Friday",
+      "Ash Wednesday"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-d070f7844f",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What is the name of the mythical bird that dies in a fire and is reborn from its own ashes?",
+    "options": [
+      "The Siren",
+      "The Harpy",
+      "The Phoenix",
+      "The Roc"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-d72aea1590",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the meaning of \"Honolulu\"?",
+    "options": [
+      "Trading Post",
+      "Bright Sun",
+      "Golden Shores",
+      "Sheltered harbor"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-961cc2713e",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "What is the word for a group of asses?",
+    "options": [
+      "A pride",
+      "A brace",
+      "A cast",
+      "A pace"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-37e3ba4f01",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who was the first Prime Minister of India?",
+    "options": [
+      "Indira Gandhi",
+      "Subhas Chandra Bose",
+      "Mahatma Gandhi",
+      "Jawaharlal Nehru"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-67a4cfd015",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Who is the founder of Amazon?",
+    "options": [
+      "Elon Musk",
+      "Jeff Bezos",
+      "Bill Gates",
+      "Mark Zuckerberg"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-5bec6fee28",
+    "category": "Arts And Literature",
+    "difficulty": "easy",
+    "text": "Which book contains the character 'Big Brother'?",
+    "options": [
+      "The Age of Innocence",
+      "Howards End",
+      "1984",
+      "Parade's End"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-9e2ff4979c",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Chittagong is a city in which country?",
+    "options": [
+      "Thailand",
+      "Singapore",
+      "Bangladesh",
+      "Malaysia"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-d99460930b",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "What is the name of the stepped structure used as a temple by Mesopotamian cultures?",
+    "options": [
+      "Ziggurat",
+      "Pyramid",
+      "Obelisk",
+      "Sphinx"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-3691fb8f64",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "What is the plot of the movie Shutter Island?",
+    "options": [
+      "Two bounty hunters with the same intentions team up to track down an escaped Mexican outlaw.",
+      "When two girls move to the country, they have adventures with the forest spirits who live nearby.",
+      "A man investigates the disappearance of a murderer who escaped from a hospital for the insane.",
+      "The son of a city's mastermind falls in love with a working-class prophet."
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-869c344425",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who was the leader of the Parliamentary forces during the English Civil War?",
+    "options": [
+      "Charles I",
+      "Henry VIII",
+      "Oliver Cromwell",
+      "Lord Byron"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-de980b8ad2",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "On internet chats, what do the letters 'TIL' mean?",
+    "options": [
+      "Total Internet Legend",
+      "Totally In Love",
+      "Today I Learned",
+      "To Invoke Laughter"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-1be40ca6de",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "Which of these quotes is from the film 'The Hunger Games'?",
+    "options": [
+      "\"After all, tomorrow is another day!\"",
+      "\"May the odds ever be in your favor.\"",
+      "\"Exercise gives you endorphins. Endorphins make you happy. Happy people just don’t shoot their husbands. They just don’t.\"",
+      "\"I'll have what she's having.\""
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-ca07132eb2",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What is the common name for the scapula?",
+    "options": [
+      "Kneecap",
+      "Ribs",
+      "Shoulder blade",
+      "Collar Bone"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-1240590f1f",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which 2 Countries Have Coastlines On The Bay Of Biscay?",
+    "options": [
+      "China & Vietnam",
+      "France & Spain",
+      "The USA & Mexico",
+      "Thailand & Myanmar"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-47717c9870",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Which film contains the character 'Rev. Harry Powell'?",
+    "options": [
+      "The Wizard of Oz",
+      "The Night of the Hunter",
+      "Fatal Attraction",
+      "Jaws"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-a79fb6ab06",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which country's flag can be described as 'Blue with a red cross outlined in white extending to the edges.'?",
+    "options": [
+      "Iceland",
+      "France",
+      "Luxembourg",
+      "Uruguay"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-a331be220d",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which of the following describes John Locke?",
+    "options": [
+      "Biologist who discovered penicillin.",
+      "Renaissance sculptor, painter and architect",
+      "Political philosopher who promoted a theory of liberal democracy and a social contract.",
+      "Explorer who landed in America."
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-ece32a06e8",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which of these colors would you find on the flag of Hungary?",
+    "options": [
+      "Black",
+      "Gold",
+      "Green",
+      "Orange"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-0c50c6f131",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Name the movie that matches the following plot summary: '24 hours in the lives of three young men the day after a violent riot.'",
+    "options": [
+      "La Haine",
+      "Three Billboards Outside Ebbing, Missouri",
+      "The Big Lebowski",
+      "The Lives of Others"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-fb92b55861",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "In Which Country Were The 1992 Olympics Held?",
+    "options": [
+      "Italy",
+      "Japan",
+      "USA",
+      "Spain"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-413061aee3",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which region of the world uses '.ni' at the end of its web addresses?",
+    "options": [
+      "Niger",
+      "Namibia",
+      "Nicaragua",
+      "Nigeria"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-8018dd1ccb",
+    "category": "Society And Culture",
+    "difficulty": "easy",
+    "text": "What is the term used to refer to the food that God instructed Adam not to eat in the bible?",
+    "options": [
+      "Bad apple",
+      "Forbidden fruit",
+      "Sour grapes",
+      "Posioned chalice"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-bde6fdbc54",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "What major city is on an island in the St Lawrence River?",
+    "options": [
+      "Montreal",
+      "Los Angeles",
+      "Sao Paolo",
+      "London"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-0b3c87d37a",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Which author wrote 'The Godfather'?",
+    "options": [
+      "Mario Puzo",
+      "Dan Brown",
+      "Edgar Allan Poe",
+      "Stephen King"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-4f2af7fdb2",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "Which Italian city gave its name to a cheese and a type of ham?",
+    "options": [
+      "Parma",
+      "Genoa",
+      "Venice",
+      "Florence"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-15b1b73fa8",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "The process of a snake shedding its skin or a crustacean casting off its outer shell is called __________",
+    "options": [
+      "Poreolasis",
+      "Descaling",
+      "Ecdysis",
+      "Unsheathing"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-633bc6493d",
+    "category": "General Knowledge",
+    "difficulty": "medium",
+    "text": "What Sort Of Animal Was Tarka?",
+    "options": [
+      "Turtle",
+      "Bear",
+      "Otter",
+      "Squirrel"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-511053c43c",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "Which vital organ does the adjective renal refer to?",
+    "options": [
+      "Heart",
+      "Liver",
+      "Kidney",
+      "Lung"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-aa671164a5",
+    "category": "Food And Drink",
+    "difficulty": "easy",
+    "text": "Crêpes are most associated with which part of the world?",
+    "options": [
+      "Austria",
+      "North Africa",
+      "Benin",
+      "France"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-d87e17a0f5",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "In which year did the Six-Day War take place?",
+    "options": [
+      "1967",
+      "1894",
+      "1869",
+      "1922"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-4c1044768f",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Nguyen Van Thieu served as the president of which Asian country from 1967 to 1975?",
+    "options": [
+      "South Vietnam",
+      "Laos",
+      "North Korea",
+      "China"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-8fecf6282c",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'The Steadfast Tin Soldier'?",
+    "options": [
+      "Beatrix Potter",
+      "Oscar Wilde",
+      "Hans Christian Andersen",
+      "Søren Kierkegaard"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-1b1dcf3e68",
+    "category": "General Knowledge",
+    "difficulty": "hard",
+    "text": "The word \"renaissance\" comes from the Old French \"renaistre\", which means what?",
+    "options": [
+      "Revolutionary",
+      "Reborn",
+      "Respected",
+      "Returned"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-cf94e3e0fa",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "A female swan is known as what?",
+    "options": [
+      "A Pen",
+      "A Ewe",
+      "A Jill",
+      "A Vixen"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-5d4ccdd7b4",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "In which book does 'Mr William Collins' appear?",
+    "options": [
+      "The Fault in Our Stars",
+      "Pride and Prejudice",
+      "Ship of Fools",
+      "War and Peace"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-5416680adf",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Which actress has starred in both Batman v Superman: Dawn of Justice and American Hustle?",
+    "options": [
+      "Emma Thompson",
+      "Amy Adams",
+      "Kirsten Dunst",
+      "Penélope Cruz"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-f9212f4b4e",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'Witness for the Prosecution'?",
+    "options": [
+      "Lewis Carroll",
+      "Charles Dickens",
+      "Agatha Christie",
+      "Robert Louis Stevenson"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-628da740fb",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "The country of Guinea-Bissau is on which continent?",
+    "options": [
+      "Oceania",
+      "Africa",
+      "Europe",
+      "South America"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-956109b4d3",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which artist painted \"The Sleeping Gypsy\"",
+    "options": [
+      "Vasily Kandinsky",
+      "Henri Rousseau",
+      "Raphael",
+      "‎Pablo Picasso"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-134eadc486",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Which war began on June 25, 1950?",
+    "options": [
+      "The Korean War",
+      "The Vietnam War",
+      "World War II",
+      "The American War of Independence"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-b80e221c75",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "Which film contains the character 'Kevin McCallister'?",
+    "options": [
+      "On the Waterfront",
+      "Home Alone",
+      "Blue Velvet",
+      "Mad Max"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-67b59fcfbb",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which region of the world uses '.ie' at the end of its web addresses?",
+    "options": [
+      "Iceland",
+      "Vietnam",
+      "Ireland",
+      "Israel"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-65c635c520",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'The Magician's Nephew'?",
+    "options": [
+      "C. S. Lewis",
+      "Jack Vance",
+      "Neil Gaiman",
+      "Douglas Adams"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-c9899780d9",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "In Greek mythology, who was the beautiful young man Echo fell in love with?",
+    "options": [
+      "Hercules",
+      "Apollo",
+      "Perseus",
+      "Narcissus"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-31b1f9ed44",
+    "category": "Film And Tv",
+    "difficulty": "easy",
+    "text": "What is the plot of the movie Terminator 2: Judgment Day?",
+    "options": [
+      "A criminal pleads insanity and is admitted to a mental institution.",
+      "A cyborg must protect a ten-year-old boy from a more powerful cyborg.",
+      "A car salesman's inept crime falls apart due to his and his henchmen's bungling.",
+      "An NYPD officer tries to save his wife taken hostage by terrorists during a Christmas party."
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-40203c14cd",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What is Andrology the study of?",
+    "options": [
+      "The causation of disease",
+      "Animal behaviour",
+      "Male health and disease",
+      "The structure of cells"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-fbde0a38ca",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What is dendrochronology the study of?",
+    "options": [
+      "The records in tree rings",
+      "Venereal diseases",
+      "Minerals",
+      "Muscles"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-a3be57f46d",
+    "category": "Sport And Leisure",
+    "difficulty": "medium",
+    "text": "What type of bicycle combines features of a road bike with those of a mountain bike, and uses no electricity?",
+    "options": [
+      "a hybrid bicycle",
+      "an electric bike",
+      "a recumbent bike",
+      "a tandem bike"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-59e1469ff5",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which automaker offers a V90 model?",
+    "options": [
+      "Toyota",
+      "Fiat",
+      "Volvo",
+      "Mazda"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-13b2d42c3d",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'Just After Sunset'?",
+    "options": [
+      "Jack Vance",
+      "Stephen King",
+      "Edgar Allan Poe",
+      "H. P. Lovecraft"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-dd74be2145",
+    "category": "Society And Culture",
+    "difficulty": "easy",
+    "text": "What is the name of the fashion trend popularized in the 1970s that involves wearing bell-bottoms, platform shoes, and oversized shirts?",
+    "options": [
+      "Preppy",
+      "Grunge",
+      "Hippie",
+      "Disco"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-1d53fc0564",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "Which of these is an American Football team based in Detroit?",
+    "options": [
+      "Detroit Celtics",
+      "Detroit Giants",
+      "Detroit Steelers",
+      "Detroit Lions"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-902323b411",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "In What Year Did World War I End?",
+    "options": [
+      "1920",
+      "1918",
+      "1914",
+      "1931"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-af962a9770",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which artist painted \"Les Demoiselles d’Avignon\"",
+    "options": [
+      "Peter Paul Rubens",
+      "Sandro Botticelli",
+      "Jacques-Louis David",
+      "Pablo Picasso"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-6490b9611c",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "In which city was President Kennedy killed?",
+    "options": [
+      "Dallas",
+      "Austin",
+      "Houston",
+      "Atlanta"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-97682431c9",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Which artist first recorded 'Hurt', which was later covered by Johnny Cash?",
+    "options": [
+      "Nine Inch Nails",
+      "Miley Cyrus",
+      "Creedence Clearwater Revival",
+      "The White Stripes"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-549b66618f",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "Which of these countries borders Portugal?",
+    "options": [
+      "Spain",
+      "Morocco",
+      "France",
+      "Andorra"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-94744a5036",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which country is also known as Suomi?",
+    "options": [
+      "China",
+      "Cambodia",
+      "Brazil",
+      "Finland"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-58e40b36c5",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "Which actor has starred in Thor and Westworld?",
+    "options": [
+      "Anthony Hopkins",
+      "Arnold Schwarzenegger",
+      "Tom Hanks",
+      "Ewan McGregor"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-b558ed4ec1",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "The City Of Timbuktu Is In Which African Country?",
+    "options": [
+      "Mali",
+      "Ivory Coast",
+      "Mauritania",
+      "Burkina Faso"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-6080bd87da",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "In which country would you find Mount Fuji?",
+    "options": [
+      "Japan",
+      "China",
+      "Indonesia",
+      "South Korea"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-da238679d2",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "What type of alcohol is traditionally used in the French dish 'Coq au Vin'?",
+    "options": [
+      "Port",
+      "Red wine",
+      "Beer",
+      "Brandy"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-90ce4d5cf9",
+    "category": "Society And Culture",
+    "difficulty": "easy",
+    "text": "Which of the following describes John F. Kennedy?",
+    "options": [
+      "Developed the world's first vaccine (for smallpox).",
+      "Italian explorer who landed in America.",
+      "Dictator of Nazi Germany.",
+      "38th President of the USA."
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-56211fe002",
+    "category": "Geography",
+    "difficulty": "easy",
+    "text": "Which country's flag can be described as 'Green with a yellow diamond in the center with a blue celestial globe.'?",
+    "options": [
+      "Jamaica",
+      "Faroe Islands",
+      "Iran",
+      "Brazil"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-52657ff175",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What is the Mexican currency called?",
+    "options": [
+      "Euro",
+      "Dollar",
+      "Rand",
+      "Peso"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-c28c8eef30",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Which song begins with the lyrics: \"Hello? Is there anybody in there?\"?",
+    "options": [
+      "\"Comfortably Numb\" by Pink Floyd",
+      "\"Rapper's Delight\" by Sugarhill Gang",
+      "\"Baby Got Back\" by Sir Mix-a-Lot",
+      "\"Welcome to the Black Parade\" by My Chemical Romance"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-58f9ebf0d9",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "In which book does 'Mr. Darcy' appear?",
+    "options": [
+      "Jane Eyre",
+      "Sense and Sensibility",
+      "Anna Karenina",
+      "Pride and Prejudice"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-11862037a9",
+    "category": "General Knowledge",
+    "difficulty": "medium",
+    "text": "What word could refer to a dance or a dot?",
+    "options": [
+      "Molka",
+      "Polka",
+      "Bolka",
+      "Tolka"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-c050936f1b",
+    "category": "Food And Drink",
+    "difficulty": "hard",
+    "text": "What type of pasta is anelli?",
+    "options": [
+      "Shaped pasta",
+      "Soup pasta",
+      "Stuffed pasta",
+      "Ribbon pasta"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-1d010b3c64",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital city of Uruguay?",
+    "options": [
+      "Bandar Seri Begawan",
+      "Montevideo",
+      "Zagreb",
+      "Bogotá"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-dfa63dd985",
+    "category": "General Knowledge",
+    "difficulty": "medium",
+    "text": "Which word is defined as 'two vowel sounds joined in one syllable to form one speech sound, e.g. the sounds of “ou” in out and of “oy” in boy'?",
+    "options": [
+      "Kakorrhaphiophobia",
+      "Dipthong",
+      "Grommet",
+      "Jentacular"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-92428f3b5f",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "What is the name of the Aztec writing system?",
+    "options": [
+      "Olmec",
+      "Nahuatl",
+      "Isthmian",
+      "Maya glyphs"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-bf8637775a",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which technique in abstract painting developed in the 1950's focuses on the effects of large areas of color having a minimum of surface detail?",
+    "options": [
+      "Canvas Filling",
+      "Foreshortening",
+      "Gestural Painting",
+      "Color Field Painting"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-95c36ba2f4",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Which author wrote 'The Hunger Games'?",
+    "options": [
+      "Suzanne Collins",
+      "Frederik Pohl",
+      "Dan Brown",
+      "Philip K. Dick"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-666f414274",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "What is the name given to parts of the world where the population lives significantly longer than average?",
+    "options": [
+      "Octogenarial regions",
+      "Longevity lands",
+      "Blue zones",
+      "Health spots"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-b135e9ece0",
+    "category": "Film And Tv",
+    "difficulty": "hard",
+    "text": "Which actor has starred in films including One Flew Over the Cuckoo's Nest and Batman Returns?",
+    "options": [
+      "Kiefer Sutherland",
+      "Danny DeVito",
+      "Michael Douglas",
+      "Ben Kingsley"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-5ee73fbbb7",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Which singer released the song 'S&M'?",
+    "options": [
+      "Nicki Minaj",
+      "Drake",
+      "Ricky Martin",
+      "Rihanna"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-77b0843458",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Which English band released the studio album 'Ultra'?",
+    "options": [
+      "Radiohead",
+      "Dead or Alive",
+      "Level 42",
+      "Depeche Mode"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-0a9f0e94ed",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "What is the name of the long narrative poem that tells of the deeds and adventures of a hero?",
+    "options": [
+      "Epic",
+      "Ode",
+      "Verse",
+      "Sonnet"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-39cb025922",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which of these languages would you find spoken in Indonesia?",
+    "options": [
+      "Javanese",
+      "Quechua",
+      "Mandarin",
+      "Hausa"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-7b3f7b8222",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "What is the name of the highest pitched woodwind instrument?",
+    "options": [
+      "Clarinet",
+      "Piccolo",
+      "Flute",
+      "Bass Flute"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-482c4fffee",
+    "category": "Geography",
+    "difficulty": "medium",
+    "text": "Which country are the Galapagos Islands part of?",
+    "options": [
+      "Japan",
+      "Ecuador",
+      "Indonesia",
+      "Chile"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-e0dc494959",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "Linen is obtained from the fibers of what plant?",
+    "options": [
+      "Hemp",
+      "Flax",
+      "Sunflower",
+      "Wheat"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-e2225d61f3",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Whose army did Admiral Nelson defeat at the battle of Trafalgar?",
+    "options": [
+      "Charlemagne",
+      "Hitler",
+      "Napoleon",
+      "Genghis Khan"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-6b7a817ca6",
+    "category": "Food And Drink",
+    "difficulty": "medium",
+    "text": "From which country does emmental cheese originate?",
+    "options": [
+      "The Netherlands",
+      "Switzerland",
+      "Denmark",
+      "France"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-e00c23b1a9",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which Canadian city is nicknamed 'Oil City'?",
+    "options": [
+      "Toronto",
+      "Edmonton",
+      "Vancouver",
+      "Calgary"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-dad802039c",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "The language 'Mandarin Chinese' belongs to which language family?",
+    "options": [
+      "Uralic",
+      "Sino-Tibetan",
+      "Dravidian",
+      "Kra–Dai"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-2c30f7715f",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "What is the name of the album by Adele that features the songs 'Hello' and 'When We Were Young'?",
+    "options": [
+      "30",
+      "19",
+      "21",
+      "25"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-dd058feecf",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Double, double toil and trouble, Fire burn, and cauldron bubble. Comes from which of Shakespeare's plays?",
+    "options": [
+      "Macbeth",
+      "King Lear",
+      "Romeo & Juliette",
+      "Hamlet"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-f7378194b6",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which author wrote 'The White Guard'?",
+    "options": [
+      "Ayn Rand",
+      "Mikhail Bulgakov",
+      "Vladimir Nabokov",
+      "Stanisław Lem"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-b51020a87a",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which philosopher famously said 'The only thing I know is that I know nothing'?",
+    "options": [
+      "Socrates",
+      "Bertrand Russell",
+      "Thomas Hobbes",
+      "Immanuel Kant"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-ff793360d8",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "The language 'Amharic' belongs to which language family?",
+    "options": [
+      "Sino-Tibetan",
+      "Japonic",
+      "Afroasiatic",
+      "Dravidian"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-518b42e59a",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "Baseball: The Baltimore ________.",
+    "options": [
+      "Yankees",
+      "Ravens",
+      "Orioles",
+      "Jays"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-0f76a9f5ab",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Which Shakespeare play opens with the 3 Witches?",
+    "options": [
+      "Othello",
+      "Macbeth",
+      "Hamlet",
+      "Romeo & Juliette"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-bfe2ce50cd",
+    "category": "Society And Culture",
+    "difficulty": "hard",
+    "text": "Which philosopher famously said 'Freedom is secured not by the fulfilling of one's desires, but by the removal of desire'?",
+    "options": [
+      "Bertrand Russell",
+      "Epictetus",
+      "Anaxagoras",
+      "John Locke"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-3215a8c15c",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "In the NATO phonetic alphabet, which word represents the letter Q?",
+    "options": [
+      "Quebec",
+      "Queen",
+      "Quaff",
+      "Quid"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-735c825195",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What is the approximate temperature of the universe?",
+    "options": [
+      "2.73 K",
+      "27.3 K",
+      "2730 K",
+      "273 K"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-099e9835e2",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which Borough of New York is northeast of and adjacent to Manhattan?",
+    "options": [
+      "Brooklyn",
+      "The Bronx",
+      "The Jersey Shore",
+      "Staten Island"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-ca9bbcedbf",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "What part of the body is the sclera a part of?",
+    "options": [
+      "The eyeball",
+      "The ear",
+      "The brain",
+      "The skeleton"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-885db9f0be",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital city of Uganda?",
+    "options": [
+      "Kampala",
+      "Lilongwe",
+      "Nuku'alofa",
+      "Yamoussoukro"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-5d3424f58b",
+    "category": "Science",
+    "difficulty": "medium",
+    "text": "What word refers to distortion caused by a loop in a sound system?",
+    "options": [
+      "Echo",
+      "Interference",
+      "Resonance",
+      "Feedback"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-1052000940",
+    "category": "General Knowledge",
+    "difficulty": "medium",
+    "text": "Where is most of America's gold located?",
+    "options": [
+      "Fort Dox",
+      "Fort Stox",
+      "Fort Box",
+      "Fort Knox"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-aef85cf44e",
+    "category": "Food And Drink",
+    "difficulty": "hard",
+    "text": "Which country is associated with the drink tuica?",
+    "options": [
+      "Latvia",
+      "Finland",
+      "Romania",
+      "Denmark"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-3095be5d22",
+    "category": "Arts And Literature",
+    "difficulty": "hard",
+    "text": "Which book contains the character 'Charles Ryder'?",
+    "options": [
+      "The Old Man and the Sea",
+      "Brideshead Revisited",
+      "Ulysses",
+      "The English Patient"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-eb1fd130ea",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "Which Central American country extends furthest North?",
+    "options": [
+      "El Salvador",
+      "Honduras",
+      "Guatemala",
+      "Belize"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-44e0915aa5",
+    "category": "Science",
+    "difficulty": "hard",
+    "text": "What is the word for a group of foxes?",
+    "options": [
+      "A skulk",
+      "A stud",
+      "A yoke",
+      "A school"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-4f49adef40",
+    "category": "History",
+    "difficulty": "hard",
+    "text": "From which European country did Mozambique declare independence in 1975?",
+    "options": [
+      "Portugal",
+      "Spain",
+      "Italy",
+      "France"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-6dab32dab7",
+    "category": "Arts And Literature",
+    "difficulty": "medium",
+    "text": "Which book is the 7th book of the Harry Potter series?",
+    "options": [
+      "Harry Potter and the Order of Phoenix",
+      "Harry Potter and the Deathly Hallows",
+      "Harry Potter and the Chamber of Secrets",
+      "Harry Potter and the Cursed Child"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-88a8228bbd",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who fought for the Holy Land between 1095 and 1291?",
+    "options": [
+      "The Righteous",
+      "The Zealots",
+      "The Crusaders",
+      "The Infidels"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-3ad141a510",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "In German, what is the meaning of the word 'acht'?",
+    "options": [
+      "Eight",
+      "Green",
+      "Seven",
+      "White"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-3e0e2f009c",
+    "category": "History",
+    "difficulty": "medium",
+    "text": "Who was called 'The Maid of Orleans'?",
+    "options": [
+      "Birgitte Bardot",
+      "Joan of Arc",
+      "Simone de Beauvoir",
+      "Marie Antoinette"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-bedefbbdf5",
+    "category": "Society And Culture",
+    "difficulty": "medium",
+    "text": "Which is the national flower of India?",
+    "options": [
+      "Marigold",
+      "Rose",
+      "Jasmine",
+      "Lotus"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-8d500079a9",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "Which of these is a baseball team based in Cleveland?",
+    "options": [
+      "Cleveland Blackhawks",
+      "Cleveland Hornets",
+      "Cleveland Indians",
+      "Cleveland Celtics"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "id": "tta-fd9786dece",
+    "category": "General Knowledge",
+    "difficulty": "easy",
+    "text": "What is a barrier that blocks flowing water?",
+    "options": [
+      "Clam",
+      "Lamb",
+      "Scam",
+      "Dam"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-53520166fe",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Which American grunge band released the studio album 'Black Gives Way to Blue'?",
+    "options": [
+      "Alice in Chains",
+      "Three 6 Mafia",
+      "Poison",
+      "The Velvet Underground"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-90d363ac0a",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "What song did ? & The Mysterians have a hit with in 1966?",
+    "options": [
+      "96 Tears",
+      "Puttin' on the Ritz",
+      "I'Ve Never Been to Me",
+      "Mambo No. 5 (A Little Bit Of...)"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "tta-b3a8a94529",
+    "category": "Geography",
+    "difficulty": "hard",
+    "text": "What is the capital city of Tunisia?",
+    "options": [
+      "Ankara",
+      "Dakar",
+      "Algiers",
+      "Tunis"
+    ],
+    "correctIndex": 3
+  },
+  {
+    "id": "tta-87adb3a136",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Which band includes 'Billie Joe Armstrong'?",
+    "options": [
+      "Fall Out Boy",
+      "Green Day",
+      "Animal Collective",
+      "Mastodon"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-1614fdbd1e",
+    "category": "Sport And Leisure",
+    "difficulty": "hard",
+    "text": "Which country won the 1994 FIFA World Cup, hosted in United States?",
+    "options": [
+      "Uruguay",
+      "Brazil",
+      "France",
+      "Germany"
+    ],
+    "correctIndex": 1
+  },
+  {
+    "id": "tta-ef3aa3bbe9",
+    "category": "Film And Tv",
+    "difficulty": "medium",
+    "text": "What is the name of the beautiful princess in Sleeping Beauty?",
+    "options": [
+      "Aurora",
+      "Belle",
+      "Cinderella",
+      "Rapunzel"
+    ],
+    "correctIndex": 0
   }
 ]
