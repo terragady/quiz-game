@@ -297,6 +297,19 @@ describe('buildQuestionPool', () => {
     expect(pool.length).toBeGreaterThan(0);
     expect(pool.some((q) => q.category === 'Europe')).toBe(true);
   });
+
+  it('serves curated flag images from local paths, not external URLs', () => {
+    const pool = buildQuestionPool(
+      CURATED_QUESTIONS_PATH,
+      '/no/such/file.json',
+      '/no/such/trivia.json',
+    );
+    const images = pool.filter((q) => q.imageUrl);
+    expect(images.length).toBeGreaterThan(0);
+    for (const q of images) {
+      expect(q.imageUrl).toMatch(/^\/images\//);
+    }
+  });
 });
 
 describe('loadQuestionPool', () => {

@@ -583,7 +583,7 @@
       "Finland"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/no.png"
+    "imageUrl": "/images/flags/no.png"
   },
   {
     "id": "curated-flag-pl",
@@ -597,7 +597,7 @@
       "Austria"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/pl.png"
+    "imageUrl": "/images/flags/pl.png"
   },
   {
     "id": "curated-flag-se",
@@ -611,7 +611,7 @@
       "Denmark"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/se.png"
+    "imageUrl": "/images/flags/se.png"
   },
   {
     "id": "curated-flag-de",
@@ -625,7 +625,7 @@
       "Netherlands"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/de.png"
+    "imageUrl": "/images/flags/de.png"
   },
   {
     "id": "curated-flag-fr",
@@ -639,7 +639,7 @@
       "Russia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/fr.png"
+    "imageUrl": "/images/flags/fr.png"
   },
   {
     "id": "curated-flag-it",
@@ -653,7 +653,7 @@
       "Hungary"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/it.png"
+    "imageUrl": "/images/flags/it.png"
   },
   {
     "id": "curated-flag-es",
@@ -667,7 +667,7 @@
       "Italy"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/es.png"
+    "imageUrl": "/images/flags/es.png"
   },
   {
     "id": "curated-flag-gb",
@@ -681,7 +681,7 @@
       "Norway"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/gb.png"
+    "imageUrl": "/images/flags/gb.png"
   },
   {
     "id": "curated-flag-ie",
@@ -695,7 +695,7 @@
       "India"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ie.png"
+    "imageUrl": "/images/flags/ie.png"
   },
   {
     "id": "curated-flag-gr",
@@ -709,7 +709,7 @@
       "Finland"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/gr.png"
+    "imageUrl": "/images/flags/gr.png"
   },
   {
     "id": "curated-flag-nl",
@@ -723,7 +723,7 @@
       "France"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/nl.png"
+    "imageUrl": "/images/flags/nl.png"
   },
   {
     "id": "curated-flag-ch",
@@ -737,7 +737,7 @@
       "England"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ch.png"
+    "imageUrl": "/images/flags/ch.png"
   },
   {
     "id": "curated-flag-ua",
@@ -751,7 +751,7 @@
       "Argentina"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ua.png"
+    "imageUrl": "/images/flags/ua.png"
   },
   {
     "id": "curated-flag-pt",
@@ -765,7 +765,7 @@
       "Italy"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/pt.png"
+    "imageUrl": "/images/flags/pt.png"
   },
   {
     "id": "curated-no-population",
@@ -1312,7 +1312,7 @@
       "Chad"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/be.png"
+    "imageUrl": "/images/flags/be.png"
   },
   {
     "id": "curated-flag-dk",
@@ -1326,7 +1326,7 @@
       "England"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/dk.png"
+    "imageUrl": "/images/flags/dk.png"
   },
   {
     "id": "curated-flag-fi",
@@ -1340,7 +1340,7 @@
       "Greece"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/fi.png"
+    "imageUrl": "/images/flags/fi.png"
   },
   {
     "id": "curated-flag-is",
@@ -1354,7 +1354,7 @@
       "Denmark"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/is.png"
+    "imageUrl": "/images/flags/is.png"
   },
   {
     "id": "curated-flag-at",
@@ -1368,7 +1368,7 @@
       "Lebanon"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/at.png"
+    "imageUrl": "/images/flags/at.png"
   },
   {
     "id": "curated-flag-hu",
@@ -1382,7 +1382,7 @@
       "Tajikistan"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/hu.png"
+    "imageUrl": "/images/flags/hu.png"
   },
   {
     "id": "curated-flag-cz",
@@ -1396,7 +1396,7 @@
       "Slovenia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/cz.png"
+    "imageUrl": "/images/flags/cz.png"
   },
   {
     "id": "curated-flag-ro",
@@ -1410,7 +1410,7 @@
       "Andorra"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ro.png"
+    "imageUrl": "/images/flags/ro.png"
   },
   {
     "id": "curated-flag-ru",
@@ -1424,7 +1424,7 @@
       "Netherlands"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ru.png"
+    "imageUrl": "/images/flags/ru.png"
   },
   {
     "id": "curated-flag-hr",
@@ -1438,7 +1438,7 @@
       "Slovenia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/hr.png"
+    "imageUrl": "/images/flags/hr.png"
   },
   {
     "id": "curated-flag-tr",
@@ -1452,7 +1452,7 @@
       "Pakistan"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/tr.png"
+    "imageUrl": "/images/flags/tr.png"
   },
   {
     "id": "curated-flag-ee",
@@ -1466,7 +1466,7 @@
       "Russia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ee.png"
+    "imageUrl": "/images/flags/ee.png"
   },
   {
     "id": "curated-no-flag-colours",
@@ -1987,7 +1987,7 @@
       "Ghana"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/lt.png"
+    "imageUrl": "/images/flags/lt.png"
   },
   {
     "id": "curated-flag-lv",
@@ -2001,7 +2001,7 @@
       "Poland"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/lv.png"
+    "imageUrl": "/images/flags/lv.png"
   },
   {
     "id": "curated-flag-sk",
@@ -2015,7 +2015,7 @@
       "Serbia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/sk.png"
+    "imageUrl": "/images/flags/sk.png"
   },
   {
     "id": "curated-flag-si",
@@ -2029,7 +2029,7 @@
       "Croatia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/si.png"
+    "imageUrl": "/images/flags/si.png"
   },
   {
     "id": "curated-flag-rs",
@@ -2043,7 +2043,7 @@
       "Slovenia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/rs.png"
+    "imageUrl": "/images/flags/rs.png"
   },
   {
     "id": "curated-flag-bg",
@@ -2057,7 +2057,7 @@
       "Russia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/bg.png"
+    "imageUrl": "/images/flags/bg.png"
   },
   {
     "id": "curated-flag-al",
@@ -2071,7 +2071,7 @@
       "Serbia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/al.png"
+    "imageUrl": "/images/flags/al.png"
   },
   {
     "id": "curated-flag-lu",
@@ -2085,7 +2085,7 @@
       "France"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/lu.png"
+    "imageUrl": "/images/flags/lu.png"
   },
   {
     "id": "curated-flag-mt",
@@ -2099,7 +2099,7 @@
       "Switzerland"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/mt.png"
+    "imageUrl": "/images/flags/mt.png"
   },
   {
     "id": "curated-flag-md",
@@ -2113,7 +2113,7 @@
       "Chad"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/md.png"
+    "imageUrl": "/images/flags/md.png"
   },
   {
     "id": "curated-flag-ba",
@@ -2127,7 +2127,7 @@
       "Croatia"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/ba.png"
+    "imageUrl": "/images/flags/ba.png"
   },
   {
     "id": "curated-flag-mk",
@@ -2141,7 +2141,7 @@
       "Bangladesh"
     ],
     "correctIndex": 0,
-    "imageUrl": "https://flagcdn.com/w320/mk.png"
+    "imageUrl": "/images/flags/mk.png"
   },
   {
     "id": "otdb-6787bf14ce",
