@@ -3,11 +3,13 @@ import type { Question } from '@quiz/shared';
 import {
   CURATED_QUESTIONS_PATH,
   DEFAULT_QUESTIONS_PATH,
+  dedupeByText,
   filterQuestions,
   listCategories,
   loadQuestionPool,
   loadQuestions,
   mergeQuestions,
+  normalizeQuestionText,
   selectQuestions,
   validateQuestionsData,
   withShuffledOptions,
@@ -179,6 +181,51 @@ describe('mergeQuestions', () => {
   });
 });
 
+describe('normalizeQuestionText', () => {
+  it('ignores casing, punctuation, and whitespace differences', () => {
+    expect(normalizeQuestionText('Capital of France?')).toBe(
+      normalizeQuestionText('  capital   of france '),
+    );
+  });
+
+  it('strips HTML entities', () => {
+    expect(normalizeQuestionText('Tom &amp; Jerry')).toBe(
+      normalizeQuestionText('Tom Jerry'),
+    );
+  });
+});
+
+describe('dedupeByText', () => {
+  it('removes later questions whose text duplicates an earlier one', () => {
+    const first: Question = { ...sample[2], id: 'first' };
+    const dup: Question = { ...sample[2], id: 'second', text: 'capital of FRANCE?' };
+    const result = dedupeByText([first, dup, sample[0]]);
+    expect(result.map((q) => q.id)).toEqual(['first', 'a']);
+  });
+
+  it('keeps image questions that share a prompt but differ by image', () => {
+    const flagOne: Question = {
+      id: 'flag-1',
+      category: 'Flags',
+      difficulty: 'easy',
+      text: "Which country's flag is this?",
+      options: ['Norway', 'Sweden'],
+      correctIndex: 0,
+      imageUrl: 'https://flagcdn.com/w320/no.png',
+    };
+    const flagTwo: Question = {
+      ...flagOne,
+      id: 'flag-2',
+      options: ['Sweden', 'Norway'],
+      imageUrl: 'https://flagcdn.com/w320/se.png',
+    };
+    expect(dedupeByText([flagOne, flagTwo]).map((q) => q.id)).toEqual([
+      'flag-1',
+      'flag-2',
+    ]);
+  });
+});
+
 describe('loadQuestionPool', () => {
   it('loads and merges the curated and imported files', () => {
     const pool = loadQuestionPool();
@@ -188,15 +235,27 @@ describe('loadQuestionPool', () => {
     expect(pool.some((q) => q.category === 'Poland')).toBe(true);
   });
 
-  it('still returns curated questions when the imported file is absent', () => {
-    const pool = loadQuestionPool(CURATED_QUESTIONS_PATH, '/no/such/file.json');
+  it('contains no duplicate question text (flags aside)', () => {
+    const pool = loadQuestionPool();
+    const keys = pool
+      .filter((q) => !q.imageUrl)
+      .map((q) => normalizeQuestionText(q.text));
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('still returns curated questions when the other files are absent', () => {
+    const pool = loadQuestionPool(
+      CURATED_QUESTIONS_PATH,
+      '/no/such/file.json',
+      '/no/such/trivia.json',
+    );
     expect(pool.length).toBeGreaterThan(0);
     expect(pool.some((q) => q.category === 'Europe')).toBe(true);
   });
 
-  it('throws when both files are missing', () => {
+  it('throws when all files are missing', () => {
     expect(() =>
-      loadQuestionPool('/no/curated.json', '/no/imported.json'),
+      loadQuestionPool('/no/curated.json', '/no/imported.json', '/no/trivia.json'),
     ).toThrow(/No questions available/);
   });
 });
