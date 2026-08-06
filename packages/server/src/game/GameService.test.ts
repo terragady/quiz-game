@@ -166,11 +166,13 @@ describe('GameService integration', () => {
     expect(endsAt).toBeGreaterThan(Date.now());
 
     // The single player answers correctly, which auto-reveals.
+    // Options are shuffled per game; 'A' is the correct answer in the source pool.
+    const correctOption = question.options.indexOf('A');
     const answerResult = new Promise<{
       correct: boolean;
       pointsAwarded: number;
     }>((resolve) => player.once('answerResult', resolve));
-    player.emit('submitAnswer', { optionIndex: 0 });
+    player.emit('submitAnswer', { optionIndex: correctOption });
     const result = await answerResult;
     expect(result.correct).toBe(true);
     expect(result.pointsAwarded).toBeGreaterThan(0);
@@ -233,16 +235,18 @@ describe('GameService integration', () => {
     const questionArrives = nextQuestion(alice);
     // A long timer so the round can only end via the disconnect path, not timeout.
     admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
-    await questionArrives;
+    const [question] = await questionArrives;
+    // Options are shuffled per game; 'A' is the correct answer in the source pool.
+    const correctOption = question.options.indexOf('A');
 
     // Alice answers; Bob never does, then leaves — the round should reveal.
     const revealShown = waitForState(host, (s) => s.phase === 'reveal');
-    alice.emit('submitAnswer', { optionIndex: 0 });
+    alice.emit('submitAnswer', { optionIndex: correctOption });
     bob.disconnect();
 
     const revealState = await revealShown;
     expect(revealState.phase).toBe('reveal');
-    expect(revealState.revealedCorrectIndex).toBe(0);
+    expect(revealState.revealedCorrectIndex).toBe(correctOption);
   });
 
   it('gives each host its own room, and rejoins an existing room by code', async () => {
@@ -305,7 +309,9 @@ describe('GameService integration', () => {
 
     const questionArrives = nextQuestion(host);
     admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
-    await questionArrives;
+    const [question] = await questionArrives;
+    // Options are shuffled per game; 'A' is the correct answer in the source pool.
+    const correctOption = question.options.indexOf('A');
 
     // The player's phone "sleeps": the socket drops. The host sees them offline.
     const seenOffline = waitForState(
@@ -327,7 +333,7 @@ describe('GameService integration', () => {
     const answered = new Promise<{ correct: boolean }>((resolve) =>
       revived.once('answerResult', resolve),
     );
-    revived.emit('submitAnswer', { optionIndex: 0 });
+    revived.emit('submitAnswer', { optionIndex: correctOption });
     const result = await answered;
     expect(result.correct).toBe(true);
   });

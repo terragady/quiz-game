@@ -16,7 +16,8 @@
  */
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { DEFAULT_QUESTIONS_PATH, validateQuestionsData } from '../questions/loader.js';
+import { OPENTDB_QUESTIONS_PATH, validateQuestionsData } from '../questions/loader.js';
+import { writeQuestionPool } from '../questions/buildPool.js';
 import { normalizeResults, type OpenTdbResult } from '../questions/normalize.js';
 
 const API_URL = 'https://opentdb.com/api.php';
@@ -147,13 +148,16 @@ async function main(): Promise<void> {
   validateQuestionsData(questions);
 
   writeFileSync(
-    DEFAULT_QUESTIONS_PATH,
+    OPENTDB_QUESTIONS_PATH,
     `${JSON.stringify(questions, null, 2)}\n`,
     'utf-8',
   );
   console.log(
-    `Wrote ${questions.length} unique questions to ${DEFAULT_QUESTIONS_PATH}`,
+    `Wrote ${questions.length} unique questions to ${OPENTDB_QUESTIONS_PATH}`,
   );
+
+  const pool = writeQuestionPool();
+  console.log(`Rebuilt pool: ${pool.length} questions.`);
 }
 
 main().catch((error) => {

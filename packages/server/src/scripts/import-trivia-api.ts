@@ -18,12 +18,13 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import type { Question } from '@quiz/shared';
 import {
   CURATED_QUESTIONS_PATH,
-  DEFAULT_QUESTIONS_PATH,
+  OPENTDB_QUESTIONS_PATH,
   TRIVIA_API_QUESTIONS_PATH,
   loadQuestions,
   normalizeQuestionText,
   validateQuestionsData,
 } from '../questions/loader.js';
+import { writeQuestionPool } from '../questions/buildPool.js';
 import {
   normalizeTriviaApiResults,
   type TriviaApiResult,
@@ -80,7 +81,7 @@ async function main(): Promise<void> {
   // Questions already present in any source — used to avoid re-adding duplicates.
   const existingOther = [
     ...loadIfPresent(CURATED_QUESTIONS_PATH),
-    ...loadIfPresent(DEFAULT_QUESTIONS_PATH),
+    ...loadIfPresent(OPENTDB_QUESTIONS_PATH),
   ];
   const existingTrivia = loadIfPresent(TRIVIA_API_QUESTIONS_PATH);
 
@@ -143,6 +144,9 @@ async function main(): Promise<void> {
   console.log(
     `Added ${added} new; wrote ${collected.length} total to ${TRIVIA_API_QUESTIONS_PATH}`,
   );
+
+  const pool = writeQuestionPool();
+  console.log(`Rebuilt pool: ${pool.length} questions.`);
 }
 
 main().catch((error) => {

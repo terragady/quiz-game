@@ -2,6 +2,13 @@ import { beforeEach, describe, it, expect } from 'vitest';
 import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
 import { GameManager } from './GameManager.js';
 
+/**
+ * The correct answer text is the same across every question so tests can locate
+ * the correct option regardless of how `selectQuestions` shuffles question order
+ * and option order.
+ */
+const CORRECT_ANSWER = 'Correct';
+
 function makePool(): Question[] {
   return [
     {
@@ -9,7 +16,7 @@ function makePool(): Question[] {
       category: 'Science',
       difficulty: 'easy',
       text: 'Q1',
-      options: ['A', 'B', 'C', 'D'],
+      options: [CORRECT_ANSWER, 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     },
     {
@@ -17,8 +24,7 @@ function makePool(): Question[] {
       category: 'Science',
       difficulty: 'easy',
       text: 'Q2',
-      // correctIndex 0 across the pool so tests are independent of shuffle order.
-      options: ['A', 'B', 'C', 'D'],
+      options: [CORRECT_ANSWER, 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     },
     {
@@ -26,10 +32,28 @@ function makePool(): Question[] {
       category: 'History',
       difficulty: 'hard',
       text: 'Q3',
-      options: ['True', 'False'],
+      options: [CORRECT_ANSWER, 'Wrong1'],
       correctIndex: 0,
     },
   ];
+}
+
+/** Find the correct option index on the current question after shuffling. */
+function correctOptionIndex(game: GameManager): number {
+  const question = game.getPublicState().currentQuestion;
+  if (!question) {
+    throw new Error('No current question.');
+  }
+  return question.options.indexOf(CORRECT_ANSWER);
+}
+
+/** Find an incorrect option index on the current question after shuffling. */
+function wrongOptionIndex(game: GameManager): number {
+  const question = game.getPublicState().currentQuestion;
+  if (!question) {
+    throw new Error('No current question.');
+  }
+  return question.options.findIndex((option) => option !== CORRECT_ANSWER);
 }
 
 const baseSettings: GameSettings = {
@@ -204,13 +228,15 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('awards more points to faster correct answers and none to wrong ones', () => {
+    const correct = correctOptionIndex(game);
+    const incorrect = wrongOptionIndex(game);
     // Fast answers immediately (full time remaining).
-    game.submitAnswer(fast, 0);
+    game.submitAnswer(fast, correct);
     // Slow answers with half the time gone.
     clock = 1000 + 10 * 1000;
-    game.submitAnswer(slow, 0);
+    game.submitAnswer(slow, correct);
     // Wrong answers immediately but incorrectly.
-    game.submitAnswer(wrong, 1);
+    game.submitAnswer(wrong, incorrect);
 
     game.reveal();
 
@@ -227,9 +253,10 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('reveals the correct index only during the reveal phase', () => {
+    const expectedIndex = correctOptionIndex(game);
     expect(game.getPublicState().revealedCorrectIndex).toBeNull();
     game.reveal();
-    expect(game.getPublicState().revealedCorrectIndex).toBe(0);
+    expect(game.getPublicState().revealedCorrectIndex).toBe(expectedIndex);
   });
 
   it('never exposes the correct answer on the public question object', () => {
@@ -238,12 +265,12 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('accumulates score across questions', () => {
-    game.submitAnswer(fast, 0);
+    game.submitAnswer(fast, correctOptionIndex(game));
     game.reveal();
     const afterFirst = game.getAnswerResult(fast).totalScore;
     game.advance(); // reveal -> leaderboard
     game.advance(); // leaderboard -> question 2
-    game.submitAnswer(fast, 0); // correct across the pool
+    game.submitAnswer(fast, correctOptionIndex(game)); // correct across the pool
     game.reveal();
     expect(game.getAnswerResult(fast).totalScore).toBeGreaterThan(afterFirst);
   });
@@ -310,9 +337,9 @@ describe('GameManager leaderboard', () => {
     const c = game.addPlayer('C');
     game.start(baseSettings);
     // A and B answer correctly at the same instant; C is wrong.
-    game.submitAnswer(a, 0);
-    game.submitAnswer(b, 0);
-    game.submitAnswer(c, 1);
+    game.submitAnswer(a, correctOptionIndex(game));
+    game.submitAnswer(b, correctOptionIndex(game));
+    game.submitAnswer(c, wrongOptionIndex(game));
     game.reveal();
 
     const rows = game.getPublicState().leaderboard;
@@ -344,9 +371,9 @@ describe('GameManager end-of-game stats', () => {
     game.addPlayer('Quiet'); // never answers
     game.start({ ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
 
-    game.submitAnswer(right, 0); // correct, instantly (0ms response)
+    game.submitAnswer(right, correctOptionIndex(game)); // correct, instantly (0ms response)
     clock = 1000 + 5000;
-    game.submitAnswer(wrongPlayer, 1); // incorrect, after 5s
+    game.submitAnswer(wrongPlayer, wrongOptionIndex(game)); // incorrect, after 5s
     // Quiet never answers.
     game.reveal();
 
