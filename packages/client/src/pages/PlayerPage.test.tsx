@@ -61,6 +61,7 @@ describe('PlayerPage join flow', () => {
   let fake: FakeSocket;
 
   beforeEach(() => {
+    localStorage.clear();
     fake = new FakeSocket();
   });
 
@@ -112,6 +113,7 @@ describe('PlayerPage answering', () => {
   let fake: FakeSocket;
 
   beforeEach(async () => {
+    localStorage.clear();
     fake = new FakeSocket();
     fake.respondToAck('playerJoin', () => ({
       ok: true,
@@ -183,5 +185,76 @@ describe('PlayerPage answering', () => {
     expect(screen.getByText('Correct')).toBeInTheDocument();
     expect(screen.getByText('4.2s')).toBeInTheDocument();
     expect(screen.getByText('1.5s')).toBeInTheDocument();
+  });
+});
+
+describe('PlayerPage reconnection', () => {
+  let fake: FakeSocket;
+
+  beforeEach(() => {
+    localStorage.clear();
+    fake = new FakeSocket();
+  });
+
+  it('auto-rejoins from a stored session on mount, skipping the form', async () => {
+    localStorage.setItem(
+      'quiz.playerSession',
+      JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
+    );
+    fake.respondToAck('playerRejoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState({ playerCount: 1 }),
+    }));
+
+    renderPlayer(fake, '/play');
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+    });
+  });
+
+  it('falls back to the join form when the stored session has expired', async () => {
+    localStorage.setItem(
+      'quiz.playerSession',
+      JSON.stringify({ code: 'WXYZ', playerId: 'gone', nickname: 'Alice' }),
+    );
+    fake.respondToAck('playerRejoin', () => ({
+      ok: false,
+      error: 'Your game session has expired.',
+    }));
+
+    renderPlayer(fake, '/play');
+
+    expect(await screen.findByRole('button', { name: 'Join' })).toBeVisible();
+    expect(localStorage.getItem('quiz.playerSession')).toBeNull();
+  });
+
+  it('re-attaches by emitting playerRejoin when the socket reconnects', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    fake.respondToAck('playerRejoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+
+    renderPlayer(fake, '/play?code=WXYZ');
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    await screen.findByText(/You're in/i);
+
+    // The phone wakes up and Socket.IO reconnects.
+    act(() => fake.serverEmit('connect'));
+
+    expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+    });
   });
 });

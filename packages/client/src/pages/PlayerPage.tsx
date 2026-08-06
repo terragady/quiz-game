@@ -1,4 +1,10 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   MAX_NICKNAME_LENGTH,
@@ -9,25 +15,45 @@ import {
 } from '@quiz/shared';
 import { useSocket } from '../SocketContext.js';
 import { AnswerButton } from '../components/AnswerButton.js';
+import {
+  clearSession,
+  readSession,
+  writeSession,
+} from '../playerSession.js';
 
 export function PlayerPage() {
   const socket = useSocket();
   const [searchParams] = useSearchParams();
 
+  const storedRef = useRef(readSession());
+  const stored = storedRef.current;
+
   const [code, setCode] = useState(
-    (searchParams.get('code') ?? '').toUpperCase(),
+    (stored?.code ?? searchParams.get('code') ?? '').toUpperCase(),
   );
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(stored?.nickname ?? '');
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [state, setState] = useState<PublicGameState | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [rejoining, setRejoining] = useState(Boolean(stored));
+
+  // The live session used by the reconnect handler; kept in a ref so it never
+  // goes stale inside the long-lived socket 'connect' listener.
+  const sessionRef = useRef<{ code: string; playerId: string } | null>(
+    stored ? { code: stored.code, playerId: stored.playerId } : null,
+  );
 
   useEffect(() => {
     if (!playerId) return undefined;
 
-    const onState = (next: PublicGameState) => setState(next);
+    const onState = (next: PublicGameState) => {
+      setState(next);
+      // Once the game is over, forget the saved session so a later fresh visit
+      // starts at the join form (in-memory reconnect still works this session).
+      if (next.phase === 'ended') clearSession();
+    };
     const onQuestionStarted = () => {
       setSelectedIndex(null);
       setResult(null);
@@ -48,6 +74,48 @@ export function PlayerPage() {
     };
   }, [socket, playerId]);
 
+  const attemptRejoin = useCallback(
+    (rejoinCode: string, rejoinPlayerId: string) => {
+      socket.emit(
+        'playerRejoin',
+        { code: rejoinCode, playerId: rejoinPlayerId },
+        (ack: JoinAck) => {
+          if (ack.ok) {
+            sessionRef.current = { code: rejoinCode, playerId: ack.playerId };
+            setPlayerId(ack.playerId);
+            setState(ack.state);
+          } else {
+            // The room or player is gone — drop the stale session.
+            clearSession();
+            sessionRef.current = null;
+          }
+          setRejoining(false);
+        },
+      );
+    },
+    [socket],
+  );
+
+  // On first mount, resume a saved session if one exists.
+  useEffect(() => {
+    const session = sessionRef.current;
+    if (session) attemptRejoin(session.code, session.playerId);
+    // Runs only on mount; the reconnect listener below covers later reconnects.
+  }, [attemptRejoin]);
+
+  // Re-attach to the game whenever the socket (re)connects — this is what
+  // recovers a phone that dropped its connection while the screen was off.
+  useEffect(() => {
+    const onConnect = () => {
+      const session = sessionRef.current;
+      if (session) attemptRejoin(session.code, session.playerId);
+    };
+    socket.on('connect', onConnect);
+    return () => {
+      socket.off('connect', onConnect);
+    };
+  }, [socket, attemptRejoin]);
+
   const handleJoin = (event: FormEvent) => {
     event.preventDefault();
     setError(null);
@@ -62,6 +130,12 @@ export function PlayerPage() {
       { code: trimmedCode, nickname: trimmedNickname },
       (ack: JoinAck) => {
         if (ack.ok) {
+          sessionRef.current = { code: trimmedCode, playerId: ack.playerId };
+          writeSession({
+            code: trimmedCode,
+            playerId: ack.playerId,
+            nickname: trimmedNickname,
+          });
           setPlayerId(ack.playerId);
           setState(ack.state);
         } else {
@@ -76,6 +150,14 @@ export function PlayerPage() {
     setSelectedIndex(index);
     socket.emit('submitAnswer', { optionIndex: index });
   };
+
+  if (!playerId && rejoining) {
+    return (
+      <main className="screen screen--center">
+        <p className="center-text">Reconnecting…</p>
+      </main>
+    );
+  }
 
   if (!playerId) {
     return (

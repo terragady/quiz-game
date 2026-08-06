@@ -80,6 +80,27 @@ export class GameService {
       }
     });
 
+    socket.on('playerRejoin', ({ code, playerId }, ack) => {
+      const game = this.games.get(normalizeCode(code));
+      if (!game || !game.hasPlayer(playerId)) {
+        ack({ ok: false, error: 'Your game session has expired.' });
+        return;
+      }
+      socket.data.role = 'player';
+      socket.data.code = game.code;
+      socket.data.playerId = playerId;
+      this.playerSockets.set(playerId, socket.id);
+      game.setConnected(playerId, true);
+      this.cancelCleanup(game.code);
+      void socket.join(game.code);
+      ack({ ok: true, playerId, state: game.getPublicState() });
+      this.broadcastState(game.code);
+      // If they reconnected mid-reveal, resend their result so the screen matches.
+      if (game.phase === 'reveal') {
+        socket.emit('answerResult', game.getAnswerResult(playerId));
+      }
+    });
+
     socket.on('adminJoin', ({ code }, ack) => {
       const game = this.games.get(normalizeCode(code));
       if (!game) {
@@ -149,7 +170,13 @@ export class GameService {
     socket.on('disconnect', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;
-      if (playerId && game) {
+      // Ignore a stale socket's late disconnect: if the player already
+      // reconnected on a newer socket, the map no longer points here.
+      if (
+        playerId &&
+        game &&
+        this.playerSockets.get(playerId) === socket.id
+      ) {
         game.setConnected(playerId, false);
         this.playerSockets.delete(playerId);
         this.broadcastState(game.code);

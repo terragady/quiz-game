@@ -100,6 +100,16 @@ function adminJoin(
   return new Promise((resolve) => socket.emit('adminJoin', { code }, resolve));
 }
 
+function playerRejoin(
+  socket: ClientSocket,
+  code: string,
+  playerId: string,
+): Promise<JoinAck> {
+  return new Promise((resolve) =>
+    socket.emit('playerRejoin', { code, playerId }, resolve),
+  );
+}
+
 function nextQuestion(
   socket: ClientSocket,
 ): Promise<[PublicQuestion, number]> {
@@ -274,6 +284,65 @@ describe('GameService integration', () => {
     expect(ack.ok).toBe(false);
     if (!ack.ok) {
       expect(ack.error).toMatch(/not found/i);
+    }
+  });
+
+  it('lets a dropped player rejoin on a new socket and keep answering', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    expect(hostAck.ok).toBe(true);
+    if (!hostAck.ok) return;
+    const code = hostAck.state.code;
+
+    const player = connect();
+    const joinAck = await playerJoin(player, code, 'Alice');
+    expect(joinAck.ok).toBe(true);
+    if (!joinAck.ok) return;
+    const { playerId } = joinAck;
+
+    const admin = connect();
+    await adminJoin(admin, code);
+
+    const questionArrives = nextQuestion(host);
+    admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
+    await questionArrives;
+
+    // The player's phone "sleeps": the socket drops. The host sees them offline.
+    const seenOffline = waitForState(
+      host,
+      (s) => s.players[0]?.connected === false,
+    );
+    player.disconnect();
+    await seenOffline;
+
+    // The phone wakes and reconnects on a brand-new socket, then rejoins.
+    const revived = connect();
+    const rejoinAck = await playerRejoin(revived, code, playerId);
+    expect(rejoinAck.ok).toBe(true);
+    if (!rejoinAck.ok) return;
+    expect(rejoinAck.playerId).toBe(playerId);
+    expect(rejoinAck.state.players[0]?.connected).toBe(true);
+
+    // The revived socket can answer, proving it is re-associated server-side.
+    const answered = new Promise<{ correct: boolean }>((resolve) =>
+      revived.once('answerResult', resolve),
+    );
+    revived.emit('submitAnswer', { optionIndex: 0 });
+    const result = await answered;
+    expect(result.correct).toBe(true);
+  });
+
+  it('rejects a rejoin for an unknown player id', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    expect(hostAck.ok).toBe(true);
+    if (!hostAck.ok) return;
+
+    const player = connect();
+    const ack = await playerRejoin(player, hostAck.state.code, 'not-a-real-id');
+    expect(ack.ok).toBe(false);
+    if (!ack.ok) {
+      expect(ack.error).toMatch(/session/i);
     }
   });
 

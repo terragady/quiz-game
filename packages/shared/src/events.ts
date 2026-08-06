@@ -35,6 +35,15 @@ export interface ClientToServerEvents {
     payload: { code: string; nickname: string },
     ack: (result: JoinAck) => void,
   ) => void;
+  /**
+   * Re-attach an existing player to a new socket after a drop or refresh. The
+   * `playerId` acts as a bearer token: it is proof the client was this player.
+   * Works even after the game has started, unlike {@link playerJoin}.
+   */
+  playerRejoin: (
+    payload: { code: string; playerId: string },
+    ack: (result: JoinAck) => void,
+  ) => void;
   /** Admin remote attaches to an existing game. */
   adminJoin: (
     payload: { code: string },
