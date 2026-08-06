@@ -1,8 +1,8 @@
 import { fileURLToPath } from 'node:url';
 import { createGameServer } from './app.js';
-import { loadQuestions } from './questions/loader.js';
+import { loadQuestionPool } from './questions/loader.js';
 
-const questions = loadQuestions();
+const questions = loadQuestionPool();
 
 // Built client lives at packages/client/dist relative to this file.
 const clientDir = fileURLToPath(new URL('../../client/dist', import.meta.url));

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ObserverJoinAck, PublicGameState } from '@quiz/shared';
 import { useGameState } from '../hooks/useGameState.js';
 import { AnswerButton } from '../components/AnswerButton.js';
@@ -6,14 +6,52 @@ import { Countdown } from '../components/Countdown.js';
 import { Leaderboard } from '../components/Leaderboard.js';
 import { QRCode } from '../components/QRCode.js';
 
+/** Remembered so refreshing the TV rejoins the same game instead of making a new one. */
+const HOST_CODE_KEY = 'quiz.hostCode';
+
+function readStoredCode(): string | undefined {
+  try {
+    return localStorage.getItem(HOST_CODE_KEY) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function storeCode(code: string): void {
+  try {
+    localStorage.setItem(HOST_CODE_KEY, code);
+  } catch {
+    // Ignore storage failures (private mode, etc.).
+  }
+}
+
 export function HostPage() {
   const { socket, state, setState, error } = useGameState();
 
+  const join = useCallback(
+    (code?: string) => {
+      socket.emit('hostJoin', { code }, (ack: ObserverJoinAck) => {
+        if (ack.ok) {
+          setState(ack.state);
+          storeCode(ack.state.code);
+        }
+      });
+    },
+    [socket, setState],
+  );
+
   useEffect(() => {
-    socket.emit('hostJoin', (ack: ObserverJoinAck) => {
-      if (ack.ok) setState(ack.state);
-    });
-  }, [socket, setState]);
+    join(readStoredCode());
+  }, [join]);
+
+  const startNewGame = useCallback(() => {
+    try {
+      localStorage.removeItem(HOST_CODE_KEY);
+    } catch {
+      // Ignore.
+    }
+    join(undefined);
+  }, [join]);
 
   if (!state) {
     return (
@@ -26,7 +64,7 @@ export function HostPage() {
   return (
     <main className="screen">
       {error && <div className="error-banner">{error}</div>}
-      <HostBody state={state} />
+      <HostBody state={state} onNewGame={startNewGame} />
     </main>
   );
 }
@@ -37,10 +75,16 @@ function joinUrl(code: string): string {
   return `${origin}/play?code=${code}`;
 }
 
-function HostBody({ state }: { state: PublicGameState }) {
+function HostBody({
+  state,
+  onNewGame,
+}: {
+  state: PublicGameState;
+  onNewGame: () => void;
+}) {
   switch (state.phase) {
     case 'lobby':
-      return <Lobby state={state} />;
+      return <Lobby state={state} onNewGame={onNewGame} />;
 
     case 'question':
     case 'reveal': {
@@ -59,6 +103,13 @@ function HostBody({ state }: { state: PublicGameState }) {
           </div>
           {!revealing && <Countdown endsAt={state.endsAt} />}
           <h1 className="question-text">{question.text}</h1>
+          {question.imageUrl && (
+            <img
+              className="question-image"
+              src={question.imageUrl}
+              alt="Question image"
+            />
+          )}
           <div
             className={
               question.options.length <= 2
@@ -100,6 +151,13 @@ function HostBody({ state }: { state: PublicGameState }) {
             <p className="code-badge">🏆 {state.leaderboard[0].nickname}</p>
           )}
           <Leaderboard rows={state.leaderboard} />
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={onNewGame}
+          >
+            New game
+          </button>
         </div>
       );
 
@@ -108,7 +166,13 @@ function HostBody({ state }: { state: PublicGameState }) {
   }
 }
 
-function Lobby({ state }: { state: PublicGameState }) {
+function Lobby({
+  state,
+  onNewGame,
+}: {
+  state: PublicGameState;
+  onNewGame: () => void;
+}) {
   const url = joinUrl(state.code);
   return (
     <div className="stack">
@@ -130,6 +194,9 @@ function Lobby({ state }: { state: PublicGameState }) {
           </span>
         ))}
       </div>
+      <button type="button" className="btn btn--ghost" onClick={onNewGame}>
+        New game (new code)
+      </button>
     </div>
   );
 }

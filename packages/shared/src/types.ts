@@ -20,6 +20,8 @@ export interface Question {
   options: string[];
   /** Index into `options` of the correct answer. */
   correctIndex: number;
+  /** Optional image shown with the question (e.g. a flag to identify). */
+  imageUrl?: string;
 }
 
 /** A question as sent to clients while it is being asked — no correct answer. */
@@ -33,6 +35,8 @@ export interface PublicQuestion {
   difficulty: Difficulty;
   text: string;
   options: string[];
+  /** Optional image shown with the question (e.g. a flag to identify). */
+  imageUrl?: string;
 }
 
 /** Settings chosen by the admin before starting a game. */
@@ -43,6 +47,15 @@ export interface GameSettings {
   category: string | null;
   /** Difficulty to filter by, or null for any. */
   difficulty: Difficulty | null;
+  /**
+   * When true, the game advances on its own: reveal -> leaderboard -> next
+   * question, using the delays below. The admin can still advance manually.
+   */
+  autoAdvance: boolean;
+  /** Seconds to stay on the answer reveal before showing the leaderboard. */
+  revealSeconds: number;
+  /** Seconds to stay on the leaderboard before the next question. */
+  leaderboardSeconds: number;
 }
 
 /** A player as visible to everyone (no per-answer detail). */

@@ -24,14 +24,20 @@ type QuizSocket = Socket<
   SocketData
 >;
 
+/** Delay before an empty room is discarded, allowing brief refreshes/reconnects. */
+const ROOM_CLEANUP_GRACE_MS = 5 * 60 * 1000;
+
 /**
- * Bridges Socket.IO connections to a single in-memory GameManager, broadcasting
- * state to a room named after the game code and driving the question countdown.
+ * Bridges Socket.IO connections to per-room {@link GameManager} instances,
+ * keyed by game code. Each room broadcasts to a Socket.IO room named after its
+ * code and drives its own question countdown.
  */
 export class GameService {
-  private game: GameManager | null = null;
+  private readonly games = new Map<string, GameManager>();
+  private readonly phaseTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  /** playerId -> socketId (player ids are globally unique). */
   private readonly playerSockets = new Map<string, string>();
-  private revealTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly io: QuizServer,
@@ -39,8 +45,10 @@ export class GameService {
   ) {}
 
   register(socket: QuizSocket): void {
-    socket.on('hostJoin', (ack) => {
-      const game = this.ensureGame();
+    socket.on('hostJoin', ({ code }, ack) => {
+      const existing = code ? this.games.get(normalizeCode(code)) : undefined;
+      const game = existing ?? this.createRoom();
+      this.cancelCleanup(game.code);
       socket.data.role = 'host';
       socket.data.code = game.code;
       void socket.join(game.code);
@@ -52,8 +60,8 @@ export class GameService {
     });
 
     socket.on('playerJoin', ({ code, nickname }, ack) => {
-      const game = this.game;
-      if (!game || game.code !== normalizeCode(code)) {
+      const game = this.games.get(normalizeCode(code));
+      if (!game) {
         ack({ ok: false, error: 'Game not found.' });
         return;
       }
@@ -63,22 +71,24 @@ export class GameService {
         socket.data.code = game.code;
         socket.data.playerId = playerId;
         this.playerSockets.set(playerId, socket.id);
+        this.cancelCleanup(game.code);
         void socket.join(game.code);
         ack({ ok: true, playerId, state: game.getPublicState() });
-        this.broadcastState();
+        this.broadcastState(game.code);
       } catch (error) {
         ack({ ok: false, error: toMessage(error) });
       }
     });
 
     socket.on('adminJoin', ({ code }, ack) => {
-      const game = this.game;
-      if (!game || game.code !== normalizeCode(code)) {
+      const game = this.games.get(normalizeCode(code));
+      if (!game) {
         ack({ ok: false, error: 'Game not found.' });
         return;
       }
       socket.data.role = 'admin';
       socket.data.code = game.code;
+      this.cancelCleanup(game.code);
       void socket.join(game.code);
       ack({
         ok: true,
@@ -96,35 +106,25 @@ export class GameService {
         socket.emit('errorMessage', toMessage(error));
         return;
       }
-      this.onQuestionBegan();
+      this.onQuestionBegan(game.code);
     });
 
     socket.on('adminNext', () => {
       const game = this.requireAdminGame(socket);
       if (!game) return;
-      this.clearTimer();
-      const before = game.phase;
-      game.advance();
-      const after = game.phase;
-      if (before === 'question' && after === 'reveal') {
-        this.onReveal();
-      } else if (after === 'question') {
-        this.onQuestionBegan();
-      } else {
-        this.broadcastState();
-      }
+      this.applyAdvance(game.code);
     });
 
     socket.on('adminEnd', () => {
       const game = this.requireAdminGame(socket);
       if (!game) return;
-      this.clearTimer();
+      this.clearTimer(game.code);
       game.end();
-      this.broadcastState();
+      this.broadcastState(game.code);
     });
 
     socket.on('submitAnswer', ({ optionIndex }) => {
-      const game = this.game;
+      const game = this.socketGame(socket);
       const playerId = socket.data.playerId;
       if (!game || !playerId) {
         socket.emit('errorMessage', 'You are not in a game.');
@@ -140,105 +140,192 @@ export class GameService {
         socket.emit('errorMessage', toMessage(error));
         return;
       }
-      this.broadcastState();
+      this.broadcastState(game.code);
       if (game.allConnectedAnswered()) {
-        this.revealNow();
+        this.revealNow(game.code);
       }
     });
 
     socket.on('disconnect', () => {
-      const { playerId } = socket.data;
-      if (playerId && this.game) {
-        this.game.setConnected(playerId, false);
+      const { playerId, code } = socket.data;
+      const game = code ? this.games.get(code) : undefined;
+      if (playerId && game) {
+        game.setConnected(playerId, false);
         this.playerSockets.delete(playerId);
-        this.broadcastState();
-        // If the departing player was the last one we were waiting on, don't
-        // stall the round on the timer — reveal as soon as everyone still
-        // connected has answered.
-        if (
-          this.game.phase === 'question' &&
-          this.game.allConnectedAnswered()
-        ) {
-          this.revealNow();
+        this.broadcastState(game.code);
+        // Don't stall the round if the last un-answered player left.
+        if (game.phase === 'question' && game.allConnectedAnswered()) {
+          this.revealNow(game.code);
         }
       }
+      if (code) this.scheduleCleanupIfEmpty(code);
     });
   }
 
-  /** Stop any pending timer (used on shutdown). */
+  /** Stop all pending timers (used on shutdown). */
   dispose(): void {
-    this.clearTimer();
+    for (const code of [...this.phaseTimers.keys()]) this.clearTimer(code);
+    for (const timer of this.cleanupTimers.values()) clearTimeout(timer);
+    this.cleanupTimers.clear();
   }
 
-  // --- Internals -------------------------------------------------------------
+  // --- Rooms -----------------------------------------------------------------
 
-  private ensureGame(): GameManager {
-    if (!this.game || this.game.phase === 'ended') {
-      this.clearTimer();
-      this.playerSockets.clear();
-      this.game = new GameManager({
-        code: generateGameCode(),
-        questionPool: this.questionPool,
-      });
+  private createRoom(): GameManager {
+    let code = generateGameCode();
+    while (this.games.has(code)) {
+      code = generateGameCode();
     }
-    return this.game;
+    const game = new GameManager({ code, questionPool: this.questionPool });
+    this.games.set(code, game);
+    return game;
+  }
+
+  private removeRoom(code: string): void {
+    this.clearTimer(code);
+    const cleanup = this.cleanupTimers.get(code);
+    if (cleanup) {
+      clearTimeout(cleanup);
+      this.cleanupTimers.delete(code);
+    }
+    this.games.delete(code);
+  }
+
+  private cancelCleanup(code: string): void {
+    const timer = this.cleanupTimers.get(code);
+    if (timer) {
+      clearTimeout(timer);
+      this.cleanupTimers.delete(code);
+    }
+  }
+
+  private scheduleCleanupIfEmpty(code: string): void {
+    if (!this.games.has(code)) return;
+    if ((this.io.sockets.adapter.rooms.get(code)?.size ?? 0) > 0) return;
+    this.cancelCleanup(code);
+    this.cleanupTimers.set(
+      code,
+      setTimeout(() => this.removeRoom(code), ROOM_CLEANUP_GRACE_MS),
+    );
+  }
+
+  // --- Round flow ------------------------------------------------------------
+
+  private socketGame(socket: QuizSocket): GameManager | undefined {
+    return socket.data.code ? this.games.get(socket.data.code) : undefined;
   }
 
   private requireAdminGame(socket: QuizSocket): GameManager | null {
-    if (socket.data.role !== 'admin' || !this.game) {
+    const game = this.socketGame(socket);
+    if (socket.data.role !== 'admin' || !game) {
       socket.emit('errorMessage', 'You are not the admin of a game.');
       return null;
     }
-    return this.game;
+    return game;
   }
 
-  private onQuestionBegan(): void {
-    const game = this.game;
+  private onQuestionBegan(code: string): void {
+    const game = this.games.get(code);
     if (!game) return;
     const state = game.getPublicState();
-    this.broadcastState(state);
+    this.broadcastState(code, state);
     if (state.currentQuestion && state.endsAt !== null) {
       this.io
-        .to(game.code)
+        .to(code)
         .emit('questionStarted', state.currentQuestion, state.endsAt);
-      this.scheduleReveal(state.endsAt);
+      this.scheduleReveal(code, state.endsAt);
     }
   }
 
-  private revealNow(): void {
-    if (this.game?.phase !== 'question') return;
-    this.clearTimer();
-    this.game.reveal();
-    this.onReveal();
+  private revealNow(code: string): void {
+    const game = this.games.get(code);
+    if (game?.phase !== 'question') return;
+    this.clearTimer(code);
+    game.reveal();
+    this.onReveal(code);
+    this.scheduleAutoAdvance(code);
   }
 
-  private onReveal(): void {
-    const game = this.game;
+  /**
+   * Advance one phase (reveal -> leaderboard -> next question/end), emit the
+   * right events for the new phase, and queue the next auto-advance if enabled.
+   */
+  private applyAdvance(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    this.clearTimer(code);
+    const before = game.phase;
+    game.advance();
+    const after = game.phase;
+    if (before === 'question' && after === 'reveal') {
+      this.onReveal(code);
+    } else if (after === 'question') {
+      this.onQuestionBegan(code);
+    } else {
+      this.broadcastState(code);
+    }
+    this.scheduleAutoAdvance(code);
+  }
+
+  /**
+   * When auto-advance is enabled, queue the transition out of the current
+   * reveal/leaderboard phase after the configured delay. Other phases (question
+   * countdowns, ended) are handled elsewhere or need no timer.
+   */
+  private scheduleAutoAdvance(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    const { settings } = game.getPublicState();
+    if (!settings.autoAdvance) return;
+    let delaySeconds: number;
+    if (game.phase === 'reveal') {
+      delaySeconds = settings.revealSeconds;
+    } else if (game.phase === 'leaderboard') {
+      delaySeconds = settings.leaderboardSeconds;
+    } else {
+      return;
+    }
+    this.clearTimer(code);
+    this.phaseTimers.set(
+      code,
+      setTimeout(() => this.applyAdvance(code), delaySeconds * 1000),
+    );
+  }
+
+  private onReveal(code: string): void {
+    const game = this.games.get(code);
     if (!game) return;
     for (const [playerId, socketId] of this.playerSockets) {
       if (game.hasPlayer(playerId)) {
         this.io.to(socketId).emit('answerResult', game.getAnswerResult(playerId));
       }
     }
-    this.broadcastState();
+    this.broadcastState(code);
   }
 
-  private scheduleReveal(endsAt: number): void {
-    this.clearTimer();
+  private scheduleReveal(code: string, endsAt: number): void {
+    this.clearTimer(code);
     const delay = Math.max(0, endsAt - Date.now());
-    this.revealTimer = setTimeout(() => this.revealNow(), delay);
+    this.phaseTimers.set(
+      code,
+      setTimeout(() => this.revealNow(code), delay),
+    );
   }
 
-  private clearTimer(): void {
-    if (this.revealTimer) {
-      clearTimeout(this.revealTimer);
-      this.revealTimer = null;
+  private clearTimer(code: string): void {
+    const timer = this.phaseTimers.get(code);
+    if (timer) {
+      clearTimeout(timer);
+      this.phaseTimers.delete(code);
     }
   }
 
-  private broadcastState(state = this.game?.getPublicState()): void {
-    if (this.game && state) {
-      this.io.to(this.game.code).emit('gameState', state);
+  private broadcastState(
+    code: string,
+    state = this.games.get(code)?.getPublicState(),
+  ): void {
+    if (state) {
+      this.io.to(code).emit('gameState', state);
     }
   }
 }

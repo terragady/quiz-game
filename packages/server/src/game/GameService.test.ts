@@ -39,6 +39,9 @@ const settings: GameSettings = {
   secondsPerQuestion: 30,
   category: null,
   difficulty: null,
+  autoAdvance: false,
+  revealSeconds: 5,
+  leaderboardSeconds: 8,
 };
 
 let handles: GameServerHandles;
@@ -73,8 +76,11 @@ function connect(): ClientSocket {
   return socket;
 }
 
-function hostJoin(socket: ClientSocket): Promise<ObserverJoinAck> {
-  return new Promise((resolve) => socket.emit('hostJoin', resolve));
+function hostJoin(
+  socket: ClientSocket,
+  code?: string,
+): Promise<ObserverJoinAck> {
+  return new Promise((resolve) => socket.emit('hostJoin', { code }, resolve));
 }
 
 function playerJoin(
@@ -170,6 +176,35 @@ describe('GameService integration', () => {
     expect(leaderboardState.leaderboard[0]?.score).toBeGreaterThan(0);
   });
 
+  it('auto-advances from reveal to leaderboard when autoAdvance is enabled', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    expect(hostAck.ok).toBe(true);
+    if (!hostAck.ok) return;
+    const code = hostAck.state.code;
+
+    const player = connect();
+    await playerJoin(player, code, 'Alice');
+    const admin = connect();
+    await adminJoin(admin, code);
+
+    const questionArrives = nextQuestion(player);
+    admin.emit('adminStart', {
+      ...settings,
+      secondsPerQuestion: 120,
+      autoAdvance: true,
+      revealSeconds: 2,
+    });
+    await questionArrives;
+
+    // Answering reveals immediately; the leaderboard should then appear on its
+    // own after revealSeconds, without any admin action.
+    const leaderboardShown = waitForState(host, (s) => s.phase === 'leaderboard');
+    player.emit('submitAnswer', { optionIndex: 0 });
+    const leaderboardState = await leaderboardShown;
+    expect(leaderboardState.phase).toBe('leaderboard');
+  });
+
   it('reveals without waiting when the last un-answered player disconnects', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
@@ -198,6 +233,37 @@ describe('GameService integration', () => {
     const revealState = await revealShown;
     expect(revealState.phase).toBe('reveal');
     expect(revealState.revealedCorrectIndex).toBe(0);
+  });
+
+  it('gives each host its own room, and rejoins an existing room by code', async () => {
+    const host1 = connect();
+    const ack1 = await hostJoin(host1);
+    const host2 = connect();
+    const ack2 = await hostJoin(host2);
+    expect(ack1.ok && ack2.ok).toBe(true);
+    if (!ack1.ok || !ack2.ok) return;
+
+    // Separate hosts get separate game codes (separate rooms).
+    expect(ack1.state.code).not.toBe(ack2.state.code);
+
+    // A player joining room 1 does not appear in room 2.
+    const player = connect();
+    await playerJoin(player, ack1.state.code, 'Alice');
+    const rejoin = connect();
+    const rejoinAck = await hostJoin(rejoin, ack1.state.code);
+    expect(rejoinAck.ok).toBe(true);
+    if (!rejoinAck.ok) return;
+    expect(rejoinAck.state.code).toBe(ack1.state.code);
+    expect(rejoinAck.state.players.map((p) => p.nickname)).toEqual(['Alice']);
+  });
+
+  it('creates a fresh room when rejoining a code that no longer exists', async () => {
+    const host = connect();
+    const ack = await hostJoin(host, 'ZZZZ');
+    expect(ack.ok).toBe(true);
+    if (!ack.ok) return;
+    expect(ack.state.code).not.toBe('ZZZZ');
+    expect(ack.state.phase).toBe('lobby');
   });
 
   it('rejects joining with an unknown code', async () => {

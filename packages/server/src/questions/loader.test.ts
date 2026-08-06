@@ -1,12 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import type { Question } from '@quiz/shared';
 import {
+  CURATED_QUESTIONS_PATH,
   DEFAULT_QUESTIONS_PATH,
   filterQuestions,
   listCategories,
+  loadQuestionPool,
   loadQuestions,
+  mergeQuestions,
   selectQuestions,
   validateQuestionsData,
+  withShuffledOptions,
 } from './loader.js';
 
 const sample: Question[] = [
@@ -63,6 +67,40 @@ describe('validateQuestionsData', () => {
   it('rejects an empty text field', () => {
     const bad = [{ ...sample[0], text: '   ' }];
     expect(() => validateQuestionsData(bad)).toThrow(/text/);
+  });
+
+  it('accepts an optional imageUrl and preserves it', () => {
+    const withImage = [{ ...sample[0], imageUrl: 'https://example.com/x.png' }];
+    expect(validateQuestionsData(withImage)[0].imageUrl).toBe(
+      'https://example.com/x.png',
+    );
+  });
+
+  it('rejects a blank imageUrl when present', () => {
+    const bad = [{ ...sample[0], imageUrl: '   ' }];
+    expect(() => validateQuestionsData(bad)).toThrow(/imageUrl/);
+  });
+});
+
+describe('withShuffledOptions', () => {
+  it('keeps correctIndex pointing at the correct answer text', () => {
+    const source: Question = {
+      id: 'z',
+      category: 'Test',
+      difficulty: 'easy',
+      text: 'Pick the right one',
+      options: ['Right', 'Wrong1', 'Wrong2', 'Wrong3'],
+      correctIndex: 0,
+    };
+    // Run many times: however the options land, correctIndex must track "Right".
+    for (let i = 0; i < 50; i += 1) {
+      const shuffled = withShuffledOptions(source);
+      expect(shuffled.options).toHaveLength(4);
+      expect(shuffled.options[shuffled.correctIndex]).toBe('Right');
+      expect([...shuffled.options].sort()).toEqual(
+        [...source.options].sort(),
+      );
+    }
   });
 });
 
@@ -125,5 +163,40 @@ describe('loadQuestions (seed file)', () => {
 
   it('throws a clear error for a missing file', () => {
     expect(() => loadQuestions('/no/such/file.json')).toThrow(/Could not read/);
+  });
+});
+
+describe('mergeQuestions', () => {
+  it('combines lists and keeps the first occurrence of each id', () => {
+    const curated: Question[] = [{ ...sample[0], text: 'Curated version' }];
+    const imported: Question[] = [
+      { ...sample[0], text: 'Imported duplicate' },
+      sample[2],
+    ];
+    const merged = mergeQuestions(curated, imported);
+    expect(merged.map((q) => q.id)).toEqual(['a', 'c']);
+    expect(merged.find((q) => q.id === 'a')?.text).toBe('Curated version');
+  });
+});
+
+describe('loadQuestionPool', () => {
+  it('loads and merges the curated and imported files', () => {
+    const pool = loadQuestionPool();
+    const ids = new Set(pool.map((q) => q.id));
+    expect(ids.size).toBe(pool.length); // no duplicate ids
+    expect(pool.some((q) => q.category === 'Norway')).toBe(true);
+    expect(pool.some((q) => q.category === 'Poland')).toBe(true);
+  });
+
+  it('still returns curated questions when the imported file is absent', () => {
+    const pool = loadQuestionPool(CURATED_QUESTIONS_PATH, '/no/such/file.json');
+    expect(pool.length).toBeGreaterThan(0);
+    expect(pool.some((q) => q.category === 'Europe')).toBe(true);
+  });
+
+  it('throws when both files are missing', () => {
+    expect(() =>
+      loadQuestionPool('/no/curated.json', '/no/imported.json'),
+    ).toThrow(/No questions available/);
   });
 });
