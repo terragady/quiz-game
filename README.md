@@ -1,9 +1,9 @@
 # Quiz Game
 
-A real-time, multiplayer trivia game in the spirit of PlayStation Buzz! and
-Kahoot. One screen hosts the game (TV/projector) and players join from their
-phones. The host both displays the game and drives it (settings, start, reveal,
-next, end) — no separate remote needed.
+A real-time, multiplayer trivia party game. One screen hosts the game
+(TV/projector) and players join from their phones. The host both displays the
+game and drives it (settings, start, reveal, next, end) — no separate remote
+needed.
 
 **🎮 Live demo: <https://quiz.michalik.no>** — open `/host` on a big screen and
 share the code, then have everyone join from their phones at `/play`. (Free
