@@ -309,7 +309,7 @@ function Lobby({
           {state.players.map((player, index) => (
             <span
               key={player.id}
-              className={`chip chip--float ${player.connected ? '' : 'muted'}`}
+              className={`chip chip--float${player.connected ? '' : ' muted'}`}
               style={{ animationDelay: `${(index % 6) * 0.4}s` }}
             >
               {player.nickname}

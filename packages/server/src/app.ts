@@ -27,6 +27,7 @@ export interface GameServerHandles {
 export interface GameServerOptions {
   clientDir?: string;
   startCountdownMs?: number;
+  corsOrigin?: string | string[] | boolean;
 }
 
 export function createGameServer(
@@ -53,7 +54,7 @@ export function createGameServer(
     InterServerEvents,
     SocketData
   >(httpServer, {
-    cors: { origin: true },
+    cors: { origin: options.corsOrigin ?? true },
   });
 
   const service = new GameService(io, questionPool, {

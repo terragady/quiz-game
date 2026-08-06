@@ -14,7 +14,13 @@ interface Piece {
   drift: number;
 }
 
-export function Confetti({ pieceCount = 160 }: { pieceCount?: number }) {
+export function Confetti({
+  pieceCount = 160,
+  durationMs = 6000,
+}: {
+  pieceCount?: number;
+  durationMs?: number;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -45,7 +51,12 @@ export function Confetti({ pieceCount = 160 }: { pieceCount?: number }) {
     }));
 
     let frame = 0;
-    const render = () => {
+    const startedAt = performance.now();
+    const render = (now: number) => {
+      if (now - startedAt > durationMs) {
+        context.clearRect(0, 0, width, height);
+        return;
+      }
       context.clearRect(0, 0, width, height);
       for (const piece of pieces) {
         piece.drift += 0.02;
@@ -71,7 +82,7 @@ export function Confetti({ pieceCount = 160 }: { pieceCount?: number }) {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', onResize);
     };
-  }, [pieceCount]);
+  }, [pieceCount, durationMs]);
 
   return <canvas className="confetti" ref={canvasRef} aria-hidden="true" />;
 }
