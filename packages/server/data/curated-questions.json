@@ -1332,5 +1332,257 @@
     "options": ["North Macedonia", "Kyrgyzstan", "Japan", "Bangladesh"],
     "correctIndex": 0,
     "imageUrl": "/images/flags/mk.png"
+  },
+  {
+    "id": "curated-landmark-eiffel-tower",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Eiffel Tower", "Big Ben", "Sagrada Família", "Brandenburg Gate"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/eiffel-tower.jpg"
+  },
+  {
+    "id": "curated-landmark-colosseum",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Colosseum", "Acropolis of Athens", "Sagrada Família", "Brandenburg Gate"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/colosseum.jpg"
+  },
+  {
+    "id": "curated-landmark-big-ben",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Big Ben", "Eiffel Tower", "Brandenburg Gate", "Leaning Tower of Pisa"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/big-ben.jpg"
+  },
+  {
+    "id": "curated-landmark-statue-of-liberty",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Statue of Liberty", "Christ the Redeemer", "Brandenburg Gate", "Big Ben"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/statue-of-liberty.jpg"
+  },
+  {
+    "id": "curated-landmark-taj-mahal",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Taj Mahal", "Sagrada Família", "Acropolis of Athens", "Neuschwanstein Castle"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/taj-mahal.jpg"
+  },
+  {
+    "id": "curated-landmark-leaning-tower-of-pisa",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Leaning Tower of Pisa", "Big Ben", "Eiffel Tower", "Sagrada Família"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/leaning-tower-of-pisa.jpg"
+  },
+  {
+    "id": "curated-landmark-great-wall-of-china",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Great Wall of China", "Golden Gate Bridge", "Acropolis of Athens", "Taj Mahal"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/great-wall-of-china.jpg"
+  },
+  {
+    "id": "curated-landmark-golden-gate-bridge",
+    "category": "Landmarks",
+    "difficulty": "easy",
+    "text": "Which landmark is this?",
+    "options": ["Golden Gate Bridge", "Great Wall of China", "Sydney Opera House", "Eiffel Tower"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/golden-gate-bridge.jpg"
+  },
+  {
+    "id": "curated-landmark-sydney-opera-house",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Sydney Opera House", "Sagrada Família", "Colosseum", "Taj Mahal"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/sydney-opera-house.jpg"
+  },
+  {
+    "id": "curated-landmark-brandenburg-gate",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Brandenburg Gate", "Big Ben", "Acropolis of Athens", "Colosseum"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/brandenburg-gate.jpg"
+  },
+  {
+    "id": "curated-landmark-sagrada-familia",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Sagrada Família", "Neuschwanstein Castle", "Taj Mahal", "Colosseum"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/sagrada-familia.jpg"
+  },
+  {
+    "id": "curated-landmark-christ-the-redeemer",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Christ the Redeemer", "Statue of Liberty", "Great Wall of China", "Big Ben"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/christ-the-redeemer.jpg"
+  },
+  {
+    "id": "curated-landmark-acropolis",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Acropolis of Athens", "Colosseum", "Brandenburg Gate", "Taj Mahal"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/acropolis.jpg"
+  },
+  {
+    "id": "curated-landmark-neuschwanstein",
+    "category": "Landmarks",
+    "difficulty": "medium",
+    "text": "Which landmark is this?",
+    "options": ["Neuschwanstein Castle", "Sagrada Família", "Big Ben", "Christ the Redeemer"],
+    "correctIndex": 0,
+    "imageUrl": "/images/landmarks/neuschwanstein.jpg"
+  },
+  {
+    "id": "curated-person-albert-einstein",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Albert Einstein", "Nikola Tesla", "Charles Darwin", "Winston Churchill"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/albert-einstein.jpg"
+  },
+  {
+    "id": "curated-person-abraham-lincoln",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Abraham Lincoln", "Charles Darwin", "Barack Obama", "Winston Churchill"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/abraham-lincoln.jpg"
+  },
+  {
+    "id": "curated-person-barack-obama",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Barack Obama", "Abraham Lincoln", "Lionel Messi", "Cristiano Ronaldo"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/barack-obama.jpg"
+  },
+  {
+    "id": "curated-person-lionel-messi",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Lionel Messi", "Cristiano Ronaldo", "Barack Obama", "Napoleon Bonaparte"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/lionel-messi.jpg"
+  },
+  {
+    "id": "curated-person-cristiano-ronaldo",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Cristiano Ronaldo", "Lionel Messi", "Barack Obama", "Nikola Tesla"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/cristiano-ronaldo.jpg"
+  },
+  {
+    "id": "curated-person-taylor-swift",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Taylor Swift", "Marie Curie", "Queen Elizabeth II", "Barack Obama"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/taylor-swift.png"
+  },
+  {
+    "id": "curated-person-mahatma-gandhi",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Mahatma Gandhi", "Nikola Tesla", "Winston Churchill", "Charles Darwin"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/mahatma-gandhi.jpg"
+  },
+  {
+    "id": "curated-person-winston-churchill",
+    "category": "Famous People",
+    "difficulty": "easy",
+    "text": "Who is this?",
+    "options": ["Winston Churchill", "Abraham Lincoln", "Napoleon Bonaparte", "Nikola Tesla"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/winston-churchill.jpg"
+  },
+  {
+    "id": "curated-person-napoleon",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["Napoleon Bonaparte", "Abraham Lincoln", "Winston Churchill", "William Shakespeare"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/napoleon.jpg"
+  },
+  {
+    "id": "curated-person-marie-curie",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["Marie Curie", "Queen Elizabeth II", "Taylor Swift", "Albert Einstein"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/marie-curie.jpg"
+  },
+  {
+    "id": "curated-person-william-shakespeare",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["William Shakespeare", "Charles Darwin", "Napoleon Bonaparte", "Nikola Tesla"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/william-shakespeare.jpg"
+  },
+  {
+    "id": "curated-person-nikola-tesla",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["Nikola Tesla", "Albert Einstein", "Charles Darwin", "Winston Churchill"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/nikola-tesla.jpg"
+  },
+  {
+    "id": "curated-person-charles-darwin",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["Charles Darwin", "William Shakespeare", "Nikola Tesla", "Abraham Lincoln"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/charles-darwin.jpg"
+  },
+  {
+    "id": "curated-person-queen-elizabeth-ii",
+    "category": "Famous People",
+    "difficulty": "medium",
+    "text": "Who is this?",
+    "options": ["Queen Elizabeth II", "Marie Curie", "Taylor Swift", "Winston Churchill"],
+    "correctIndex": 0,
+    "imageUrl": "/images/people/queen-elizabeth-ii.jpg"
   }
 ]
