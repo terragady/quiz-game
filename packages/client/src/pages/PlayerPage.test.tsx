@@ -150,4 +150,38 @@ describe('PlayerPage answering', () => {
       expect(button).toBeDisabled();
     }
   });
+
+  it('shows placement and stats when the game ends', async () => {
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'ended',
+          leaderboard: [
+            {
+              playerId: 'p1',
+              nickname: 'Alice',
+              score: 2400,
+              rank: 1,
+              lastPoints: 0,
+              stats: {
+                correct: 3,
+                incorrect: 1,
+                unanswered: 1,
+                averageResponseMs: 4200,
+                fastestCorrectMs: 1500,
+              },
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText(/1st place/i)).toBeInTheDocument();
+    expect(screen.getByText('2400')).toBeInTheDocument();
+    // Stats grid values.
+    expect(screen.getByText('Correct')).toBeInTheDocument();
+    expect(screen.getByText('4.2s')).toBeInTheDocument();
+    expect(screen.getByText('1.5s')).toBeInTheDocument();
+  });
 });

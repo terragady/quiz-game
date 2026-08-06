@@ -508,6 +508,51 @@ h1 {
   font-weight: 900;
 }
 
+.place-badge {
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  font-weight: 900;
+  margin: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin: 12px auto 0;
+  padding: 0;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  margin: 0;
+  text-align: center;
+}
+
+.stat__value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.stat__label {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.stat--good .stat__value {
+  color: var(--good);
+}
+
+.stat--bad .stat__value {
+  color: var(--bad);
+}
+
 .center-text {
   text-align: center;
 }

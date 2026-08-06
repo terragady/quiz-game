@@ -324,3 +324,61 @@ describe('GameManager leaderboard', () => {
     expect(rankByNickname.C).toBe(3);
   });
 });
+
+describe('GameManager end-of-game stats', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  it('exposes per-player stats only once the game has ended', () => {
+    const right = game.addPlayer('Right');
+    const wrongPlayer = game.addPlayer('Wrong');
+    game.addPlayer('Quiet'); // never answers
+    game.start({ ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
+
+    game.submitAnswer(right, 0); // correct, instantly (0ms response)
+    clock = 1000 + 5000;
+    game.submitAnswer(wrongPlayer, 1); // incorrect, after 5s
+    // Quiet never answers.
+    game.reveal();
+
+    // Not ended yet: no stats attached.
+    expect(game.getPublicState().leaderboard[0]?.stats).toBeUndefined();
+
+    game.advance(); // reveal -> leaderboard
+    game.advance(); // leaderboard -> ended (single question)
+
+    const rows = game.getPublicState().leaderboard;
+    const byName = Object.fromEntries(rows.map((r) => [r.nickname, r.stats]));
+
+    expect(byName.Right).toMatchObject({
+      correct: 1,
+      incorrect: 0,
+      unanswered: 0,
+      averageResponseMs: 0,
+      fastestCorrectMs: 0,
+    });
+    expect(byName.Wrong).toMatchObject({
+      correct: 0,
+      incorrect: 1,
+      unanswered: 0,
+      averageResponseMs: 5000,
+      fastestCorrectMs: null,
+    });
+    expect(byName.Quiet).toMatchObject({
+      correct: 0,
+      incorrect: 0,
+      unanswered: 1,
+      averageResponseMs: null,
+      fastestCorrectMs: null,
+    });
+  });
+});

@@ -68,6 +68,20 @@ export interface PublicPlayer {
   hasAnswered: boolean;
 }
 
+/** End-of-game per-player statistics ("for nerds"). */
+export interface PlayerStats {
+  /** Questions answered correctly. */
+  correct: number;
+  /** Questions answered incorrectly. */
+  incorrect: number;
+  /** Questions the player did not answer in time. */
+  unanswered: number;
+  /** Average time to answer, in ms, over answered questions (null if none). */
+  averageResponseMs: number | null;
+  /** Fastest correct answer, in ms (null if no correct answers). */
+  fastestCorrectMs: number | null;
+}
+
 /** One row of the leaderboard, ranked high-to-low by score. */
 export interface LeaderboardRow {
   playerId: string;
@@ -77,6 +91,8 @@ export interface LeaderboardRow {
   rank: number;
   /** Points earned on the most recently revealed question. */
   lastPoints: number;
+  /** Full-game statistics, present only once the game has ended. */
+  stats?: PlayerStats;
 }
 
 /** Per-player result delivered when a question is revealed. */
