@@ -117,8 +117,9 @@ describe('HostPage', () => {
       ),
     );
 
-    expect(screen.getByText('3 · 75%')).toBeInTheDocument();
-    expect(screen.getByText('1 · 25%')).toBeInTheDocument();
+    expect(screen.getByText('votes · 75%')).toBeInTheDocument();
+    expect(screen.getByText('vote · 25%')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 
   it('advances the game with the host control buttons during a question', async () => {

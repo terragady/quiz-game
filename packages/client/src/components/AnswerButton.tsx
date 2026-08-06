@@ -29,6 +29,7 @@ export function AnswerButton({
 
   const showDistribution = share !== undefined;
   const percent = share !== undefined ? Math.round(share * 100) : 0;
+  const votes = count ?? 0;
 
   return (
     <button
@@ -38,13 +39,6 @@ export function AnswerButton({
       onClick={onSelect}
       aria-pressed={selected}
     >
-      {showDistribution && (
-        <span
-          className="answer__fill"
-          style={{ width: `${percent}%` }}
-          aria-hidden="true"
-        />
-      )}
       {!hideLetter && (
         <span className="answer__letter" aria-hidden="true">
           {LETTERS[index] ?? index + 1}
@@ -52,8 +46,11 @@ export function AnswerButton({
       )}
       <span className="answer__label">{label}</span>
       {showDistribution && (
-        <span className="answer__count">
-          {count ?? 0} · {percent}%
+        <span className="answer__badge">
+          <span className="answer__badge-count">{votes}</span>
+          <span className="answer__badge-meta">
+            {votes === 1 ? 'vote' : 'votes'} · {percent}%
+          </span>
         </span>
       )}
     </button>
