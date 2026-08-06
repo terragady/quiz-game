@@ -42,7 +42,7 @@ export function createGameServer(
   if (options.clientDir && existsSync(options.clientDir)) {
     const indexHtml = join(options.clientDir, 'index.html');
     app.use(express.static(options.clientDir));
-    app.get('*', (_req, res) => {
+    app.get('/*splat', (_req, res) => {
       res.sendFile(indexHtml);
     });
   }
