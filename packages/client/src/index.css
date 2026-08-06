@@ -489,6 +489,55 @@ h1 {
   font-weight: 700;
 }
 
+/* Animated leaderboard (host TV) ------------------------------------------- */
+.leaderboard--animated {
+  position: relative;
+  display: block;
+  padding: 0;
+}
+
+.leaderboard--animated .arow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 62px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 1.2rem;
+  will-change: transform;
+}
+
+.leaderboard--animated .arow--gold {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, rgba(255, 209, 92, 0.16), transparent);
+}
+.leaderboard--animated .arow--gold .leaderboard__rank {
+  color: var(--gold);
+}
+
+.leaderboard--animated .arow--silver {
+  border-color: var(--silver);
+  background: linear-gradient(90deg, rgba(214, 220, 236, 0.12), transparent);
+}
+.leaderboard--animated .arow--silver .leaderboard__rank {
+  color: var(--silver);
+}
+
+.leaderboard--animated .arow--bronze {
+  border-color: var(--bronze);
+  background: linear-gradient(90deg, rgba(224, 151, 90, 0.12), transparent);
+}
+.leaderboard--animated .arow--bronze .leaderboard__rank {
+  color: var(--bronze);
+}
+
 /* Feedback (player) -------------------------------------------------------- */
 .feedback {
   text-align: center;

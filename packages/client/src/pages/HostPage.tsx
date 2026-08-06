@@ -4,6 +4,7 @@ import { useGameState } from '../hooks/useGameState.js';
 import { AnswerButton } from '../components/AnswerButton.js';
 import { Countdown } from '../components/Countdown.js';
 import { Leaderboard } from '../components/Leaderboard.js';
+import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
 import { QRCode } from '../components/QRCode.js';
 
 /** Remembered so refreshing the TV rejoins the same game instead of making a new one. */
@@ -139,7 +140,7 @@ function HostBody({
       return (
         <div className="stack">
           <h1>Leaderboard</h1>
-          <Leaderboard rows={state.leaderboard} />
+          <AnimatedLeaderboard rows={state.leaderboard} />
         </div>
       );
 
