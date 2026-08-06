@@ -124,8 +124,19 @@ describe('withShuffledOptions', () => {
 
 describe('filterQuestions', () => {
   it('filters by category', () => {
-    const result = filterQuestions(sample, { category: 'Science' });
+    const result = filterQuestions(sample, { categories: ['Science'] });
     expect(result.map((q) => q.id)).toEqual(['a', 'b']);
+  });
+
+  it('filters by multiple categories', () => {
+    const result = filterQuestions(sample, {
+      categories: ['Science', 'Geography'],
+    });
+    expect(result.map((q) => q.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('returns all when categories is empty', () => {
+    expect(filterQuestions(sample, { categories: [] })).toHaveLength(3);
   });
 
   it('filters by difficulty', () => {
@@ -135,7 +146,7 @@ describe('filterQuestions', () => {
 
   it('filters by category and difficulty together', () => {
     const result = filterQuestions(sample, {
-      category: 'Science',
+      categories: ['Science'],
       difficulty: 'easy',
     });
     expect(result.map((q) => q.id)).toEqual(['a']);
@@ -158,7 +169,7 @@ describe('selectQuestions', () => {
   it('only returns questions matching the filter', () => {
     const result = selectQuestions(sample, {
       count: 10,
-      category: 'Science',
+      categories: ['Science'],
     });
     expect(result.every((q) => q.category === 'Science')).toBe(true);
   });

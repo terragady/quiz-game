@@ -57,7 +57,7 @@ function startGame(game: GameManager, settings: GameSettings): void {
 const baseSettings: GameSettings = {
   questionCount: 3,
   secondsPerQuestion: 20,
-  category: null,
+  categories: [],
   difficulty: null,
   autoAdvance: false,
   revealSeconds: 5,
@@ -147,8 +147,29 @@ describe('GameManager start', () => {
 
   it('rejects settings whose filter matches no questions', () => {
     expect(() =>
-      game.start({ ...baseSettings, category: 'Nonexistent' }),
+      game.start({ ...baseSettings, categories: ['Nonexistent'] }),
     ).toThrow(/No questions match/);
+  });
+
+  it('draws only from the selected categories', () => {
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 3,
+      categories: ['Science'],
+    });
+    expect(game.getPublicState().currentQuestion?.category).toBe('Science');
+    expect(game.getPublicState().currentQuestion?.total).toBe(2);
+  });
+
+  it('trims and de-duplicates selected categories', () => {
+    game.start({
+      ...baseSettings,
+      categories: ['Science', ' Science ', 'History'],
+    });
+    expect(game.getPublicState().settings.categories).toEqual([
+      'Science',
+      'History',
+    ]);
   });
 
   it('rejects being started twice', () => {

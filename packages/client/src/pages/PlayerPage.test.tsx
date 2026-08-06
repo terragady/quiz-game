@@ -14,7 +14,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     settings: {
       questionCount: 3,
       secondsPerQuestion: 20,
-      category: null,
+      categories: [],
       difficulty: null,
       autoAdvance: false,
       revealSeconds: 5,

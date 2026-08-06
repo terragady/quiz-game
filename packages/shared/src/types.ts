@@ -34,7 +34,7 @@ export interface PublicQuestion {
 export interface GameSettings {
   questionCount: number;
   secondsPerQuestion: number;
-  category: string | null;
+  categories: string[];
   difficulty: Difficulty | null;
   autoAdvance: boolean;
   revealSeconds: number;

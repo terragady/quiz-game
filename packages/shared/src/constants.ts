@@ -21,7 +21,7 @@ export const BENIGN_ANSWER_ERRORS: readonly string[] =
 export const DEFAULT_SETTINGS: GameSettings = {
   questionCount: 10,
   secondsPerQuestion: 20,
-  category: null,
+  categories: [],
   difficulty: null,
   autoAdvance: true,
   revealSeconds: 5,

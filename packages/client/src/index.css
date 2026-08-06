@@ -178,6 +178,49 @@ h1 {
   margin: 0;
 }
 
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.category-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.category-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(11, 12, 26, 0.7);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.category-option:has(input:checked) {
+  border-color: var(--accent, #7c5cff);
+  background: rgba(124, 92, 255, 0.22);
+}
+
+.category-option input {
+  margin: 0;
+}
+
 .input,
 .select {
   padding: 14px;

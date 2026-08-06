@@ -37,7 +37,7 @@ const pool: Question[] = [
 const settings: GameSettings = {
   questionCount: 2,
   secondsPerQuestion: 30,
-  category: null,
+  categories: [],
   difficulty: null,
   autoAdvance: false,
   revealSeconds: 5,
