@@ -35,7 +35,8 @@ hosting tier: the first load after an idle period takes a few seconds to wake.)
 
 Each host screen is its own **room** with a unique code; refreshing the TV
 rejoins the same game, and a "New game" button starts a fresh one. Some
-questions are **picture questions** (e.g. "guess the flag").
+questions are **picture questions** — guess the flag, the landmark, or the
+famous person — with the image shown on the host screen.
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single
 origin, so it fits comfortably on a free hosting tier.
@@ -77,8 +78,10 @@ At runtime the game pool is the merge of two committed files, so the app has no
 runtime dependency on any external service:
 
 - `packages/server/data/curated-questions.json` — a hand-maintained set of
-  English questions focused on Europe, Norway, and Poland, plus "guess the flag"
-  picture questions. Edit this by hand; the importer never touches it.
+  English questions focused on Europe, Norway, and Poland, plus picture
+  questions (flags, landmarks, and famous people) whose images are served
+  locally from `packages/client/public/images`. Edit this by hand; the importer
+  never touches it.
 - `packages/server/data/questions.json` — the [Open Trivia DB](https://opentdb.com)
   dump, produced (and overwritten) by the import script.
 
@@ -141,7 +144,7 @@ few seconds to wake.
 packages/
   shared/   Types + socket event contract (consumed as TS source)
   server/   Express + Socket.IO game server, question loader, import script
-    data/curated-questions.json   Hand-maintained EU/NO/PL + flag questions
+    data/curated-questions.json   Hand-maintained EU/NO/PL + picture questions
     data/questions.json           Imported Open Trivia DB dump
   client/   React app (home, host, player views)
 ```
