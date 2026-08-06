@@ -353,6 +353,10 @@ function validateSettings(settings: GameSettings): GameSettings {
     maxQuestionCount,
     minSecondsPerQuestion,
     maxSecondsPerQuestion,
+    minRevealSeconds,
+    maxRevealSeconds,
+    minLeaderboardSeconds,
+    maxLeaderboardSeconds,
   } = SETTINGS_LIMITS;
 
   if (
@@ -379,12 +383,33 @@ function validateSettings(settings: GameSettings): GameSettings {
   ) {
     throw new Error('Invalid difficulty.');
   }
+  if (
+    !Number.isInteger(settings.revealSeconds) ||
+    settings.revealSeconds < minRevealSeconds ||
+    settings.revealSeconds > maxRevealSeconds
+  ) {
+    throw new Error(
+      `Reveal seconds must be between ${minRevealSeconds} and ${maxRevealSeconds}.`,
+    );
+  }
+  if (
+    !Number.isInteger(settings.leaderboardSeconds) ||
+    settings.leaderboardSeconds < minLeaderboardSeconds ||
+    settings.leaderboardSeconds > maxLeaderboardSeconds
+  ) {
+    throw new Error(
+      `Leaderboard seconds must be between ${minLeaderboardSeconds} and ${maxLeaderboardSeconds}.`,
+    );
+  }
 
   return {
     questionCount: settings.questionCount,
     secondsPerQuestion: settings.secondsPerQuestion,
     category: settings.category?.trim() ? settings.category.trim() : null,
     difficulty: settings.difficulty,
+    autoAdvance: Boolean(settings.autoAdvance),
+    revealSeconds: settings.revealSeconds,
+    leaderboardSeconds: settings.leaderboardSeconds,
   };
 }
 
@@ -394,5 +419,8 @@ function defaultSettingsSnapshot(): GameSettings {
     secondsPerQuestion: 0,
     category: null,
     difficulty: null,
+    autoAdvance: false,
+    revealSeconds: 0,
+    leaderboardSeconds: 0,
   };
 }

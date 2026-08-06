@@ -34,7 +34,7 @@ const ROOM_CLEANUP_GRACE_MS = 5 * 60 * 1000;
  */
 export class GameService {
   private readonly games = new Map<string, GameManager>();
-  private readonly revealTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly phaseTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
   /** playerId -> socketId (player ids are globally unique). */
   private readonly playerSockets = new Map<string, string>();
@@ -112,17 +112,7 @@ export class GameService {
     socket.on('adminNext', () => {
       const game = this.requireAdminGame(socket);
       if (!game) return;
-      this.clearTimer(game.code);
-      const before = game.phase;
-      game.advance();
-      const after = game.phase;
-      if (before === 'question' && after === 'reveal') {
-        this.onReveal(game.code);
-      } else if (after === 'question') {
-        this.onQuestionBegan(game.code);
-      } else {
-        this.broadcastState(game.code);
-      }
+      this.applyAdvance(game.code);
     });
 
     socket.on('adminEnd', () => {
@@ -174,7 +164,7 @@ export class GameService {
 
   /** Stop all pending timers (used on shutdown). */
   dispose(): void {
-    for (const code of [...this.revealTimers.keys()]) this.clearTimer(code);
+    for (const code of [...this.phaseTimers.keys()]) this.clearTimer(code);
     for (const timer of this.cleanupTimers.values()) clearTimeout(timer);
     this.cleanupTimers.clear();
   }
@@ -253,6 +243,53 @@ export class GameService {
     this.clearTimer(code);
     game.reveal();
     this.onReveal(code);
+    this.scheduleAutoAdvance(code);
+  }
+
+  /**
+   * Advance one phase (reveal -> leaderboard -> next question/end), emit the
+   * right events for the new phase, and queue the next auto-advance if enabled.
+   */
+  private applyAdvance(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    this.clearTimer(code);
+    const before = game.phase;
+    game.advance();
+    const after = game.phase;
+    if (before === 'question' && after === 'reveal') {
+      this.onReveal(code);
+    } else if (after === 'question') {
+      this.onQuestionBegan(code);
+    } else {
+      this.broadcastState(code);
+    }
+    this.scheduleAutoAdvance(code);
+  }
+
+  /**
+   * When auto-advance is enabled, queue the transition out of the current
+   * reveal/leaderboard phase after the configured delay. Other phases (question
+   * countdowns, ended) are handled elsewhere or need no timer.
+   */
+  private scheduleAutoAdvance(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    const { settings } = game.getPublicState();
+    if (!settings.autoAdvance) return;
+    let delaySeconds: number;
+    if (game.phase === 'reveal') {
+      delaySeconds = settings.revealSeconds;
+    } else if (game.phase === 'leaderboard') {
+      delaySeconds = settings.leaderboardSeconds;
+    } else {
+      return;
+    }
+    this.clearTimer(code);
+    this.phaseTimers.set(
+      code,
+      setTimeout(() => this.applyAdvance(code), delaySeconds * 1000),
+    );
   }
 
   private onReveal(code: string): void {
@@ -269,17 +306,17 @@ export class GameService {
   private scheduleReveal(code: string, endsAt: number): void {
     this.clearTimer(code);
     const delay = Math.max(0, endsAt - Date.now());
-    this.revealTimers.set(
+    this.phaseTimers.set(
       code,
       setTimeout(() => this.revealNow(code), delay),
     );
   }
 
   private clearTimer(code: string): void {
-    const timer = this.revealTimers.get(code);
+    const timer = this.phaseTimers.get(code);
     if (timer) {
       clearTimeout(timer);
-      this.revealTimers.delete(code);
+      this.phaseTimers.delete(code);
     }
   }
 

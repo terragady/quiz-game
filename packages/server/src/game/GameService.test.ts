@@ -39,6 +39,9 @@ const settings: GameSettings = {
   secondsPerQuestion: 30,
   category: null,
   difficulty: null,
+  autoAdvance: false,
+  revealSeconds: 5,
+  leaderboardSeconds: 8,
 };
 
 let handles: GameServerHandles;
@@ -171,6 +174,35 @@ describe('GameService integration', () => {
     const leaderboardState = await leaderboardShown;
     expect(leaderboardState.leaderboard[0]?.nickname).toBe('Alice');
     expect(leaderboardState.leaderboard[0]?.score).toBeGreaterThan(0);
+  });
+
+  it('auto-advances from reveal to leaderboard when autoAdvance is enabled', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    expect(hostAck.ok).toBe(true);
+    if (!hostAck.ok) return;
+    const code = hostAck.state.code;
+
+    const player = connect();
+    await playerJoin(player, code, 'Alice');
+    const admin = connect();
+    await adminJoin(admin, code);
+
+    const questionArrives = nextQuestion(player);
+    admin.emit('adminStart', {
+      ...settings,
+      secondsPerQuestion: 120,
+      autoAdvance: true,
+      revealSeconds: 2,
+    });
+    await questionArrives;
+
+    // Answering reveals immediately; the leaderboard should then appear on its
+    // own after revealSeconds, without any admin action.
+    const leaderboardShown = waitForState(host, (s) => s.phase === 'leaderboard');
+    player.emit('submitAnswer', { optionIndex: 0 });
+    const leaderboardState = await leaderboardShown;
+    expect(leaderboardState.phase).toBe('leaderboard');
   });
 
   it('reveals without waiting when the last un-answered player disconnects', async () => {

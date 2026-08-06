@@ -141,6 +141,16 @@ h3 {
   color: var(--text-dim);
 }
 
+.field--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.field--inline label {
+  margin: 0;
+}
+
 .input,
 .select {
   padding: 14px;

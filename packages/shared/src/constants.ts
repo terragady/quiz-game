@@ -15,6 +15,9 @@ export const DEFAULT_SETTINGS: GameSettings = {
   secondsPerQuestion: 20,
   category: null,
   difficulty: null,
+  autoAdvance: true,
+  revealSeconds: 5,
+  leaderboardSeconds: 8,
 };
 
 /** Bounds the admin settings are validated against. */
@@ -23,4 +26,8 @@ export const SETTINGS_LIMITS = {
   maxQuestionCount: 50,
   minSecondsPerQuestion: 5,
   maxSecondsPerQuestion: 120,
+  minRevealSeconds: 2,
+  maxRevealSeconds: 30,
+  minLeaderboardSeconds: 2,
+  maxLeaderboardSeconds: 60,
 } as const;

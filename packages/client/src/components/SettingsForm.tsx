@@ -96,6 +96,55 @@ export function SettingsForm({
           ))}
         </select>
       </div>
+
+      <div className="field field--inline">
+        <input
+          id="autoAdvance"
+          type="checkbox"
+          checked={settings.autoAdvance}
+          disabled={disabled}
+          onChange={(e) => update({ autoAdvance: e.target.checked })}
+        />
+        <label htmlFor="autoAdvance">
+          Advance automatically (reveal → leaderboard → next)
+        </label>
+      </div>
+
+      {settings.autoAdvance && (
+        <>
+          <div className="field">
+            <label htmlFor="revealSeconds">Seconds on answer reveal</label>
+            <input
+              id="revealSeconds"
+              className="input"
+              type="number"
+              min={SETTINGS_LIMITS.minRevealSeconds}
+              max={SETTINGS_LIMITS.maxRevealSeconds}
+              value={settings.revealSeconds}
+              disabled={disabled}
+              onChange={(e) =>
+                update({ revealSeconds: Number(e.target.value) })
+              }
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="leaderboardSeconds">Seconds on leaderboard</label>
+            <input
+              id="leaderboardSeconds"
+              className="input"
+              type="number"
+              min={SETTINGS_LIMITS.minLeaderboardSeconds}
+              max={SETTINGS_LIMITS.maxLeaderboardSeconds}
+              value={settings.leaderboardSeconds}
+              disabled={disabled}
+              onChange={(e) =>
+                update({ leaderboardSeconds: Number(e.target.value) })
+              }
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

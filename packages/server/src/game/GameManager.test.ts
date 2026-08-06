@@ -37,6 +37,9 @@ const baseSettings: GameSettings = {
   secondsPerQuestion: 20,
   category: null,
   difficulty: null,
+  autoAdvance: false,
+  revealSeconds: 5,
+  leaderboardSeconds: 8,
 };
 
 describe('GameManager lobby', () => {
