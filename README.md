@@ -51,7 +51,7 @@ origin, so it fits comfortably on a free hosting tier.
 
 ## Prerequisites
 
-- Node.js >= 20.19 (or >= 22.12) — required by Vite 8
+- Node.js >= 22.19 (24 LTS recommended) — required by the test toolchain (jsdom 30 / undici)
 - npm (comes with Node)
 
 ## Getting started
