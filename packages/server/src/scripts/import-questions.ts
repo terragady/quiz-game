@@ -41,8 +41,8 @@ function parseCount(raw: string | undefined, flag: string): number {
 }
 
 function parseArgs(argv: string[]): { multiple: number; boolean: number } {
-  let multiple = 50;
-  let booleanCount = 15;
+  let multiple = 150;
+  let booleanCount = 50;
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--multiple') {
       multiple = parseCount(argv[i + 1], '--multiple');

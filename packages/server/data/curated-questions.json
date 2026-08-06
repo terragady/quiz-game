@@ -1,0 +1,354 @@
+[
+  {
+    "id": "curated-no-capital",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "What is the capital of Norway?",
+    "options": ["Oslo", "Bergen", "Trondheim", "Stavanger"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-currency",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "What is the official currency of Norway?",
+    "options": ["Norwegian krone", "Euro", "Swedish krona", "Danish krone"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-national-day",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "On which date does Norway celebrate its Constitution Day?",
+    "options": ["17 May", "1 May", "4 July", "6 June"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-longest-fjord",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which is the longest and deepest fjord in Norway?",
+    "options": ["Sognefjord", "Geirangerfjord", "Hardangerfjord", "Nordfjord"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-highest-mountain",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "What is the highest mountain in Norway?",
+    "options": ["Galdhøpiggen", "Glittertind", "Snøhetta", "Store Skagastølstind"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-amundsen",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian explorer was the first person to reach the South Pole?",
+    "options": ["Roald Amundsen", "Fridtjof Nansen", "Thor Heyerdahl", "Robert Falcon Scott"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-eu-member",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Norway is famously NOT a member of which organisation?",
+    "options": ["The European Union", "NATO", "The United Nations", "The Nordic Council"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-bergen",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian city is known as the 'Gateway to the Fjords'?",
+    "options": ["Bergen", "Tromsø", "Oslo", "Ålesund"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-lutefisk",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "Which traditional Norwegian dish is dried cod soaked in a lye solution?",
+    "options": ["Lutefisk", "Rakfisk", "Fårikål", "Smalahove"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-nobel-peace",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "In which Norwegian city is the Nobel Peace Prize awarded each year?",
+    "options": ["Oslo", "Stockholm", "Bergen", "Copenhagen"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-nordkapp",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian cape is a popular destination marketed as the northern tip of Europe?",
+    "options": ["The North Cape (Nordkapp)", "Lindesnes", "Stad", "Kinnarodden"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-king",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Who has been the King of Norway since 1991?",
+    "options": ["Harald V", "Olav V", "Haakon VII", "Frederik X"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-capital",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "What is the capital of Poland?",
+    "options": ["Warsaw", "Kraków", "Gdańsk", "Wrocław"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-currency",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "What is the official currency of Poland?",
+    "options": ["Złoty", "Euro", "Koruna", "Forint"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-vistula",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which river flows through the Polish capital, Warsaw?",
+    "options": ["Vistula", "Oder", "Warta", "Bug"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-copernicus",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which Polish astronomer proposed that the Earth revolves around the Sun?",
+    "options": ["Nicolaus Copernicus", "Galileo Galilei", "Johannes Kepler", "Tycho Brahe"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-chopin",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "Which composer, born near Warsaw, is celebrated for his piano music?",
+    "options": ["Frédéric Chopin", "Franz Liszt", "Johannes Brahms", "Antonín Dvořák"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-krakow",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which Polish city was the country's royal capital before Warsaw?",
+    "options": ["Kraków", "Poznań", "Łódź", "Lublin"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-eu-year",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "In which year did Poland join the European Union?",
+    "options": ["2004", "1999", "2007", "2011"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-solidarity",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which Polish trade union movement was led by Lech Wałęsa?",
+    "options": ["Solidarity", "Fidesz", "Charter 77", "Perestroika"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-curie",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "In which city was the scientist Marie Curie born?",
+    "options": ["Warsaw", "Paris", "Kraków", "Vienna"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-tatra",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which mountain range forms Poland's southern border with Slovakia?",
+    "options": ["The Tatra Mountains", "The Alps", "The Carpathian foothills only", "The Ural Mountains"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-pierogi",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "What is the name of the traditional Polish stuffed dumplings?",
+    "options": ["Pierogi", "Gnocchi", "Bao", "Ravioli"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-jp2",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "What was the birth name of the Polish-born Pope John Paul II?",
+    "options": ["Karol Wojtyła", "Joseph Ratzinger", "Angelo Roncalli", "Jorge Bergoglio"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-wieliczka",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "The Wieliczka site near Kraków is a famous historic what?",
+    "options": ["Salt mine", "Coal mine", "Castle", "Cathedral"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-smallest-country",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which is the smallest independent country in the world?",
+    "options": ["Vatican City", "Monaco", "San Marino", "Liechtenstein"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-longest-river",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the longest river in Europe?",
+    "options": ["Volga", "Danube", "Rhine", "Dnieper"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-pyrenees",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which mountain range forms the border between France and Spain?",
+    "options": ["The Pyrenees", "The Alps", "The Apennines", "The Carpathians"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-euro-country-count",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which shared currency is used by most European Union member states?",
+    "options": ["The euro", "The dollar", "The pound", "The franc"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-most-populous",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which European Union country has the largest population?",
+    "options": ["Germany", "France", "Italy", "Spain"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-etna",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "On which Italian island is the active volcano Mount Etna located?",
+    "options": ["Sicily", "Sardinia", "Capri", "Corsica"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-stockholm",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which Scandinavian capital is spread across 14 islands?",
+    "options": ["Stockholm", "Copenhagen", "Helsinki", "Oslo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-finland-capital",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Finland?",
+    "options": ["Helsinki", "Tallinn", "Stockholm", "Riga"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-thousand-lakes",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which country is nicknamed the 'Land of a Thousand Lakes'?",
+    "options": ["Finland", "Sweden", "Canada", "Estonia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-largest-in-europe",
+    "category": "Europe",
+    "difficulty": "hard",
+    "text": "Which is the largest country lying entirely within Europe?",
+    "options": ["Ukraine", "France", "Spain", "Germany"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-brandenburg",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "In which city would you find the Brandenburg Gate?",
+    "options": ["Berlin", "Munich", "Vienna", "Hamburg"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-danube-capital",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which of these capital cities lies on the River Danube?",
+    "options": ["Budapest", "Warsaw", "Madrid", "Berlin"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-baltic-sea",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which sea lies between Sweden, the Baltic states, and Poland?",
+    "options": ["The Baltic Sea", "The North Sea", "The Adriatic Sea", "The Black Sea"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-austria-language",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the main official language of Austria?",
+    "options": ["German", "Austrian", "Hungarian", "Italian"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-colosseum",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "In which city is the ancient Colosseum located?",
+    "options": ["Rome", "Athens", "Naples", "Florence"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-parliament-seat",
+    "category": "Europe",
+    "difficulty": "hard",
+    "text": "Which city is the official seat of the European Parliament?",
+    "options": ["Strasbourg", "Brussels", "Luxembourg", "The Hague"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-schengen",
+    "category": "Europe",
+    "difficulty": "hard",
+    "text": "The Schengen Agreement, allowing passport-free travel, is named after a village in which country?",
+    "options": ["Luxembourg", "Belgium", "Switzerland", "Germany"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-iberian",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Spain and Portugal together make up which peninsula?",
+    "options": ["The Iberian Peninsula", "The Balkan Peninsula", "The Apennine Peninsula", "The Scandinavian Peninsula"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-nordic-count",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which of these countries is NOT one of the five Nordic countries?",
+    "options": ["Estonia", "Norway", "Denmark", "Iceland"],
+    "correctIndex": 0
+  }
+]

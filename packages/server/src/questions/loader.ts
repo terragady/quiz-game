@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type {
   CategorySummary,
@@ -8,9 +8,21 @@ import type {
 
 const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
 
-/** Absolute path to the committed questions file. */
+/**
+ * Absolute path to the imported questions file. This is the Open Trivia DB dump
+ * produced by `npm run questions:import`; the import script overwrites it.
+ */
 export const DEFAULT_QUESTIONS_PATH = fileURLToPath(
   new URL('../../data/questions.json', import.meta.url),
+);
+
+/**
+ * Absolute path to the hand-curated questions file (Europe, Norway, Poland).
+ * This file is maintained by hand and is never overwritten by the importer, so
+ * curated questions survive a re-import.
+ */
+export const CURATED_QUESTIONS_PATH = fileURLToPath(
+  new URL('../../data/curated-questions.json', import.meta.url),
 );
 
 /**
@@ -101,6 +113,37 @@ export function loadQuestions(
   }
 
   return validateQuestionsData(parsed);
+}
+
+/** Combine question lists, keeping the first occurrence of each id. */
+export function mergeQuestions(...lists: Question[][]): Question[] {
+  const byId = new Map<string, Question>();
+  for (const list of lists) {
+    for (const question of list) {
+      if (!byId.has(question.id)) {
+        byId.set(question.id, question);
+      }
+    }
+  }
+  return [...byId.values()];
+}
+
+/**
+ * Load the full question pool the game runs on: the hand-curated questions plus
+ * the imported Open Trivia DB questions, de-duplicated by id. Either file may be
+ * absent, but at least one must exist and yield questions.
+ */
+export function loadQuestionPool(
+  curatedPath: string = CURATED_QUESTIONS_PATH,
+  importedPath: string = DEFAULT_QUESTIONS_PATH,
+): Question[] {
+  const curated = existsSync(curatedPath) ? loadQuestions(curatedPath) : [];
+  const imported = existsSync(importedPath) ? loadQuestions(importedPath) : [];
+  const pool = mergeQuestions(curated, imported);
+  if (pool.length === 0) {
+    throw new Error('No questions available: both question files are empty or missing.');
+  }
+  return pool;
 }
 
 export interface SelectionCriteria {
