@@ -4,11 +4,18 @@ type Handler = (...args: unknown[]) => void;
 
 export class FakeSocket {
   readonly emitted: { event: string; args: unknown[] }[] = [];
+  connected = false;
   private readonly handlers = new Map<string, Set<Handler>>();
   private readonly ackResponders = new Map<
     string,
     (args: unknown[]) => unknown
   >();
+
+  connect(): this {
+    this.connected = true;
+    this.serverEmit('connect');
+    return this;
+  }
 
   on(event: string, handler: Handler): this {
     this.getSet(event).add(handler);

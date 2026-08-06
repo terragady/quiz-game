@@ -107,6 +107,18 @@ export function PlayerPage() {
     };
   }, [socket, attemptRejoin]);
 
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && !socket.connected) {
+        socket.connect();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [socket]);
+
   const handleJoin = (event: FormEvent) => {
     event.preventDefault();
     setError(null);

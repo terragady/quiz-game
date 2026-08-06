@@ -255,4 +255,49 @@ describe('PlayerPage reconnection', () => {
       playerId: 'p1',
     });
   });
+
+  it('reconnects and rejoins when the tab becomes visible after a drop', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    fake.respondToAck('playerRejoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+
+    renderPlayer(fake, '/play?code=WXYZ');
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    await screen.findByText(/You're in/i);
+
+    fake.connected = false;
+    act(() => document.dispatchEvent(new Event('visibilitychange')));
+
+    expect(fake.connected).toBe(true);
+    expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+    });
+  });
+
+  it('does not reconnect on visibility when the socket is still connected', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+
+    renderPlayer(fake, '/play?code=WXYZ');
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    await screen.findByText(/You're in/i);
+
+    fake.connected = true;
+    act(() => document.dispatchEvent(new Event('visibilitychange')));
+
+    expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
+  });
 });
