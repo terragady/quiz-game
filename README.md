@@ -2,6 +2,7 @@
 
 [![Live demo](https://img.shields.io/badge/▶_Live_demo-quiz.michalik.no-2ea44f?style=for-the-badge)](https://quiz.michalik.no)
 
+[![CI](https://img.shields.io/github/actions/workflow/status/terragady/quiz-game/ci.yml?branch=main&label=CI&logo=github)](https://github.com/terragady/quiz-game/actions/workflows/ci.yml)
 ![GitHub top language](https://img.shields.io/github/languages/top/terragady/quiz-game)
 ![GitHub repo size](https://img.shields.io/github/repo-size/terragady/quiz-game)
 ![GitHub last commit](https://img.shields.io/github/last-commit/terragady/quiz-game)
