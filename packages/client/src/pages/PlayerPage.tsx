@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
+  BENIGN_ANSWER_ERRORS,
   MAX_NICKNAME_LENGTH,
   type AnswerResult,
   type JoinAck,
@@ -15,11 +16,14 @@ import {
 } from '@quiz/shared';
 import { useSocket } from '../SocketContext.js';
 import { AnswerButton } from '../components/AnswerButton.js';
+import { Countdown } from '../components/Countdown.js';
 import {
   clearSession,
   readSession,
   writeSession,
 } from '../playerSession.js';
+
+const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 
 export function PlayerPage() {
   const socket = useSocket();
@@ -34,10 +38,19 @@ export function PlayerPage() {
   const [nickname, setNickname] = useState(stored?.nickname ?? '');
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [state, setState] = useState<PublicGameState | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [answer, setAnswer] = useState<{
+    questionId: string;
+    index: number;
+  } | null>(null);
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rejoining, setRejoining] = useState(Boolean(stored));
+
+  const currentQuestionId = state?.currentQuestion?.id ?? null;
+  const selectedIndex =
+    answer && answer.questionId === currentQuestionId ? answer.index : null;
+  const shownResult =
+    result && result.questionId === currentQuestionId ? result : null;
 
   const sessionRef = useRef<{ code: string; playerId: string } | null>(
     stored ? { code: stored.code, playerId: stored.playerId } : null,
@@ -47,24 +60,24 @@ export function PlayerPage() {
     if (!playerId) return undefined;
 
     const onState = (next: PublicGameState) => {
-      setState(next);
+      setState((prev) => {
+        if (prev && prev.phase !== next.phase) setError(null);
+        return next;
+      });
       if (next.phase === 'ended') clearSession();
     };
-    const onQuestionStarted = () => {
-      setSelectedIndex(null);
-      setResult(null);
-    };
     const onAnswerResult = (next: AnswerResult) => setResult(next);
-    const onError = (message: string) => setError(message);
+    const onError = (message: string) => {
+      if (BENIGN_ANSWER_ERROR_SET.has(message)) return;
+      setError(message);
+    };
 
     socket.on('gameState', onState);
-    socket.on('questionStarted', onQuestionStarted);
     socket.on('answerResult', onAnswerResult);
     socket.on('errorMessage', onError);
 
     return () => {
       socket.off('gameState', onState);
-      socket.off('questionStarted', onQuestionStarted);
       socket.off('answerResult', onAnswerResult);
       socket.off('errorMessage', onError);
     };
@@ -149,8 +162,11 @@ export function PlayerPage() {
   };
 
   const handleAnswer = (index: number) => {
-    if (state?.phase !== 'question' || selectedIndex !== null) return;
-    setSelectedIndex(index);
+    const question = state?.currentQuestion;
+    if (state?.phase !== 'question' || !question || selectedIndex !== null) {
+      return;
+    }
+    setAnswer({ questionId: question.id, index });
     socket.emit('submitAnswer', { optionIndex: index });
   };
 
@@ -207,7 +223,7 @@ export function PlayerPage() {
         state={state}
         playerId={playerId}
         selectedIndex={selectedIndex}
-        result={result}
+        result={shownResult}
         onAnswer={handleAnswer}
       />
     </main>
@@ -241,15 +257,27 @@ function PlayerBody({
         </div>
       );
 
+    case 'countdown':
+      return (
+        <div className="stack feedback">
+          <h1>Get ready!</h1>
+          <Countdown endsAt={state.endsAt} />
+          <p className="muted">The first question is coming up…</p>
+        </div>
+      );
+
     case 'question': {
       const question = state.currentQuestion;
       if (!question) return <p className="center-text">Get ready…</p>;
       const locked = selectedIndex !== null;
       return (
         <div className="stack">
-          <p className="muted">
-            Question {question.number} of {question.total}
-          </p>
+          <div className="question-meta">
+            <span className="chip chip--category">{question.category}</span>
+            <span className="muted">
+              Question {question.number} of {question.total}
+            </span>
+          </div>
           {locked ? (
             <p className="center-text">
               Answer locked in — sit tight!
@@ -272,6 +300,7 @@ function PlayerBody({
                 disabled={locked}
                 selected={selectedIndex === index}
                 onSelect={() => onAnswer(index)}
+                hideLetter
               />
             ))}
           </div>

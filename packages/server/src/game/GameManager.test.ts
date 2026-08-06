@@ -49,6 +49,11 @@ function wrongOptionIndex(game: GameManager): number {
   return question.options.findIndex((option) => option !== CORRECT_ANSWER);
 }
 
+function startGame(game: GameManager, settings: GameSettings): void {
+  game.start(settings);
+  game.beginQuestions();
+}
+
 const baseSettings: GameSettings = {
   questionCount: 3,
   secondsPerQuestion: 20,
@@ -107,14 +112,37 @@ describe('GameManager start', () => {
     });
   });
 
-  it('begins the first question with a deadline', () => {
-    game.start(baseSettings);
+  it('enters a countdown before the first question', () => {
+    game.start({ ...baseSettings });
+    const state = game.getPublicState();
+    expect(state.phase).toBe('countdown');
+    expect(state.currentQuestion).toBeNull();
+    expect(state.endsAt).toBe(1000 + 5 * 1000);
+  });
+
+  it('uses the configured countdown duration', () => {
+    const custom = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+      startCountdownMs: 3000,
+    });
+    custom.start(baseSettings);
+    expect(custom.getPublicState().endsAt).toBe(1000 + 3000);
+  });
+
+  it('begins the first question with a deadline after the countdown', () => {
+    startGame(game, baseSettings);
     const state = game.getPublicState();
     expect(state.phase).toBe('question');
     expect(state.currentQuestion?.number).toBe(1);
     expect(state.currentQuestion?.total).toBe(3);
     expect(state.endsAt).toBe(1000 + 20 * 1000);
     expect(state.revealedCorrectIndex).toBeNull();
+  });
+
+  it('rejects beginning questions before a countdown', () => {
+    expect(() => game.beginQuestions()).toThrow(/not counting down/);
   });
 
   it('rejects settings whose filter matches no questions', () => {
@@ -148,7 +176,7 @@ describe('GameManager answering', () => {
       now: () => clock,
     });
     alice = game.addPlayer('Alice');
-    game.start(baseSettings);
+    startGame(game, baseSettings);
   });
 
   it('accepts a valid answer', () => {
@@ -189,7 +217,7 @@ describe('GameManager answering', () => {
     });
     const a = twoPlayerGame.addPlayer('Ann');
     const b = twoPlayerGame.addPlayer('Ben');
-    twoPlayerGame.start(baseSettings);
+    startGame(twoPlayerGame, baseSettings);
 
     expect(twoPlayerGame.allConnectedAnswered()).toBe(false);
     twoPlayerGame.submitAnswer(a, 0);
@@ -216,7 +244,7 @@ describe('GameManager scoring and reveal', () => {
     fast = game.addPlayer('Fast');
     slow = game.addPlayer('Slow');
     wrong = game.addPlayer('Wrong');
-    game.start(baseSettings);
+    startGame(game, baseSettings);
   });
 
   it('awards more points to faster correct answers and none to wrong ones', () => {
@@ -248,6 +276,23 @@ describe('GameManager scoring and reveal', () => {
     expect(game.getPublicState().revealedCorrectIndex).toBe(expectedIndex);
   });
 
+  it('exposes per-option answer counts only during the reveal phase', () => {
+    const correct = correctOptionIndex(game);
+    const incorrect = wrongOptionIndex(game);
+    game.submitAnswer(fast, correct);
+    game.submitAnswer(slow, correct);
+    game.submitAnswer(wrong, incorrect);
+
+    expect(game.getPublicState().optionCounts).toBeNull();
+
+    game.reveal();
+
+    const counts = game.getPublicState().optionCounts;
+    expect(counts).not.toBeNull();
+    expect(counts?.[correct]).toBe(2);
+    expect(counts?.[incorrect]).toBe(1);
+  });
+
   it('never exposes the correct answer on the public question object', () => {
     const question = game.getPublicState().currentQuestion;
     expect(question).not.toHaveProperty('correctIndex');
@@ -277,7 +322,7 @@ describe('GameManager phase advancement', () => {
       now: () => clock,
     });
     game.addPlayer('Alice');
-    game.start({ ...baseSettings, questionCount: 2 });
+    startGame(game, { ...baseSettings, questionCount: 2 });
   });
 
   it('walks question -> reveal -> leaderboard -> next question', () => {
@@ -324,7 +369,7 @@ describe('GameManager leaderboard', () => {
     const a = game.addPlayer('A');
     const b = game.addPlayer('B');
     const c = game.addPlayer('C');
-    game.start(baseSettings);
+    startGame(game, baseSettings);
     game.submitAnswer(a, correctOptionIndex(game));
     game.submitAnswer(b, correctOptionIndex(game));
     game.submitAnswer(c, wrongOptionIndex(game));
@@ -357,7 +402,7 @@ describe('GameManager end-of-game stats', () => {
     const right = game.addPlayer('Right');
     const wrongPlayer = game.addPlayer('Wrong');
     game.addPlayer('Quiet');
-    game.start({ ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
+    startGame(game, { ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
 
     game.submitAnswer(right, correctOptionIndex(game));
     clock = 1000 + 5000;

@@ -6,6 +6,18 @@ export const MAX_NICKNAME_LENGTH = 16;
 
 export const BASE_POINTS = 1000;
 
+export const START_COUNTDOWN_SECONDS = 5;
+
+export const ANSWER_REJECTION = {
+  notAcceptingAnswers: 'Not accepting answers right now.',
+  invalidOption: 'Invalid option.',
+  alreadyAnswered: 'You already answered.',
+  timeUp: 'Time is up.',
+} as const;
+
+export const BENIGN_ANSWER_ERRORS: readonly string[] =
+  Object.values(ANSWER_REJECTION);
+
 export const DEFAULT_SETTINGS: GameSettings = {
   questionCount: 10,
   secondsPerQuestion: 20,

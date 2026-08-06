@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { PublicGameState } from '@quiz/shared';
 import { HostPage } from './HostPage.js';
 import { SocketProvider } from '../SocketContext.js';
@@ -24,6 +25,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 0,
+    optionCounts: null,
     leaderboard: [],
     ...overrides,
   };
@@ -70,6 +72,86 @@ describe('HostPage', () => {
     expect(screen.getByText('Alice')).toBeInTheDocument();
   });
 
+  it('lets the host configure settings and start the game from the lobby', async () => {
+    const user = userEvent.setup();
+    renderHost(fake);
+
+    const startButton = screen.getByTestId('start-button');
+    expect(startButton).toBeEnabled();
+    await user.click(startButton);
+
+    expect(fake.emittedArgs('hostStart')).toHaveLength(1);
+  });
+
+  it('disables Start until at least one player has joined', () => {
+    fake.respondToAck('hostJoin', () => ({
+      ok: true,
+      state: baseState({ players: [], playerCount: 0 }),
+      categories: [{ name: 'Science', count: 5 }],
+    }));
+    renderHost(fake);
+
+    expect(screen.getByTestId('start-button')).toBeDisabled();
+  });
+
+  it('shows the answer distribution on reveal', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'reveal',
+          playerCount: 4,
+          revealedCorrectIndex: 0,
+          optionCounts: [3, 1, 0, 0],
+          currentQuestion: {
+            id: 'q1',
+            number: 1,
+            total: 3,
+            category: 'Science',
+            difficulty: 'easy',
+            text: 'Capital of Japan?',
+            options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
+          },
+        }),
+      ),
+    );
+
+    expect(screen.getByText('3 · 75%')).toBeInTheDocument();
+    expect(screen.getByText('1 · 25%')).toBeInTheDocument();
+  });
+
+  it('advances the game with the host control buttons during a question', async () => {
+    const user = userEvent.setup();
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'question',
+          playerCount: 3,
+          answeredCount: 1,
+          endsAt: Date.now() + 20_000,
+          currentQuestion: {
+            id: 'q1',
+            number: 1,
+            total: 3,
+            category: 'Science',
+            difficulty: 'easy',
+            text: 'Capital of Japan?',
+            options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
+          },
+        }),
+      ),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Reveal answers' }));
+    expect(fake.emittedArgs('hostNext')).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'End game' }));
+    expect(fake.emittedArgs('hostEnd')).toHaveLength(1);
+  });
+
   it('renders the question, options, and answered count', () => {
     renderHost(fake);
     act(() =>
@@ -96,6 +178,7 @@ describe('HostPage', () => {
     expect(screen.getByText('Capital of Japan?')).toBeInTheDocument();
     expect(screen.getByText('Tokyo')).toBeInTheDocument();
     expect(screen.getByText('2/3 answered')).toBeInTheDocument();
+    expect(screen.getByText('Science')).toBeInTheDocument();
   });
 
   it('renders a question image when one is provided', () => {

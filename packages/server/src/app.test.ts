@@ -63,3 +63,57 @@ describe('createGameServer static client serving', () => {
     expect(await response.text()).toContain('<div id="root">');
   });
 });
+
+describe('createGameServer CORS configuration', () => {
+  async function handshakeAllowOrigin(
+    handles: GameServerHandles,
+    origin: string,
+  ): Promise<string | null> {
+    const { port } = handles.httpServer.address() as AddressInfo;
+    const response = await fetch(
+      `http://localhost:${port}/socket.io/?EIO=4&transport=polling`,
+      { headers: { Origin: origin } },
+    );
+    await response.text();
+    return response.headers.get('access-control-allow-origin');
+  }
+
+  async function withServer(
+    options: Parameters<typeof createGameServer>[1],
+    run: (handles: GameServerHandles) => Promise<void>,
+  ): Promise<void> {
+    const handles = createGameServer(pool, options);
+    await new Promise<void>((resolve) => handles.httpServer.listen(0, resolve));
+    try {
+      await run(handles);
+    } finally {
+      handles.service.dispose();
+      handles.io.close();
+      await new Promise<void>((resolve) =>
+        handles.httpServer.close(() => resolve()),
+      );
+    }
+  }
+
+  it('reflects any origin by default', async () => {
+    await withServer({}, async (handles) => {
+      expect(await handshakeAllowOrigin(handles, 'https://anywhere.example')).toBe(
+        'https://anywhere.example',
+      );
+    });
+  });
+
+  it('allows a configured origin but not others', async () => {
+    await withServer(
+      { corsOrigin: ['https://quiz.example.com'] },
+      async (handles) => {
+        expect(
+          await handshakeAllowOrigin(handles, 'https://quiz.example.com'),
+        ).toBe('https://quiz.example.com');
+        expect(
+          await handshakeAllowOrigin(handles, 'https://evil.example'),
+        ).toBeNull();
+      },
+    );
+  });
+});

@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import {
+  ANSWER_REJECTION,
   BASE_POINTS,
   calculateScore,
   MAX_NICKNAME_LENGTH,
   SETTINGS_LIMITS,
+  START_COUNTDOWN_SECONDS,
   type AnswerResult,
   type GamePhase,
   type GameSettings,
@@ -49,6 +51,7 @@ export interface GameManagerOptions {
   code: string;
   questionPool: Question[];
   now?: () => number;
+  startCountdownMs?: number;
 }
 
 export class GameManager {
@@ -56,6 +59,7 @@ export class GameManager {
 
   private readonly questionPool: Question[];
   private readonly now: () => number;
+  private readonly startCountdownMs: number;
 
   private phaseValue: GamePhase = 'lobby';
   private settingsValue: GameSettings | null = null;
@@ -68,6 +72,8 @@ export class GameManager {
     this.code = options.code;
     this.questionPool = options.questionPool;
     this.now = options.now ?? (() => Date.now());
+    this.startCountdownMs =
+      options.startCountdownMs ?? START_COUNTDOWN_SECONDS * 1000;
   }
 
   get phase(): GamePhase {
@@ -143,6 +149,14 @@ export class GameManager {
     this.settingsValue = validated;
     this.questions = selected;
     this.questionIndex = -1;
+    this.endsAt = this.now() + this.startCountdownMs;
+    this.phaseValue = 'countdown';
+  }
+
+  beginQuestions(): void {
+    if (this.phaseValue !== 'countdown') {
+      throw new Error('The game is not counting down.');
+    }
     this.beginNextQuestion();
   }
 
@@ -152,7 +166,7 @@ export class GameManager {
       throw new Error('Unknown player.');
     }
     if (this.phaseValue !== 'question') {
-      return { accepted: false, reason: 'Not accepting answers right now.' };
+      return { accepted: false, reason: ANSWER_REJECTION.notAcceptingAnswers };
     }
     const question = this.currentQuestion();
     if (
@@ -160,14 +174,14 @@ export class GameManager {
       optionIndex < 0 ||
       optionIndex >= question.options.length
     ) {
-      return { accepted: false, reason: 'Invalid option.' };
+      return { accepted: false, reason: ANSWER_REJECTION.invalidOption };
     }
     if (player.currentAnswer) {
-      return { accepted: false, reason: 'You already answered.' };
+      return { accepted: false, reason: ANSWER_REJECTION.alreadyAnswered };
     }
     const now = this.now();
     if (this.endsAt !== null && now > this.endsAt) {
-      return { accepted: false, reason: 'Time is up.' };
+      return { accepted: false, reason: ANSWER_REJECTION.timeUp };
     }
     const timeRemainingMs = this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
     player.currentAnswer = { optionIndex, timeRemainingMs };
@@ -260,6 +274,7 @@ export class GameManager {
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
+      optionCounts: this.phaseValue === 'reveal' ? this.optionCounts() : null,
       leaderboard: this.leaderboard(),
     };
   }
@@ -346,6 +361,18 @@ export class GameManager {
   private answeredCount(): number {
     return [...this.players.values()].filter((p) => p.currentAnswer !== null)
       .length;
+  }
+
+  private optionCounts(): number[] {
+    const question = this.currentQuestion();
+    const counts = question.options.map(() => 0);
+    for (const player of this.players.values()) {
+      const index = player.currentAnswer?.optionIndex;
+      if (index !== undefined && index >= 0 && index < counts.length) {
+        counts[index] += 1;
+      }
+    }
+    return counts;
   }
 
   private leaderboard(): LeaderboardRow[] {

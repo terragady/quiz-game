@@ -15,9 +15,6 @@ export function HomePage() {
           <Link className="btn" to="/play">
             Join as a player
           </Link>
-          <Link className="btn btn--ghost" to="/admin">
-            Admin remote
-          </Link>
         </nav>
       </div>
     </main>

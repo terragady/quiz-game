@@ -270,6 +270,26 @@ h1 {
   color: var(--good);
 }
 
+.chip--category {
+  background: rgba(124, 92, 255, 0.18);
+  border-color: var(--primary-strong);
+  color: var(--primary-strong);
+  text-transform: capitalize;
+}
+
+.question-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.question-meta--wide {
+  justify-content: space-between;
+  width: 100%;
+}
+
 .question-image {
   max-width: min(420px, 80vw);
   max-height: 40vh;
@@ -283,7 +303,8 @@ h1 {
 
 .answer-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-auto-rows: 1fr;
   gap: 14px;
   width: 100%;
   max-width: 720px;
@@ -295,6 +316,8 @@ h1 {
 }
 
 .answer {
+  position: relative;
+  overflow: hidden;
   min-height: 96px;
   border: none;
   border-radius: 16px;
@@ -314,6 +337,47 @@ h1 {
     opacity 0.15s ease;
 }
 
+.answer__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: rgba(0, 0, 0, 0.28);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.answer__label {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+.answer--no-letter {
+  justify-content: center;
+  text-align: center;
+  padding: 18px 20px;
+}
+
+.answer--no-letter .answer__label {
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+.answer__count {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
 .answer:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.7);
@@ -328,6 +392,8 @@ h1 {
 }
 
 .answer__letter {
+  position: relative;
+  z-index: 1;
   font-size: 1.4rem;
   font-weight: 900;
   width: 1.9em;
@@ -598,4 +664,112 @@ h1 {
   flex-direction: column;
   gap: var(--gap);
   align-items: center;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.host-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.lobby-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 4vw, 40px);
+  align-items: start;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .lobby-layout {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.lobby-join {
+  text-align: center;
+}
+
+.lobby-setup {
+  max-width: none;
+  text-align: left;
+}
+
+.player-chips--floating .chip--float {
+  animation: chip-float 3.2s ease-in-out infinite;
+}
+
+@keyframes chip-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/*
+ * The host runs on a TV / laptop (never a phone), so instead of a fixed
+ * breakpoint the whole question view flexes to fill the viewport and every
+ * size is expressed in viewport units so it scales continuously with the
+ * screen — the bigger the display, the bigger the text and answer tiles.
+ */
+.screen--host {
+  min-height: 100vh;
+}
+
+.screen--host .question-stack {
+  flex: 1;
+  width: 100%;
+  max-width: min(1600px, 96vw);
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.screen--host .question-text {
+  font-size: clamp(1.8rem, 4.2vw, 5rem);
+  max-width: 100%;
+}
+
+.screen--host .chip--category {
+  font-size: clamp(0.9rem, 1.6vw, 1.5rem);
+}
+
+.screen--host .answer-grid {
+  flex: 1 1 auto;
+  max-width: min(1400px, 94vw);
+  gap: clamp(14px, 1.6vw, 26px);
+  align-content: stretch;
+}
+
+.screen--host .answer {
+  min-height: clamp(96px, 15vh, 220px);
+  font-size: clamp(1.3rem, 2.4vw, 2.8rem);
+  padding: clamp(16px, 2vw, 32px);
+}
+
+.screen--host .answer__letter {
+  font-size: clamp(1.4rem, 2.6vw, 3rem);
+}
+
+.screen--host .answer__count {
+  font-size: clamp(1rem, 1.6vw, 1.6rem);
+}
+
+.screen--host .countdown {
+  font-size: clamp(2rem, 5vw, 3.6rem);
 }

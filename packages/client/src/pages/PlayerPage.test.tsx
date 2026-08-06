@@ -26,17 +26,22 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 1,
+    optionCounts: null,
     leaderboard: [],
     ...overrides,
   };
 }
 
-function questionState(options: string[]): PublicGameState {
+function questionState(
+  options: string[],
+  id = 'q1',
+  number = 1,
+): PublicGameState {
   return baseState({
     phase: 'question',
     currentQuestion: {
-      id: 'q1',
-      number: 1,
+      id,
+      number,
       total: 3,
       category: 'Science',
       difficulty: 'easy',
@@ -133,6 +138,11 @@ describe('PlayerPage answering', () => {
     );
   });
 
+  it('shows the question category as a chip', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    expect(await screen.findByText('Science')).toBeInTheDocument();
+  });
+
   it('renders two buttons for a true/false question', async () => {
     act(() => fake.serverEmit('gameState', questionState(['True', 'False'])));
     await waitFor(() =>
@@ -151,6 +161,63 @@ describe('PlayerPage answering', () => {
     for (const button of screen.getAllByRole('button')) {
       expect(button).toBeDisabled();
     }
+  });
+
+  it('unlocks answering on a new question even without a questionStarted event', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q1')));
+    await userEvent.click(await screen.findByRole('button', { name: /A/ }));
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toBeDisabled();
+    }
+
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q2', 2)),
+    );
+
+    const buttons = await screen.findAllByRole('button');
+    for (const button of buttons) {
+      expect(button).not.toBeDisabled();
+    }
+
+    await userEvent.click(buttons[1]);
+    expect(fake.emittedArgs('submitAnswer').at(-1)?.[0]).toEqual({
+      optionIndex: 1,
+    });
+  });
+
+  it('does not show a banner for a benign answer rejection', async () => {
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() => fake.serverEmit('errorMessage', 'Not accepting answers right now.'));
+
+    expect(
+      screen.queryByText('Not accepting answers right now.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('clears a lingering error banner when the phase changes', async () => {
+    act(() => fake.serverEmit('errorMessage', 'You are not in a game.'));
+    expect(
+      await screen.findByText('You are not in a game.'),
+    ).toBeInTheDocument();
+
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText('You are not in a game.'),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it('shows a get-ready countdown before the first question', async () => {
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({ phase: 'countdown', endsAt: Date.now() + 5_000 }),
+      ),
+    );
+
+    expect(await screen.findByText(/Get ready/i)).toBeInTheDocument();
   });
 
   it('shows placement and stats when the game ends', async () => {
