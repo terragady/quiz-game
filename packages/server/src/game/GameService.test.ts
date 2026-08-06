@@ -49,7 +49,7 @@ let port: number;
 const clients: ClientSocket[] = [];
 
 beforeEach(async () => {
-  handles = createGameServer(pool);
+  handles = createGameServer(pool, { startCountdownMs: 0 });
   await new Promise<void>((resolve) => {
     handles.httpServer.listen(0, resolve);
   });
@@ -91,13 +91,6 @@ function playerJoin(
   return new Promise((resolve) =>
     socket.emit('playerJoin', { code, nickname }, resolve),
   );
-}
-
-function adminJoin(
-  socket: ClientSocket,
-  code: string,
-): Promise<ObserverJoinAck> {
-  return new Promise((resolve) => socket.emit('adminJoin', { code }, resolve));
 }
 
 function playerRejoin(
@@ -152,12 +145,8 @@ describe('GameService integration', () => {
     const lobbyState = await hostSeesPlayer;
     expect(lobbyState.players[0]?.nickname).toBe('Alice');
 
-    const admin = connect();
-    const adminAck = await adminJoin(admin, code);
-    expect(adminAck.ok).toBe(true);
-
     const questionArrives = nextQuestion(player);
-    admin.emit('adminStart', settings);
+    host.emit('hostStart', settings);
     const [question, endsAt] = await questionArrives;
     expect(question.number).toBe(1);
     expect(question.total).toBe(2);
@@ -177,10 +166,92 @@ describe('GameService integration', () => {
       host,
       (s) => s.phase === 'leaderboard',
     );
-    admin.emit('adminNext');
+    host.emit('hostNext');
     const leaderboardState = await leaderboardShown;
     expect(leaderboardState.leaderboard[0]?.nickname).toBe('Alice');
     expect(leaderboardState.leaderboard[0]?.score).toBeGreaterThan(0);
+  });
+
+  it('broadcasts a countdown phase before the first question starts', async () => {
+    const server = createGameServer(pool, { startCountdownMs: 60 });
+    await new Promise<void>((resolve) => server.httpServer.listen(0, resolve));
+    const countdownPort = (server.httpServer.address() as AddressInfo).port;
+    const local: ClientSocket[] = [];
+    const localConnect = (): ClientSocket => {
+      const socket: ClientSocket = createClient(
+        `http://localhost:${countdownPort}`,
+        { forceNew: true, transports: ['websocket'] },
+      );
+      local.push(socket);
+      return socket;
+    };
+    try {
+      const host = localConnect();
+      const hostAck = await new Promise<ObserverJoinAck>((resolve) =>
+        host.emit('hostJoin', {}, resolve),
+      );
+      expect(hostAck.ok).toBe(true);
+      if (!hostAck.ok) return;
+      const code = hostAck.state.code;
+
+      const player = localConnect();
+      await new Promise<JoinAck>((resolve) =>
+        player.emit('playerJoin', { code, nickname: 'Alice' }, resolve),
+      );
+      const countdownSeen = waitForState(host, (s) => s.phase === 'countdown');
+      const questionSeen = waitForState(host, (s) => s.phase === 'question');
+      host.emit('hostStart', settings);
+
+      const countdownState = await countdownSeen;
+      expect(countdownState.currentQuestion).toBeNull();
+      expect(countdownState.endsAt).toBeGreaterThan(Date.now());
+
+      const questionState = await questionSeen;
+      expect(questionState.currentQuestion?.number).toBe(1);
+    } finally {
+      for (const socket of local) socket.disconnect();
+      server.service.dispose();
+      await new Promise<void>((resolve) => server.io.close(() => resolve()));
+    }
+  });
+
+  it('ignores hostNext during the countdown and still starts the first question', async () => {
+    const server = createGameServer(pool, { startCountdownMs: 80 });
+    await new Promise<void>((resolve) => server.httpServer.listen(0, resolve));
+    const localPort = (server.httpServer.address() as AddressInfo).port;
+    const local: ClientSocket[] = [];
+    const localConnect = (): ClientSocket => {
+      const socket: ClientSocket = createClient(`http://localhost:${localPort}`, {
+        forceNew: true,
+        transports: ['websocket'],
+      });
+      local.push(socket);
+      return socket;
+    };
+    try {
+      const host = localConnect();
+      const hostAck = await new Promise<ObserverJoinAck>((resolve) =>
+        host.emit('hostJoin', {}, resolve),
+      );
+      expect(hostAck.ok).toBe(true);
+      if (!hostAck.ok) return;
+      const code = hostAck.state.code;
+
+      const player = localConnect();
+      await new Promise<JoinAck>((resolve) =>
+        player.emit('playerJoin', { code, nickname: 'Alice' }, resolve),
+      );
+      const questionSeen = waitForState(host, (s) => s.phase === 'question');
+      host.emit('hostStart', settings);
+      host.emit('hostNext');
+
+      const questionState = await questionSeen;
+      expect(questionState.currentQuestion?.number).toBe(1);
+    } finally {
+      for (const socket of local) socket.disconnect();
+      server.service.dispose();
+      await new Promise<void>((resolve) => server.io.close(() => resolve()));
+    }
   });
 
   it('auto-advances from reveal to leaderboard when autoAdvance is enabled', async () => {
@@ -192,11 +263,9 @@ describe('GameService integration', () => {
 
     const player = connect();
     await playerJoin(player, code, 'Alice');
-    const admin = connect();
-    await adminJoin(admin, code);
 
     const questionArrives = nextQuestion(player);
-    admin.emit('adminStart', {
+    host.emit('hostStart', {
       ...settings,
       secondsPerQuestion: 120,
       autoAdvance: true,
@@ -222,11 +291,8 @@ describe('GameService integration', () => {
     const bob = connect();
     await playerJoin(bob, code, 'Bob');
 
-    const admin = connect();
-    await adminJoin(admin, code);
-
     const questionArrives = nextQuestion(alice);
-    admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
+    host.emit('hostStart', { ...settings, secondsPerQuestion: 120 });
     const [question] = await questionArrives;
     const correctOption = question.options.indexOf('A');
 
@@ -292,11 +358,8 @@ describe('GameService integration', () => {
     if (!joinAck.ok) return;
     const { playerId } = joinAck;
 
-    const admin = connect();
-    await adminJoin(admin, code);
-
     const questionArrives = nextQuestion(host);
-    admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
+    host.emit('hostStart', { ...settings, secondsPerQuestion: 120 });
     const [question] = await questionArrives;
     const correctOption = question.options.indexOf('A');
 

@@ -6,6 +6,8 @@ export const MAX_NICKNAME_LENGTH = 16;
 
 export const BASE_POINTS = 1000;
 
+export const START_COUNTDOWN_SECONDS = 5;
+
 export const DEFAULT_SETTINGS: GameSettings = {
   questionCount: 10,
   secondsPerQuestion: 20,

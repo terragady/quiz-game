@@ -4,6 +4,7 @@ import {
   calculateScore,
   MAX_NICKNAME_LENGTH,
   SETTINGS_LIMITS,
+  START_COUNTDOWN_SECONDS,
   type AnswerResult,
   type GamePhase,
   type GameSettings,
@@ -49,6 +50,7 @@ export interface GameManagerOptions {
   code: string;
   questionPool: Question[];
   now?: () => number;
+  startCountdownMs?: number;
 }
 
 export class GameManager {
@@ -56,6 +58,7 @@ export class GameManager {
 
   private readonly questionPool: Question[];
   private readonly now: () => number;
+  private readonly startCountdownMs: number;
 
   private phaseValue: GamePhase = 'lobby';
   private settingsValue: GameSettings | null = null;
@@ -68,6 +71,8 @@ export class GameManager {
     this.code = options.code;
     this.questionPool = options.questionPool;
     this.now = options.now ?? (() => Date.now());
+    this.startCountdownMs =
+      options.startCountdownMs ?? START_COUNTDOWN_SECONDS * 1000;
   }
 
   get phase(): GamePhase {
@@ -143,6 +148,14 @@ export class GameManager {
     this.settingsValue = validated;
     this.questions = selected;
     this.questionIndex = -1;
+    this.endsAt = this.now() + this.startCountdownMs;
+    this.phaseValue = 'countdown';
+  }
+
+  beginQuestions(): void {
+    if (this.phaseValue !== 'countdown') {
+      throw new Error('The game is not counting down.');
+    }
     this.beginNextQuestion();
   }
 
@@ -260,6 +273,7 @@ export class GameManager {
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
+      optionCounts: this.phaseValue === 'reveal' ? this.optionCounts() : null,
       leaderboard: this.leaderboard(),
     };
   }
@@ -346,6 +360,18 @@ export class GameManager {
   private answeredCount(): number {
     return [...this.players.values()].filter((p) => p.currentAnswer !== null)
       .length;
+  }
+
+  private optionCounts(): number[] {
+    const question = this.currentQuestion();
+    const counts = question.options.map(() => 0);
+    for (const player of this.players.values()) {
+      const index = player.currentAnswer?.optionIndex;
+      if (index !== undefined && index >= 0 && index < counts.length) {
+        counts[index] += 1;
+      }
+    }
+    return counts;
   }
 
   private leaderboard(): LeaderboardRow[] {

@@ -28,13 +28,9 @@ export interface ClientToServerEvents {
     payload: { code: string; playerId: string },
     ack: (result: JoinAck) => void,
   ) => void;
-  adminJoin: (
-    payload: { code: string },
-    ack: (result: ObserverJoinAck) => void,
-  ) => void;
-  adminStart: (settings: GameSettings) => void;
-  adminNext: () => void;
-  adminEnd: () => void;
+  hostStart: (settings: GameSettings) => void;
+  hostNext: () => void;
+  hostEnd: () => void;
   submitAnswer: (payload: { optionIndex: number }) => void;
 }
 

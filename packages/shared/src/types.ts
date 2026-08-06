@@ -1,8 +1,14 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
-export type Role = 'host' | 'player' | 'admin';
+export type Role = 'host' | 'player';
 
-export type GamePhase = 'lobby' | 'question' | 'reveal' | 'leaderboard' | 'ended';
+export type GamePhase =
+  | 'lobby'
+  | 'countdown'
+  | 'question'
+  | 'reveal'
+  | 'leaderboard'
+  | 'ended';
 
 export interface Question {
   id: string;
@@ -80,6 +86,7 @@ export interface PublicGameState {
   endsAt: number | null;
   answeredCount: number;
   playerCount: number;
+  optionCounts: number[] | null;
   leaderboard: LeaderboardRow[];
 }
 
