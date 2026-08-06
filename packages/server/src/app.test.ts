@@ -62,6 +62,16 @@ describe('createGameServer static client serving', () => {
     expect(response.status).toBe(200);
     expect(await response.text()).toContain('<div id="root">');
   });
+
+  it('rate-limits the SPA fallback route but not static assets', async () => {
+    const fallback = await fetch(`${baseUrl}/play`);
+    await fallback.text();
+    expect(fallback.headers.get('ratelimit-policy')).not.toBeNull();
+
+    const asset = await fetch(`${baseUrl}/app.js`);
+    await asset.text();
+    expect(asset.headers.get('ratelimit-policy')).toBeNull();
+  });
 });
 
 describe('createGameServer CORS configuration', () => {

@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createServer, type Server as HttpServer } from 'node:http';
 import express, { type Express } from 'express';
+import rateLimit from 'express-rate-limit';
 import { Server } from 'socket.io';
 import type {
   ClientToServerEvents,
@@ -42,7 +43,13 @@ export function createGameServer(
   if (options.clientDir && existsSync(options.clientDir)) {
     const indexHtml = join(options.clientDir, 'index.html');
     app.use(express.static(options.clientDir));
-    app.get('/*splat', (_req, res) => {
+    const spaFallbackLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 1000,
+      standardHeaders: 'draft-7',
+      legacyHeaders: false,
+    });
+    app.get('/*splat', spaFallbackLimiter, (_req, res) => {
       res.sendFile(indexHtml);
     });
   }
