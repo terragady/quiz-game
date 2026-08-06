@@ -10,7 +10,12 @@ and an admin drives the game from a phone remote.
 - **Player** (`/play`) — mobile-first join screen (nickname + code), then big
   colored A/B/C/D answer buttons.
 - **Admin remote** (`/admin`) — enter the game code, choose settings, start the
-  game, reveal answers, advance questions, and end the game.
+  game, reveal answers, advance questions, and end the game. Optional
+  **auto-advance** moves through reveal → leaderboard → next question on a timer.
+
+Each host screen is its own **room** with a unique code; refreshing the TV
+rejoins the same game, and a "New game" button starts a fresh one. Some
+questions are **picture questions** (e.g. "guess the flag").
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single
 origin, so it fits comfortably on a free hosting tier.
@@ -49,20 +54,27 @@ of `localhost` (the QR code on the host screen uses the browser's origin).
 
 ## Questions
 
-Questions are read at runtime from `packages/server/data/questions.json` — a
-committed file, so the app has no runtime dependency on any external service.
+At runtime the game pool is the merge of two committed files, so the app has no
+runtime dependency on any external service:
 
-To refresh the pool from the [Open Trivia DB](https://opentdb.com):
+- `packages/server/data/curated-questions.json` — a hand-maintained set of
+  English questions focused on Europe, Norway, and Poland, plus "guess the flag"
+  picture questions. Edit this by hand; the importer never touches it.
+- `packages/server/data/questions.json` — the [Open Trivia DB](https://opentdb.com)
+  dump, produced (and overwritten) by the import script.
+
+Options are shuffled when the pool loads, so the correct answer never sits in a
+fixed slot. To refresh the imported pool:
 
 ```bash
-npm run questions:import                       # ~50 multiple-choice + ~15 true/false
+npm run questions:import                        # ~150 multiple-choice + ~50 true/false
 npm run questions:import -- --multiple 50 --boolean 20
 ```
 
 The import script fetches questions, decodes them, shuffles the options (tracking
-the correct answer), de-duplicates, validates, and overwrites the JSON file.
-Open Trivia DB is rate-limited, so requests are spaced out and each is capped at
-50 questions.
+the correct answer), de-duplicates, validates, and overwrites `questions.json`
+only. Open Trivia DB is rate-limited, so requests are spaced out and each is
+capped at 50 questions.
 
 ## Scripts
 
@@ -95,7 +107,7 @@ The repo includes a [`render.yaml`](./render.yaml) Blueprint.
 2. In Render, create a new **Blueprint** and point it at the repo (or create a
    **Web Service** manually with the settings below).
 3. Render reads `render.yaml`:
-   - **Build:** `npm install && npm run build`
+   - **Build:** `npm install --include=dev && npm run build`
    - **Start:** `npm start`
    - **Health check:** `/healthz`
    - **Plan:** free
@@ -110,6 +122,7 @@ few seconds to wake.
 packages/
   shared/   Types + socket event contract (consumed as TS source)
   server/   Express + Socket.IO game server, question loader, import script
-    data/questions.json   Committed question pool
+    data/curated-questions.json   Hand-maintained EU/NO/PL + flag questions
+    data/questions.json           Imported Open Trivia DB dump
   client/   React app (host, player, admin views)
 ```
