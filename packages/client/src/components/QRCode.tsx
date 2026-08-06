@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import QRCodeLib from 'qrcode';
 
-/** Renders a QR code image for the given value. */
 export function QRCode({ value, size = 220 }: { value: string; size?: number }) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 

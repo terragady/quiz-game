@@ -2,12 +2,15 @@ import { describe, it, expect } from 'vitest';
 import type { Question } from '@quiz/shared';
 import {
   CURATED_QUESTIONS_PATH,
-  DEFAULT_QUESTIONS_PATH,
+  POOL_QUESTIONS_PATH,
+  buildQuestionPool,
+  dedupeByText,
   filterQuestions,
   listCategories,
   loadQuestionPool,
   loadQuestions,
   mergeQuestions,
+  normalizeQuestionText,
   selectQuestions,
   validateQuestionsData,
   withShuffledOptions,
@@ -92,7 +95,6 @@ describe('withShuffledOptions', () => {
       options: ['Right', 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     };
-    // Run many times: however the options land, correctIndex must track "Right".
     for (let i = 0; i < 50; i += 1) {
       const shuffled = withShuffledOptions(source);
       expect(shuffled.options).toHaveLength(4);
@@ -144,6 +146,24 @@ describe('selectQuestions', () => {
     });
     expect(result.every((q) => q.category === 'Science')).toBe(true);
   });
+
+  it('shuffles each question\'s options while keeping correctIndex accurate', () => {
+    const source: Question[] = [
+      {
+        id: 'shuffle-me',
+        category: 'Test',
+        difficulty: 'easy',
+        text: 'Pick the right one',
+        options: ['Right', 'Wrong1', 'Wrong2', 'Wrong3'],
+        correctIndex: 0,
+      },
+    ];
+    for (let i = 0; i < 50; i += 1) {
+      const [picked] = selectQuestions(source, { count: 1 });
+      expect(picked.options[picked.correctIndex]).toBe('Right');
+      expect([...picked.options].sort()).toEqual([...source[0].options].sort());
+    }
+  });
 });
 
 describe('listCategories', () => {
@@ -155,9 +175,9 @@ describe('listCategories', () => {
   });
 });
 
-describe('loadQuestions (seed file)', () => {
-  it('loads and validates the committed seed questions', () => {
-    const questions = loadQuestions(DEFAULT_QUESTIONS_PATH);
+describe('loadQuestions (pool file)', () => {
+  it('loads and validates the committed pool questions', () => {
+    const questions = loadQuestions(POOL_QUESTIONS_PATH);
     expect(questions.length).toBeGreaterThanOrEqual(10);
   });
 
@@ -179,24 +199,91 @@ describe('mergeQuestions', () => {
   });
 });
 
-describe('loadQuestionPool', () => {
-  it('loads and merges the curated and imported files', () => {
-    const pool = loadQuestionPool();
+describe('normalizeQuestionText', () => {
+  it('ignores casing, punctuation, and whitespace differences', () => {
+    expect(normalizeQuestionText('Capital of France?')).toBe(
+      normalizeQuestionText('  capital   of france '),
+    );
+  });
+
+  it('strips HTML entities', () => {
+    expect(normalizeQuestionText('Tom &amp; Jerry')).toBe(
+      normalizeQuestionText('Tom Jerry'),
+    );
+  });
+});
+
+describe('dedupeByText', () => {
+  it('removes later questions whose text duplicates an earlier one', () => {
+    const first: Question = { ...sample[2], id: 'first' };
+    const dup: Question = { ...sample[2], id: 'second', text: 'capital of FRANCE?' };
+    const result = dedupeByText([first, dup, sample[0]]);
+    expect(result.map((q) => q.id)).toEqual(['first', 'a']);
+  });
+
+  it('keeps image questions that share a prompt but differ by image', () => {
+    const flagOne: Question = {
+      id: 'flag-1',
+      category: 'Flags',
+      difficulty: 'easy',
+      text: "Which country's flag is this?",
+      options: ['Norway', 'Sweden'],
+      correctIndex: 0,
+      imageUrl: 'https://flagcdn.com/w320/no.png',
+    };
+    const flagTwo: Question = {
+      ...flagOne,
+      id: 'flag-2',
+      options: ['Sweden', 'Norway'],
+      imageUrl: 'https://flagcdn.com/w320/se.png',
+    };
+    expect(dedupeByText([flagOne, flagTwo]).map((q) => q.id)).toEqual([
+      'flag-1',
+      'flag-2',
+    ]);
+  });
+});
+
+describe('buildQuestionPool', () => {
+  it('merges the source files with no duplicate ids', () => {
+    const pool = buildQuestionPool();
     const ids = new Set(pool.map((q) => q.id));
-    expect(ids.size).toBe(pool.length); // no duplicate ids
+    expect(ids.size).toBe(pool.length);
     expect(pool.some((q) => q.category === 'Norway')).toBe(true);
     expect(pool.some((q) => q.category === 'Poland')).toBe(true);
   });
 
-  it('still returns curated questions when the imported file is absent', () => {
-    const pool = loadQuestionPool(CURATED_QUESTIONS_PATH, '/no/such/file.json');
+  it('contains no duplicate question text (image questions aside)', () => {
+    const pool = buildQuestionPool();
+    const keys = pool
+      .filter((q) => !q.imageUrl)
+      .map((q) => normalizeQuestionText(q.text));
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('still returns curated questions when the other sources are absent', () => {
+    const pool = buildQuestionPool(
+      CURATED_QUESTIONS_PATH,
+      '/no/such/file.json',
+      '/no/such/trivia.json',
+    );
     expect(pool.length).toBeGreaterThan(0);
     expect(pool.some((q) => q.category === 'Europe')).toBe(true);
   });
+});
 
-  it('throws when both files are missing', () => {
-    expect(() =>
-      loadQuestionPool('/no/curated.json', '/no/imported.json'),
-    ).toThrow(/No questions available/);
+describe('loadQuestionPool', () => {
+  it('loads the pre-built committed pool', () => {
+    const pool = loadQuestionPool();
+    const ids = new Set(pool.map((q) => q.id));
+    expect(ids.size).toBe(pool.length);
+    expect(pool.some((q) => q.category === 'Norway')).toBe(true);
+    expect(pool.some((q) => q.category === 'Poland')).toBe(true);
+  });
+
+  it('throws when the pool file is missing', () => {
+    expect(() => loadQuestionPool('/no/such/pool.json')).toThrow(
+      /No questions available/,
+    );
   });
 });

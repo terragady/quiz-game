@@ -2,6 +2,8 @@ import { beforeEach, describe, it, expect } from 'vitest';
 import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
 import { GameManager } from './GameManager.js';
 
+const CORRECT_ANSWER = 'Correct';
+
 function makePool(): Question[] {
   return [
     {
@@ -9,7 +11,7 @@ function makePool(): Question[] {
       category: 'Science',
       difficulty: 'easy',
       text: 'Q1',
-      options: ['A', 'B', 'C', 'D'],
+      options: [CORRECT_ANSWER, 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     },
     {
@@ -17,8 +19,7 @@ function makePool(): Question[] {
       category: 'Science',
       difficulty: 'easy',
       text: 'Q2',
-      // correctIndex 0 across the pool so tests are independent of shuffle order.
-      options: ['A', 'B', 'C', 'D'],
+      options: [CORRECT_ANSWER, 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     },
     {
@@ -26,10 +27,26 @@ function makePool(): Question[] {
       category: 'History',
       difficulty: 'hard',
       text: 'Q3',
-      options: ['True', 'False'],
+      options: [CORRECT_ANSWER, 'Wrong1'],
       correctIndex: 0,
     },
   ];
+}
+
+function correctOptionIndex(game: GameManager): number {
+  const question = game.getPublicState().currentQuestion;
+  if (!question) {
+    throw new Error('No current question.');
+  }
+  return question.options.indexOf(CORRECT_ANSWER);
+}
+
+function wrongOptionIndex(game: GameManager): number {
+  const question = game.getPublicState().currentQuestion;
+  if (!question) {
+    throw new Error('No current question.');
+  }
+  return question.options.findIndex((option) => option !== CORRECT_ANSWER);
 }
 
 const baseSettings: GameSettings = {
@@ -165,7 +182,6 @@ describe('GameManager answering', () => {
   });
 
   it('reports when all connected players have answered', () => {
-    // Fresh game so a second player can be added during the lobby.
     const twoPlayerGame = new GameManager({
       code: 'WXYZ',
       questionPool: makePool(),
@@ -204,13 +220,12 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('awards more points to faster correct answers and none to wrong ones', () => {
-    // Fast answers immediately (full time remaining).
-    game.submitAnswer(fast, 0);
-    // Slow answers with half the time gone.
+    const correct = correctOptionIndex(game);
+    const incorrect = wrongOptionIndex(game);
+    game.submitAnswer(fast, correct);
     clock = 1000 + 10 * 1000;
-    game.submitAnswer(slow, 0);
-    // Wrong answers immediately but incorrectly.
-    game.submitAnswer(wrong, 1);
+    game.submitAnswer(slow, correct);
+    game.submitAnswer(wrong, incorrect);
 
     game.reveal();
 
@@ -227,9 +242,10 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('reveals the correct index only during the reveal phase', () => {
+    const expectedIndex = correctOptionIndex(game);
     expect(game.getPublicState().revealedCorrectIndex).toBeNull();
     game.reveal();
-    expect(game.getPublicState().revealedCorrectIndex).toBe(0);
+    expect(game.getPublicState().revealedCorrectIndex).toBe(expectedIndex);
   });
 
   it('never exposes the correct answer on the public question object', () => {
@@ -238,12 +254,12 @@ describe('GameManager scoring and reveal', () => {
   });
 
   it('accumulates score across questions', () => {
-    game.submitAnswer(fast, 0);
+    game.submitAnswer(fast, correctOptionIndex(game));
     game.reveal();
     const afterFirst = game.getAnswerResult(fast).totalScore;
-    game.advance(); // reveal -> leaderboard
-    game.advance(); // leaderboard -> question 2
-    game.submitAnswer(fast, 0); // correct across the pool
+    game.advance();
+    game.advance();
+    game.submitAnswer(fast, correctOptionIndex(game));
     game.reveal();
     expect(game.getAnswerResult(fast).totalScore).toBeGreaterThan(afterFirst);
   });
@@ -276,12 +292,12 @@ describe('GameManager phase advancement', () => {
   });
 
   it('ends the game after the last question', () => {
-    game.advance(); // q1 reveal
-    game.advance(); // q1 leaderboard
-    game.advance(); // q2 question
-    game.advance(); // q2 reveal
-    game.advance(); // q2 leaderboard
-    game.advance(); // -> ended
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
     expect(game.phase).toBe('ended');
   });
 
@@ -309,10 +325,9 @@ describe('GameManager leaderboard', () => {
     const b = game.addPlayer('B');
     const c = game.addPlayer('C');
     game.start(baseSettings);
-    // A and B answer correctly at the same instant; C is wrong.
-    game.submitAnswer(a, 0);
-    game.submitAnswer(b, 0);
-    game.submitAnswer(c, 1);
+    game.submitAnswer(a, correctOptionIndex(game));
+    game.submitAnswer(b, correctOptionIndex(game));
+    game.submitAnswer(c, wrongOptionIndex(game));
     game.reveal();
 
     const rows = game.getPublicState().leaderboard;
@@ -322,5 +337,61 @@ describe('GameManager leaderboard', () => {
     expect(rankByNickname.A).toBe(1);
     expect(rankByNickname.B).toBe(1);
     expect(rankByNickname.C).toBe(3);
+  });
+});
+
+describe('GameManager end-of-game stats', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  it('exposes per-player stats only once the game has ended', () => {
+    const right = game.addPlayer('Right');
+    const wrongPlayer = game.addPlayer('Wrong');
+    game.addPlayer('Quiet');
+    game.start({ ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
+
+    game.submitAnswer(right, correctOptionIndex(game));
+    clock = 1000 + 5000;
+    game.submitAnswer(wrongPlayer, wrongOptionIndex(game));
+    game.reveal();
+
+    expect(game.getPublicState().leaderboard[0]?.stats).toBeUndefined();
+
+    game.advance();
+    game.advance();
+
+    const rows = game.getPublicState().leaderboard;
+    const byName = Object.fromEntries(rows.map((r) => [r.nickname, r.stats]));
+
+    expect(byName.Right).toMatchObject({
+      correct: 1,
+      incorrect: 0,
+      unanswered: 0,
+      averageResponseMs: 0,
+      fastestCorrectMs: 0,
+    });
+    expect(byName.Wrong).toMatchObject({
+      correct: 0,
+      incorrect: 1,
+      unanswered: 0,
+      averageResponseMs: 5000,
+      fastestCorrectMs: null,
+    });
+    expect(byName.Quiet).toMatchObject({
+      correct: 0,
+      incorrect: 0,
+      unanswered: 1,
+      averageResponseMs: null,
+      fastestCorrectMs: null,
+    });
   });
 });

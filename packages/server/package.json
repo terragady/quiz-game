@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
+    "questions:build": "tsx src/scripts/build-questions.ts",
     "questions:import": "tsx src/scripts/import-questions.ts",
+    "questions:import:trivia-api": "tsx src/scripts/import-trivia-api.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   },

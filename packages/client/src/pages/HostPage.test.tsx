@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import type { PublicGameState } from '@quiz/shared';
 import { HostPage } from './HostPage.js';
@@ -124,36 +124,57 @@ describe('HostPage', () => {
     expect(image).toHaveAttribute('src', 'https://flagcdn.com/w320/no.png');
   });
 
-  it('renders the leaderboard standings', () => {
-    renderHost(fake);
-    act(() =>
-      fake.serverEmit(
-        'gameState',
-        baseState({
-          phase: 'leaderboard',
-          leaderboard: [
-            {
-              playerId: 'p1',
-              nickname: 'Alice',
-              score: 1500,
-              rank: 1,
-              lastPoints: 750,
-            },
-            {
-              playerId: 'p2',
-              nickname: 'Bob',
-              score: 500,
-              rank: 2,
-              lastPoints: 0,
-            },
-          ],
-        }),
-      ),
-    );
+  it('animates the leaderboard from the previous standings to the final scores', () => {
+    vi.useFakeTimers({
+      toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'performance',
+        'Date',
+      ],
+    });
+    try {
+      renderHost(fake);
+      act(() =>
+        fake.serverEmit(
+          'gameState',
+          baseState({
+            phase: 'leaderboard',
+            leaderboard: [
+              {
+                playerId: 'p1',
+                nickname: 'Alice',
+                score: 1500,
+                rank: 1,
+                lastPoints: 750,
+              },
+              {
+                playerId: 'p2',
+                nickname: 'Bob',
+                score: 500,
+                rank: 2,
+                lastPoints: 0,
+              },
+            ],
+          }),
+        ),
+      );
 
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('1500')).toBeInTheDocument();
-    expect(screen.getByText('Bob')).toBeInTheDocument();
-    expect(screen.getByText('+750')).toBeInTheDocument();
+      expect(screen.getByText('Alice')).toBeInTheDocument();
+      expect(screen.getByText('750')).toBeInTheDocument();
+      expect(screen.queryByText('+750')).not.toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      expect(screen.getByText('1500')).toBeInTheDocument();
+      expect(screen.getByText('Bob')).toBeInTheDocument();
+      expect(screen.getByText('+750')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

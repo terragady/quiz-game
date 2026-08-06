@@ -13,7 +13,6 @@ export function AnswerButton({
   onSelect?: () => void;
   disabled?: boolean;
   selected?: boolean;
-  /** During reveal: true = the correct option, false = an incorrect option. */
   correct?: boolean;
 }) {
   const classes = ['answer', `answer--${index}`];

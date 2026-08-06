@@ -8,6 +8,7 @@ import {
   type GamePhase,
   type GameSettings,
   type LeaderboardRow,
+  type PlayerStats,
   type PublicGameState,
   type PublicPlayer,
   type PublicQuestion,
@@ -20,6 +21,15 @@ interface CurrentAnswer {
   timeRemainingMs: number;
 }
 
+interface RunningStats {
+  correct: number;
+  incorrect: number;
+  unanswered: number;
+  answeredCount: number;
+  totalResponseMs: number;
+  fastestCorrectMs: number | null;
+}
+
 interface InternalPlayer {
   id: string;
   nickname: string;
@@ -27,6 +37,7 @@ interface InternalPlayer {
   connected: boolean;
   lastPoints: number;
   currentAnswer: CurrentAnswer | null;
+  stats: RunningStats;
 }
 
 export interface SubmitResult {
@@ -37,14 +48,9 @@ export interface SubmitResult {
 export interface GameManagerOptions {
   code: string;
   questionPool: Question[];
-  /** Injectable clock for deterministic testing. */
   now?: () => number;
 }
 
-/**
- * In-memory state machine for a single game.
- * Phases: lobby -> question -> reveal -> leaderboard -> (question | ended)
- */
 export class GameManager {
   readonly code: string;
 
@@ -68,9 +74,7 @@ export class GameManager {
     return this.phaseValue;
   }
 
-  // --- Lobby -----------------------------------------------------------------
 
-  /** Add a player during the lobby. Returns the new player's id. */
   addPlayer(nickname: string): string {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -99,6 +103,14 @@ export class GameManager {
       connected: true,
       lastPoints: 0,
       currentAnswer: null,
+      stats: {
+        correct: 0,
+        incorrect: 0,
+        unanswered: 0,
+        answeredCount: 0,
+        totalResponseMs: 0,
+        fastestCorrectMs: null,
+      },
     });
     return id;
   }
@@ -114,9 +126,7 @@ export class GameManager {
     }
   }
 
-  // --- Game flow -------------------------------------------------------------
 
-  /** Start the game with validated settings and begin the first question. */
   start(settings: GameSettings): void {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -136,7 +146,6 @@ export class GameManager {
     this.beginNextQuestion();
   }
 
-  /** Record a player's answer to the current question. */
   submitAnswer(playerId: string, optionIndex: number): SubmitResult {
     const player = this.players.get(playerId);
     if (!player) {
@@ -165,7 +174,6 @@ export class GameManager {
     return { accepted: true };
   }
 
-  /** True when every connected player has answered the current question. */
   allConnectedAnswered(): boolean {
     const connected = [...this.players.values()].filter((p) => p.connected);
     if (connected.length === 0) {
@@ -174,7 +182,6 @@ export class GameManager {
     return connected.every((p) => p.currentAnswer !== null);
   }
 
-  /** Move from `question` to `reveal`, scoring every player's answer. */
   reveal(): void {
     if (this.phaseValue !== 'question') {
       return;
@@ -192,12 +199,12 @@ export class GameManager {
       });
       player.lastPoints = points;
       player.score += points;
+      this.recordStats(player, answer, correct, durationMs);
     }
     this.endsAt = null;
     this.phaseValue = 'reveal';
   }
 
-  /** Admin "next": advance through reveal -> leaderboard -> next question/end. */
   advance(): void {
     switch (this.phaseValue) {
       case 'question':
@@ -218,15 +225,12 @@ export class GameManager {
     }
   }
 
-  /** End the game immediately. */
   end(): void {
     this.endsAt = null;
     this.phaseValue = 'ended';
   }
 
-  // --- Projections -----------------------------------------------------------
 
-  /** The per-player result to send once a question is revealed. */
   getAnswerResult(playerId: string): AnswerResult {
     const player = this.players.get(playerId);
     if (!player) {
@@ -244,7 +248,6 @@ export class GameManager {
     };
   }
 
-  /** The broadcastable state shared by all roles (never leaks the answer). */
   getPublicState(): PublicGameState {
     return {
       code: this.code,
@@ -261,7 +264,6 @@ export class GameManager {
     };
   }
 
-  // --- Internals -------------------------------------------------------------
 
   private beginNextQuestion(): void {
     this.questionIndex += 1;
@@ -271,6 +273,30 @@ export class GameManager {
     }
     this.endsAt = this.now() + this.settings().secondsPerQuestion * 1000;
     this.phaseValue = 'question';
+  }
+
+  private recordStats(
+    player: InternalPlayer,
+    answer: CurrentAnswer | null,
+    correct: boolean,
+    durationMs: number,
+  ): void {
+    const stats = player.stats;
+    if (!answer) {
+      stats.unanswered += 1;
+      return;
+    }
+    const responseMs = Math.max(0, durationMs - answer.timeRemainingMs);
+    stats.answeredCount += 1;
+    stats.totalResponseMs += responseMs;
+    if (correct) {
+      stats.correct += 1;
+      if (stats.fastestCorrectMs === null || responseMs < stats.fastestCorrectMs) {
+        stats.fastestCorrectMs = responseMs;
+      }
+    } else {
+      stats.incorrect += 1;
+    }
   }
 
   private settings(): GameSettings {
@@ -326,6 +352,7 @@ export class GameManager {
     const sorted = [...this.players.values()].sort(
       (a, b) => b.score - a.score,
     );
+    const includeStats = this.phaseValue === 'ended';
     let rank = 0;
     let previousScore: number | null = null;
     return sorted.map((player, position) => {
@@ -339,6 +366,7 @@ export class GameManager {
         score: player.score,
         rank,
         lastPoints: player.lastPoints,
+        ...(includeStats ? { stats: projectStats(player.stats) } : {}),
       };
     });
   }
@@ -348,6 +376,19 @@ export class GameManager {
       this.leaderboard().find((row) => row.playerId === playerId)?.rank ?? 0
     );
   }
+}
+
+function projectStats(stats: RunningStats): PlayerStats {
+  return {
+    correct: stats.correct,
+    incorrect: stats.incorrect,
+    unanswered: stats.unanswered,
+    averageResponseMs:
+      stats.answeredCount > 0
+        ? Math.round(stats.totalResponseMs / stats.answeredCount)
+        : null,
+    fastestCorrectMs: stats.fastestCorrectMs,
+  };
 }
 
 function validateSettings(settings: GameSettings): GameSettings {

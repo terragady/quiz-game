@@ -15,7 +15,6 @@
   --silver: #d6dcec;
   --bronze: #e0975a;
 
-  /* Answer colors (A/B/C/D). */
   --a: #e8455a;
   --b: #2d9cdb;
   --c: #f2b705;
@@ -94,7 +93,6 @@ h1 {
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* Buttons ------------------------------------------------------------------ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -156,7 +154,6 @@ h1 {
   flex-wrap: wrap;
 }
 
-/* Forms -------------------------------------------------------------------- */
 .field {
   display: flex;
   flex-direction: column;
@@ -210,7 +207,6 @@ h1 {
   margin-bottom: 12px;
 }
 
-/* Home --------------------------------------------------------------------- */
 .home__title {
   font-size: clamp(2.6rem, 9vw, 3.8rem);
   font-weight: 900;
@@ -232,7 +228,6 @@ h1 {
   gap: 12px;
 }
 
-/* Join code + QR ----------------------------------------------------------- */
 .code-badge {
   font-size: clamp(3rem, 12vw, 6rem);
   font-weight: 900;
@@ -255,7 +250,6 @@ h1 {
   color: var(--text-dim);
 }
 
-/* Players / lobby ---------------------------------------------------------- */
 .player-chips {
   display: flex;
   flex-wrap: wrap;
@@ -276,7 +270,6 @@ h1 {
   color: var(--good);
 }
 
-/* Question image (host) ---------------------------------------------------- */
 .question-image {
   max-width: min(420px, 80vw);
   max-height: 40vh;
@@ -288,7 +281,6 @@ h1 {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* Answers ------------------------------------------------------------------ */
 .answer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -378,7 +370,6 @@ h1 {
     0 14px 30px -10px rgba(44, 227, 138, 0.6);
 }
 
-/* Countdown ---------------------------------------------------------------- */
 .countdown {
   align-self: center;
   font-size: clamp(1.6rem, 5vw, 2.4rem);
@@ -407,7 +398,6 @@ h1 {
   }
 }
 
-/* Question (host) ---------------------------------------------------------- */
 .question-text {
   font-size: clamp(1.5rem, 5vw, 3rem);
   font-weight: 800;
@@ -417,7 +407,6 @@ h1 {
   margin-inline: auto;
 }
 
-/* Leaderboard -------------------------------------------------------------- */
 .leaderboard {
   list-style: none;
   padding: 0;
@@ -489,7 +478,54 @@ h1 {
   font-weight: 700;
 }
 
-/* Feedback (player) -------------------------------------------------------- */
+.leaderboard--animated {
+  position: relative;
+  display: block;
+  padding: 0;
+}
+
+.leaderboard--animated .arow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 62px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 1.2rem;
+  will-change: transform;
+}
+
+.leaderboard--animated .arow--gold {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, rgba(255, 209, 92, 0.16), transparent);
+}
+.leaderboard--animated .arow--gold .leaderboard__rank {
+  color: var(--gold);
+}
+
+.leaderboard--animated .arow--silver {
+  border-color: var(--silver);
+  background: linear-gradient(90deg, rgba(214, 220, 236, 0.12), transparent);
+}
+.leaderboard--animated .arow--silver .leaderboard__rank {
+  color: var(--silver);
+}
+
+.leaderboard--animated .arow--bronze {
+  border-color: var(--bronze);
+  background: linear-gradient(90deg, rgba(224, 151, 90, 0.12), transparent);
+}
+.leaderboard--animated .arow--bronze .leaderboard__rank {
+  color: var(--bronze);
+}
+
 .feedback {
   text-align: center;
   padding: 24px;
@@ -506,6 +542,51 @@ h1 {
 .feedback__points {
   font-size: 2.6rem;
   font-weight: 900;
+}
+
+.place-badge {
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  font-weight: 900;
+  margin: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin: 12px auto 0;
+  padding: 0;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  margin: 0;
+  text-align: center;
+}
+
+.stat__value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.stat__label {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.stat--good .stat__value {
+  color: var(--good);
+}
+
+.stat--bad .stat__value {
+  color: var(--bad);
 }
 
 .center-text {

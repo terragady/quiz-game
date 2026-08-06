@@ -4,7 +4,6 @@ import { loadQuestionPool } from './questions/loader.js';
 
 const questions = loadQuestionPool();
 
-// Built client lives at packages/client/dist relative to this file.
 const clientDir = fileURLToPath(new URL('../../client/dist', import.meta.url));
 const { httpServer } = createGameServer(questions, { clientDir });
 

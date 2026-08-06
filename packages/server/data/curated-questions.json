@@ -476,5 +476,861 @@
     "options": ["Portugal", "Spain", "Brazil", "Italy"],
     "correctIndex": 0,
     "imageUrl": "https://flagcdn.com/w320/pt.png"
+  },
+  {
+    "id": "curated-no-population",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Approximately how many people live in Norway?",
+    "options": ["About 5.5 million", "About 2 million", "About 10 million", "About 20 million"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-western-sea",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "Which sea borders Norway along its western coast?",
+    "options": ["The Norwegian Sea", "The Baltic Sea", "The Black Sea", "The Mediterranean Sea"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-svalbard",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Arctic archipelago far to the north is a territory of Norway?",
+    "options": ["Svalbard", "The Faroe Islands", "Åland", "Gotland"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-bryggen",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "What is the name of the colourful old Hanseatic wharf in Bergen, a UNESCO World Heritage Site?",
+    "options": ["Bryggen", "Nyhavn", "Gamla Stan", "Grünerløkka"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-aurora",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "Which natural light display is famously seen in northern Norway?",
+    "options": ["The Northern Lights (Aurora Borealis)", "A total solar eclipse", "The midnight rainbow", "Ball lightning"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-munch",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian artist painted 'The Scream'?",
+    "options": ["Edvard Munch", "Gustav Vigeland", "Henrik Ibsen", "Theodor Kittelsen"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-grieg",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian composer wrote the 'Peer Gynt' suite, including 'In the Hall of the Mountain King'?",
+    "options": ["Edvard Grieg", "Jean Sibelius", "Carl Nielsen", "Johan Svendsen"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-ibsen",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian playwright wrote 'A Doll's House'?",
+    "options": ["Henrik Ibsen", "August Strindberg", "Anton Chekhov", "Bjørnstjerne Bjørnson"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-longest-border",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "Norway shares its longest land border with which country?",
+    "options": ["Sweden", "Finland", "Russia", "Denmark"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-oil-fund",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "By what nickname is Norway's giant sovereign wealth fund commonly known?",
+    "options": ["The Oil Fund", "The Viking Fund", "The Fjord Reserve", "The Nordic Trust"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-tromso",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which city above the Arctic Circle is a major hub for Arctic tourism in Norway?",
+    "options": ["Tromsø", "Kristiansand", "Drammen", "Fredrikstad"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-vikings",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "The Vikings set sail from Scandinavia mainly during which period?",
+    "options": ["The early Middle Ages (c. 8th–11th century)", "The Bronze Age", "The Renaissance", "The Roman Empire"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-baltic",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "Which sea forms Poland's northern coastline?",
+    "options": ["The Baltic Sea", "The North Sea", "The Adriatic Sea", "The Black Sea"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-population",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Approximately how many people live in Poland?",
+    "options": ["About 38 million", "About 10 million", "About 25 million", "About 60 million"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-gdansk",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which Polish port city on the Baltic was a historic member of the Hanseatic League?",
+    "options": ["Gdańsk", "Katowice", "Lublin", "Rzeszów"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-auschwitz",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "The Auschwitz memorial is located near which Polish town?",
+    "options": ["Oświęcim", "Zakopane", "Sopot", "Toruń"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-chopin-heart",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which Polish-born composer's heart is preserved in a church in Warsaw?",
+    "options": ["Frédéric Chopin", "Ignacy Paderewski", "Karol Szymanowski", "Witold Lutosławski"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-barszcz",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "What is the traditional Polish beetroot soup called?",
+    "options": ["Barszcz", "Żurek", "Rosół", "Flaki"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-zakopane",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which mountain resort town is often called the 'winter capital of Poland'?",
+    "options": ["Zakopane", "Sopot", "Malbork", "Gniezno"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-malbork",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which Polish castle, built by the Teutonic Knights, is the largest castle in the world by land area?",
+    "options": ["Malbork Castle", "Wawel Castle", "Książ Castle", "Bran Castle"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-flag-colours",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "What are the two colours of the Polish flag?",
+    "options": ["White and red", "Red and green", "Blue and yellow", "White and blue"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-nato",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "In which year did Poland join NATO?",
+    "options": ["1999", "2004", "1991", "2009"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-pianist",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which Polish director won the Academy Award for Best Director for 'The Pianist'?",
+    "options": ["Roman Polański", "Andrzej Wajda", "Krzysztof Kieślowski", "Agnieszka Holland"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-anthem",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "The Polish national anthem is popularly known by which name?",
+    "options": ["Dąbrowski's Mazurka", "Ode to Joy", "The Eagle's March", "Rota"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-lisbon",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Portugal?",
+    "options": ["Lisbon", "Porto", "Madrid", "Seville"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-athens",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Greece?",
+    "options": ["Athens", "Thessaloniki", "Sofia", "Belgrade"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-amsterdam",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the capital of the Netherlands?",
+    "options": ["Amsterdam", "The Hague", "Rotterdam", "Utrecht"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-bern",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the capital of Switzerland?",
+    "options": ["Bern", "Zurich", "Geneva", "Basel"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-brussels",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Belgium?",
+    "options": ["Brussels", "Antwerp", "Bruges", "Ghent"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-budapest",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Hungary?",
+    "options": ["Budapest", "Vienna", "Bucharest", "Bratislava"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-vienna",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Austria?",
+    "options": ["Vienna", "Salzburg", "Graz", "Linz"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-montblanc",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the highest mountain in the Alps?",
+    "options": ["Mont Blanc", "The Matterhorn", "The Eiger", "Monte Rosa"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-channel",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which body of water separates England from France?",
+    "options": ["The English Channel", "The North Sea", "The Irish Sea", "The Bay of Biscay"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-eiffel",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "In which city is the Eiffel Tower located?",
+    "options": ["Paris", "Lyon", "Brussels", "Geneva"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-italy-boot",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which European country is famously shaped like a boot?",
+    "options": ["Italy", "Greece", "Portugal", "Croatia"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-oresund",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "The Øresund Bridge connects Denmark with which country?",
+    "options": ["Sweden", "Germany", "Norway", "Poland"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-largest-eu-area",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which is the largest European Union country by area?",
+    "options": ["France", "Germany", "Spain", "Sweden"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-danube-mouth",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Into which sea does the River Danube flow?",
+    "options": ["The Black Sea", "The Baltic Sea", "The Mediterranean Sea", "The North Sea"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-vesuvius",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Mount Vesuvius, which destroyed Pompeii, overlooks which Italian city?",
+    "options": ["Naples", "Rome", "Turin", "Venice"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-malta",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which small island country south of Sicily is a member of the European Union?",
+    "options": ["Malta", "Cyprus", "Crete", "Corsica"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-seine",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which river runs through the centre of Paris?",
+    "options": ["The Seine", "The Rhône", "The Loire", "The Thames"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-flag-be",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Belgium", "Germany", "Romania", "Chad"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/be.png"
+  },
+  {
+    "id": "curated-flag-dk",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Denmark", "Switzerland", "Iceland", "England"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/dk.png"
+  },
+  {
+    "id": "curated-flag-fi",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Finland", "Sweden", "Iceland", "Greece"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/fi.png"
+  },
+  {
+    "id": "curated-flag-is",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Iceland", "Norway", "Faroe Islands", "Denmark"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/is.png"
+  },
+  {
+    "id": "curated-flag-at",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Austria", "Latvia", "Poland", "Lebanon"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/at.png"
+  },
+  {
+    "id": "curated-flag-hu",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Hungary", "Italy", "Bulgaria", "Tajikistan"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/hu.png"
+  },
+  {
+    "id": "curated-flag-cz",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Czech Republic", "Philippines", "Slovakia", "Slovenia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/cz.png"
+  },
+  {
+    "id": "curated-flag-ro",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Romania", "Chad", "Moldova", "Andorra"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ro.png"
+  },
+  {
+    "id": "curated-flag-ru",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Russia", "Slovenia", "Slovakia", "Netherlands"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ru.png"
+  },
+  {
+    "id": "curated-flag-hr",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Croatia", "Slovakia", "Serbia", "Slovenia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/hr.png"
+  },
+  {
+    "id": "curated-flag-tr",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Turkey", "Tunisia", "Azerbaijan", "Pakistan"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/tr.png"
+  },
+  {
+    "id": "curated-flag-ee",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Estonia", "Netherlands", "Luxembourg", "Russia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ee.png"
+  },
+  {
+    "id": "curated-no-flag-colours",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "Besides white, which two colours appear on the flag of Norway?",
+    "options": ["Red and blue", "Green and yellow", "Black and yellow", "Red and green"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-storting",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "What is the name of Norway's national parliament?",
+    "options": ["The Storting", "The Riksdag", "The Folketing", "The Sejm"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-biathlon",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which winter sport, combining cross-country skiing and rifle shooting, is hugely popular in Norway?",
+    "options": ["Biathlon", "Curling", "Bobsleigh", "Luge"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-salmon",
+    "category": "Norway",
+    "difficulty": "easy",
+    "text": "Which fish, farmed in its fjords, is one of Norway's biggest food exports?",
+    "options": ["Salmon", "Tuna", "Tilapia", "Carp"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-second-city",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "What is the second-largest city in Norway?",
+    "options": ["Bergen", "Stavanger", "Trondheim", "Drammen"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-sami-reindeer",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "The indigenous Sami people of northern Norway are traditionally associated with herding which animal?",
+    "options": ["Reindeer", "Sheep", "Cattle", "Horses"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-oil-decade",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "In which decade did Norway discover major oil reserves in the North Sea?",
+    "options": ["The 1960s", "The 1980s", "The 1930s", "The 2000s"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-longyearbyen",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "What is the main settlement on Svalbard, among the world's northernmost towns?",
+    "options": ["Longyearbyen", "Hammerfest", "Kirkenes", "Vardø"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-ski-word",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which winter activity takes its name from a Norwegian word and was pioneered in Norway?",
+    "options": ["Skiing", "Snowboarding", "Ice hockey", "Figure skating"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-kontiki",
+    "category": "Norway",
+    "difficulty": "hard",
+    "text": "Which 1947 raft expedition was led by Norwegian explorer Thor Heyerdahl?",
+    "options": ["Kon-Tiki", "Endurance", "The Beagle", "The Fram"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-no-lillehammer",
+    "category": "Norway",
+    "difficulty": "medium",
+    "text": "Which Norwegian town hosted the 1994 Winter Olympic Games?",
+    "options": ["Lillehammer", "Oslo", "Bergen", "Trondheim"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-cloth-hall",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which Polish city is famous for its Main Market Square and the Renaissance Cloth Hall (Sukiennice)?",
+    "options": ["Kraków", "Łódź", "Poznań", "Szczecin"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-masuria",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which region of north-eastern Poland is a lake district popular for sailing?",
+    "options": ["Masuria", "Silesia", "Pomerania", "Podlasie"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-eagle",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "Which bird appears on Poland's coat of arms?",
+    "options": ["A white eagle", "A brown bear", "A stork", "A raven"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-bison",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "Which large wild mammal, Europe's heaviest, roams Poland's Białowieża Forest?",
+    "options": ["The European bison", "The moose", "The wolf", "The lynx"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-grosz",
+    "category": "Poland",
+    "difficulty": "medium",
+    "text": "What is the name of the subunit of the Polish złoty (100 make one złoty)?",
+    "options": ["Grosz", "Cent", "Öre", "Fillér"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-kielbasa",
+    "category": "Poland",
+    "difficulty": "easy",
+    "text": "Which cured, smoked sausage is known worldwide by its Polish name?",
+    "options": ["Kiełbasa", "Chorizo", "Salami", "Bratwurst"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-szymborska",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which Polish poet won the Nobel Prize in Literature in 1996?",
+    "options": ["Wisława Szymborska", "Czesław Miłosz", "Olga Tokarczuk", "Henryk Sienkiewicz"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-commonwealth",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which 16th-century union created one of the largest states in Europe alongside Lithuania?",
+    "options": ["The Polish–Lithuanian Commonwealth", "The Hanseatic League", "The Holy Roman Empire", "The Kalmar Union"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-lodz",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which central Polish city grew into a major textile hub once nicknamed the 'Polish Manchester'?",
+    "options": ["Łódź", "Poznań", "Katowice", "Lublin"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-oscypek",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which smoked cheese from the Polish highlands is a popular regional delicacy?",
+    "options": ["Oscypek", "Halloumi", "Feta", "Brie"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-grunwald",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "In which 1410 battle did Poland and Lithuania defeat the Teutonic Knights?",
+    "options": ["The Battle of Grunwald", "The Battle of Vienna", "The Battle of Legnica", "The Battle of Warsaw"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-pl-torun",
+    "category": "Poland",
+    "difficulty": "hard",
+    "text": "Which medieval UNESCO-listed Polish city is the birthplace of Nicolaus Copernicus?",
+    "options": ["Toruń", "Lublin", "Radom", "Kielce"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-prague",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of the Czech Republic?",
+    "options": ["Prague", "Brno", "Bratislava", "Vienna"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-dublin",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "What is the capital of Ireland?",
+    "options": ["Dublin", "Belfast", "Cork", "Galway"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-bucharest",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the capital of Romania?",
+    "options": ["Bucharest", "Sofia", "Budapest", "Chișinău"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-zagreb",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "What is the capital of Croatia?",
+    "options": ["Zagreb", "Split", "Ljubljana", "Sarajevo"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-neuschwanstein",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "In which country is the fairy-tale castle Neuschwanstein located?",
+    "options": ["Germany", "Austria", "Switzerland", "France"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-gibraltar",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which strait between Spain and Morocco links the Mediterranean Sea to the Atlantic Ocean?",
+    "options": ["The Strait of Gibraltar", "The Bosphorus", "The Øresund", "The Dardanelles"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-bigben",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Big Ben and the Houses of Parliament are landmarks in which city?",
+    "options": ["London", "Manchester", "Dublin", "Edinburgh"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-sagrada",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "The Sagrada Família basilica is located in which city?",
+    "options": ["Barcelona", "Madrid", "Valencia", "Seville"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-pisa",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "The famous Leaning Tower is found in which Italian city?",
+    "options": ["Pisa", "Florence", "Milan", "Bologna"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-swiss-landlocked",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which landlocked European country is famous for the Alps, watches, and neutrality?",
+    "options": ["Switzerland", "Portugal", "Denmark", "Greece"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-swiss-franc",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which currency is used in Switzerland?",
+    "options": ["The Swiss franc", "The euro", "The krona", "The lira"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-pound",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which currency is used in the United Kingdom?",
+    "options": ["The pound sterling", "The euro", "The dollar", "The krona"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-denmark-border",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Denmark shares its only land border with which country?",
+    "options": ["Germany", "Sweden", "Norway", "Poland"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-rhine",
+    "category": "Europe",
+    "difficulty": "medium",
+    "text": "Which river flows through the German cities of Cologne and Düsseldorf on its way to the North Sea?",
+    "options": ["The Rhine", "The Elbe", "The Danube", "The Rhône"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-tulips",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which country is famous for tulips, windmills, and cycling?",
+    "options": ["The Netherlands", "Belgium", "Denmark", "Germany"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-eu-berlin-largest",
+    "category": "Europe",
+    "difficulty": "easy",
+    "text": "Which is the largest city in Germany?",
+    "options": ["Berlin", "Munich", "Hamburg", "Frankfurt"],
+    "correctIndex": 0
+  },
+  {
+    "id": "curated-flag-lt",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Lithuania", "Bolivia", "Colombia", "Ghana"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/lt.png"
+  },
+  {
+    "id": "curated-flag-lv",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Latvia", "Austria", "Denmark", "Poland"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/lv.png"
+  },
+  {
+    "id": "curated-flag-sk",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Slovakia", "Slovenia", "Russia", "Serbia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/sk.png"
+  },
+  {
+    "id": "curated-flag-si",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Slovenia", "Slovakia", "Russia", "Croatia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/si.png"
+  },
+  {
+    "id": "curated-flag-rs",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Serbia", "Slovakia", "Russia", "Slovenia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/rs.png"
+  },
+  {
+    "id": "curated-flag-bg",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Bulgaria", "Hungary", "Italy", "Russia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/bg.png"
+  },
+  {
+    "id": "curated-flag-al",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Albania", "Montenegro", "North Macedonia", "Serbia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/al.png"
+  },
+  {
+    "id": "curated-flag-lu",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Luxembourg", "Netherlands", "Russia", "France"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/lu.png"
+  },
+  {
+    "id": "curated-flag-mt",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Malta", "Denmark", "England", "Switzerland"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/mt.png"
+  },
+  {
+    "id": "curated-flag-md",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Moldova", "Romania", "Andorra", "Chad"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/md.png"
+  },
+  {
+    "id": "curated-flag-ba",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Bosnia and Herzegovina", "Kosovo", "Slovenia", "Croatia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ba.png"
+  },
+  {
+    "id": "curated-flag-mk",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["North Macedonia", "Kyrgyzstan", "Japan", "Bangladesh"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/mk.png"
   }
 ]

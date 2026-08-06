@@ -2,18 +2,20 @@ import type { QuizSocket } from '../socket.js';
 
 type Handler = (...args: unknown[]) => void;
 
-/**
- * A minimal stand-in for a Socket.IO client used in component tests. It records
- * emitted events, lets tests script ack responses, and can push server events
- * to registered handlers.
- */
 export class FakeSocket {
   readonly emitted: { event: string; args: unknown[] }[] = [];
+  connected = false;
   private readonly handlers = new Map<string, Set<Handler>>();
   private readonly ackResponders = new Map<
     string,
     (args: unknown[]) => unknown
   >();
+
+  connect(): this {
+    this.connected = true;
+    this.serverEmit('connect');
+    return this;
+  }
 
   on(event: string, handler: Handler): this {
     this.getSet(event).add(handler);
@@ -44,21 +46,16 @@ export class FakeSocket {
     return this;
   }
 
-  // --- Test helpers ---------------------------------------------------------
-
-  /** Script the ack response for an event the client emits. */
   respondToAck(event: string, responder: (args: unknown[]) => unknown): void {
     this.ackResponders.set(event, responder);
   }
 
-  /** Simulate the server pushing an event to the client. */
   serverEmit(event: string, ...args: unknown[]): void {
     for (const handler of [...this.getSet(event)]) {
       handler(...args);
     }
   }
 
-  /** All payloads emitted for a given event. */
   emittedArgs(event: string): unknown[][] {
     return this.emitted.filter((e) => e.event === event).map((e) => e.args);
   }
