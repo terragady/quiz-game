@@ -1,5 +1,19 @@
 # Quiz Game
 
+[![Live demo](https://img.shields.io/badge/▶_Live_demo-quiz.michalik.no-2ea44f?style=for-the-badge)](https://quiz.michalik.no)
+
+![GitHub top language](https://img.shields.io/github/languages/top/terragady/quiz-game)
+![GitHub repo size](https://img.shields.io/github/repo-size/terragady/quiz-game)
+![GitHub last commit](https://img.shields.io/github/last-commit/terragady/quiz-game)
+
+![TypeScript](https://img.shields.io/github/package-json/dependency-version/terragady/quiz-game/dev/typescript?logo=typescript&logoColor=white&label=TypeScript)
+![React](https://img.shields.io/github/package-json/dependency-version/terragady/quiz-game/react?filename=packages%2Fclient%2Fpackage.json&logo=react&logoColor=61DAFB&label=React)
+![Vite](https://img.shields.io/github/package-json/dependency-version/terragady/quiz-game/dev/vite?filename=packages%2Fclient%2Fpackage.json&logo=vite&logoColor=white&label=Vite)
+![Socket.IO](https://img.shields.io/github/package-json/dependency-version/terragady/quiz-game/socket.io?filename=packages%2Fserver%2Fpackage.json&logo=socketdotio&logoColor=white&label=Socket.IO)
+![Express](https://img.shields.io/github/package-json/dependency-version/terragady/quiz-game/express?filename=packages%2Fserver%2Fpackage.json&logo=express&logoColor=white&label=Express)
+![npm workspaces](https://img.shields.io/badge/npm-workspaces-CB3837?logo=npm&logoColor=white)
+![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fterragady%2Fquiz-game%2Fmain%2Fpackage.json&query=%24.engines.node&logo=nodedotjs&logoColor=white&label=Node&color=5FA04E)
+
 A real-time, multiplayer trivia party game. One screen hosts the game
 (TV/projector) and players join from their phones. The host both displays the
 game and drives it (settings, start, reveal, next, end) — no separate remote
