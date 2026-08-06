@@ -48,14 +48,9 @@ export interface SubmitResult {
 export interface GameManagerOptions {
   code: string;
   questionPool: Question[];
-  /** Injectable clock for deterministic testing. */
   now?: () => number;
 }
 
-/**
- * In-memory state machine for a single game.
- * Phases: lobby -> question -> reveal -> leaderboard -> (question | ended)
- */
 export class GameManager {
   readonly code: string;
 
@@ -79,9 +74,7 @@ export class GameManager {
     return this.phaseValue;
   }
 
-  // --- Lobby -----------------------------------------------------------------
 
-  /** Add a player during the lobby. Returns the new player's id. */
   addPlayer(nickname: string): string {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -133,9 +126,7 @@ export class GameManager {
     }
   }
 
-  // --- Game flow -------------------------------------------------------------
 
-  /** Start the game with validated settings and begin the first question. */
   start(settings: GameSettings): void {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -155,7 +146,6 @@ export class GameManager {
     this.beginNextQuestion();
   }
 
-  /** Record a player's answer to the current question. */
   submitAnswer(playerId: string, optionIndex: number): SubmitResult {
     const player = this.players.get(playerId);
     if (!player) {
@@ -184,7 +174,6 @@ export class GameManager {
     return { accepted: true };
   }
 
-  /** True when every connected player has answered the current question. */
   allConnectedAnswered(): boolean {
     const connected = [...this.players.values()].filter((p) => p.connected);
     if (connected.length === 0) {
@@ -193,7 +182,6 @@ export class GameManager {
     return connected.every((p) => p.currentAnswer !== null);
   }
 
-  /** Move from `question` to `reveal`, scoring every player's answer. */
   reveal(): void {
     if (this.phaseValue !== 'question') {
       return;
@@ -217,7 +205,6 @@ export class GameManager {
     this.phaseValue = 'reveal';
   }
 
-  /** Admin "next": advance through reveal -> leaderboard -> next question/end. */
   advance(): void {
     switch (this.phaseValue) {
       case 'question':
@@ -238,15 +225,12 @@ export class GameManager {
     }
   }
 
-  /** End the game immediately. */
   end(): void {
     this.endsAt = null;
     this.phaseValue = 'ended';
   }
 
-  // --- Projections -----------------------------------------------------------
 
-  /** The per-player result to send once a question is revealed. */
   getAnswerResult(playerId: string): AnswerResult {
     const player = this.players.get(playerId);
     if (!player) {
@@ -264,7 +248,6 @@ export class GameManager {
     };
   }
 
-  /** The broadcastable state shared by all roles (never leaks the answer). */
   getPublicState(): PublicGameState {
     return {
       code: this.code,
@@ -281,7 +264,6 @@ export class GameManager {
     };
   }
 
-  // --- Internals -------------------------------------------------------------
 
   private beginNextQuestion(): void {
     this.questionIndex += 1;

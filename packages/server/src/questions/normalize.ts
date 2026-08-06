@@ -1,11 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Difficulty, Question } from '@quiz/shared';
 
-/**
- * A single result from the Open Trivia DB API
- * (https://opentdb.com/api.php). Text fields are expected to be encoded with
- * `encode=url3986` so they can be decoded with `decodeURIComponent`.
- */
 export interface OpenTdbResult {
   category: string;
   type: 'multiple' | 'boolean';
@@ -17,7 +12,6 @@ export interface OpenTdbResult {
 
 const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
 
-/** Deterministic default: no injection needed, but replaceable in tests. */
 export type Shuffle = <T>(items: T[]) => T[];
 
 const fisherYatesShuffle: Shuffle = (items) => {
@@ -29,10 +23,6 @@ const fisherYatesShuffle: Shuffle = (items) => {
   return result;
 };
 
-/**
- * Decode a single `url3986`-encoded field from the API. Falls back to the raw
- * value if it is not valid percent-encoding.
- */
 export function decodeApiText(value: string): string {
   try {
     return decodeURIComponent(value);
@@ -41,7 +31,6 @@ export function decodeApiText(value: string): string {
   }
 }
 
-/** Stable id derived from the (decoded) question text. */
 function questionId(decodedText: string): string {
   const hash = createHash('sha1').update(decodedText).digest('hex').slice(0, 10);
   return `otdb-${hash}`;
@@ -51,14 +40,6 @@ function isDifficulty(value: string): value is Difficulty {
   return DIFFICULTIES.includes(value as Difficulty);
 }
 
-/**
- * Convert one Open Trivia DB result into our internal {@link Question} shape:
- * decode all text, combine correct + incorrect options, shuffle them while
- * tracking which one is correct. Works for both `multiple` (4 options) and
- * `boolean` (2 options) question types.
- *
- * @throws if the difficulty is not one of easy/medium/hard.
- */
 export function normalizeResult(
   raw: OpenTdbResult,
   shuffle: Shuffle = fisherYatesShuffle,
@@ -87,10 +68,6 @@ export function normalizeResult(
   };
 }
 
-/**
- * Normalize a batch of results, dropping any that fail normalization and
- * de-duplicating by id (the same question can appear across API calls).
- */
 export function normalizeResults(
   results: OpenTdbResult[],
   shuffle: Shuffle = fisherYatesShuffle,

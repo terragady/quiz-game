@@ -2,11 +2,6 @@ import { beforeEach, describe, it, expect } from 'vitest';
 import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
 import { GameManager } from './GameManager.js';
 
-/**
- * The correct answer text is the same across every question so tests can locate
- * the correct option regardless of how `selectQuestions` shuffles question order
- * and option order.
- */
 const CORRECT_ANSWER = 'Correct';
 
 function makePool(): Question[] {
@@ -38,7 +33,6 @@ function makePool(): Question[] {
   ];
 }
 
-/** Find the correct option index on the current question after shuffling. */
 function correctOptionIndex(game: GameManager): number {
   const question = game.getPublicState().currentQuestion;
   if (!question) {
@@ -47,7 +41,6 @@ function correctOptionIndex(game: GameManager): number {
   return question.options.indexOf(CORRECT_ANSWER);
 }
 
-/** Find an incorrect option index on the current question after shuffling. */
 function wrongOptionIndex(game: GameManager): number {
   const question = game.getPublicState().currentQuestion;
   if (!question) {
@@ -189,7 +182,6 @@ describe('GameManager answering', () => {
   });
 
   it('reports when all connected players have answered', () => {
-    // Fresh game so a second player can be added during the lobby.
     const twoPlayerGame = new GameManager({
       code: 'WXYZ',
       questionPool: makePool(),
@@ -230,12 +222,9 @@ describe('GameManager scoring and reveal', () => {
   it('awards more points to faster correct answers and none to wrong ones', () => {
     const correct = correctOptionIndex(game);
     const incorrect = wrongOptionIndex(game);
-    // Fast answers immediately (full time remaining).
     game.submitAnswer(fast, correct);
-    // Slow answers with half the time gone.
     clock = 1000 + 10 * 1000;
     game.submitAnswer(slow, correct);
-    // Wrong answers immediately but incorrectly.
     game.submitAnswer(wrong, incorrect);
 
     game.reveal();
@@ -268,9 +257,9 @@ describe('GameManager scoring and reveal', () => {
     game.submitAnswer(fast, correctOptionIndex(game));
     game.reveal();
     const afterFirst = game.getAnswerResult(fast).totalScore;
-    game.advance(); // reveal -> leaderboard
-    game.advance(); // leaderboard -> question 2
-    game.submitAnswer(fast, correctOptionIndex(game)); // correct across the pool
+    game.advance();
+    game.advance();
+    game.submitAnswer(fast, correctOptionIndex(game));
     game.reveal();
     expect(game.getAnswerResult(fast).totalScore).toBeGreaterThan(afterFirst);
   });
@@ -303,12 +292,12 @@ describe('GameManager phase advancement', () => {
   });
 
   it('ends the game after the last question', () => {
-    game.advance(); // q1 reveal
-    game.advance(); // q1 leaderboard
-    game.advance(); // q2 question
-    game.advance(); // q2 reveal
-    game.advance(); // q2 leaderboard
-    game.advance(); // -> ended
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
+    game.advance();
     expect(game.phase).toBe('ended');
   });
 
@@ -336,7 +325,6 @@ describe('GameManager leaderboard', () => {
     const b = game.addPlayer('B');
     const c = game.addPlayer('C');
     game.start(baseSettings);
-    // A and B answer correctly at the same instant; C is wrong.
     game.submitAnswer(a, correctOptionIndex(game));
     game.submitAnswer(b, correctOptionIndex(game));
     game.submitAnswer(c, wrongOptionIndex(game));
@@ -368,20 +356,18 @@ describe('GameManager end-of-game stats', () => {
   it('exposes per-player stats only once the game has ended', () => {
     const right = game.addPlayer('Right');
     const wrongPlayer = game.addPlayer('Wrong');
-    game.addPlayer('Quiet'); // never answers
+    game.addPlayer('Quiet');
     game.start({ ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
 
-    game.submitAnswer(right, correctOptionIndex(game)); // correct, instantly (0ms response)
+    game.submitAnswer(right, correctOptionIndex(game));
     clock = 1000 + 5000;
-    game.submitAnswer(wrongPlayer, wrongOptionIndex(game)); // incorrect, after 5s
-    // Quiet never answers.
+    game.submitAnswer(wrongPlayer, wrongOptionIndex(game));
     game.reveal();
 
-    // Not ended yet: no stats attached.
     expect(game.getPublicState().leaderboard[0]?.stats).toBeUndefined();
 
-    game.advance(); // reveal -> leaderboard
-    game.advance(); // leaderboard -> ended (single question)
+    game.advance();
+    game.advance();
 
     const rows = game.getPublicState().leaderboard;
     const byName = Object.fromEntries(rows.map((r) => [r.nickname, r.stats]));

@@ -145,7 +145,6 @@ describe('GameService integration', () => {
     expect(code).toHaveLength(4);
     expect(hostAck.categories.length).toBeGreaterThan(0);
 
-    // Player joins and shows up on the host screen.
     const player = connect();
     const hostSeesPlayer = waitForState(host, (s) => s.players.length === 1);
     const playerAck = await playerJoin(player, code, 'Alice');
@@ -153,7 +152,6 @@ describe('GameService integration', () => {
     const lobbyState = await hostSeesPlayer;
     expect(lobbyState.players[0]?.nickname).toBe('Alice');
 
-    // Admin joins and starts the game.
     const admin = connect();
     const adminAck = await adminJoin(admin, code);
     expect(adminAck.ok).toBe(true);
@@ -165,8 +163,6 @@ describe('GameService integration', () => {
     expect(question.total).toBe(2);
     expect(endsAt).toBeGreaterThan(Date.now());
 
-    // The single player answers correctly, which auto-reveals.
-    // Options are shuffled per game; 'A' is the correct answer in the source pool.
     const correctOption = question.options.indexOf('A');
     const answerResult = new Promise<{
       correct: boolean;
@@ -177,7 +173,6 @@ describe('GameService integration', () => {
     expect(result.correct).toBe(true);
     expect(result.pointsAwarded).toBeGreaterThan(0);
 
-    // Admin advances to the leaderboard.
     const leaderboardShown = waitForState(
       host,
       (s) => s.phase === 'leaderboard',
@@ -209,8 +204,6 @@ describe('GameService integration', () => {
     });
     await questionArrives;
 
-    // Answering reveals immediately; the leaderboard should then appear on its
-    // own after revealSeconds, without any admin action.
     const leaderboardShown = waitForState(host, (s) => s.phase === 'leaderboard');
     player.emit('submitAnswer', { optionIndex: 0 });
     const leaderboardState = await leaderboardShown;
@@ -233,13 +226,10 @@ describe('GameService integration', () => {
     await adminJoin(admin, code);
 
     const questionArrives = nextQuestion(alice);
-    // A long timer so the round can only end via the disconnect path, not timeout.
     admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
     const [question] = await questionArrives;
-    // Options are shuffled per game; 'A' is the correct answer in the source pool.
     const correctOption = question.options.indexOf('A');
 
-    // Alice answers; Bob never does, then leaves — the round should reveal.
     const revealShown = waitForState(host, (s) => s.phase === 'reveal');
     alice.emit('submitAnswer', { optionIndex: correctOption });
     bob.disconnect();
@@ -257,10 +247,8 @@ describe('GameService integration', () => {
     expect(ack1.ok && ack2.ok).toBe(true);
     if (!ack1.ok || !ack2.ok) return;
 
-    // Separate hosts get separate game codes (separate rooms).
     expect(ack1.state.code).not.toBe(ack2.state.code);
 
-    // A player joining room 1 does not appear in room 2.
     const player = connect();
     await playerJoin(player, ack1.state.code, 'Alice');
     const rejoin = connect();
@@ -310,10 +298,8 @@ describe('GameService integration', () => {
     const questionArrives = nextQuestion(host);
     admin.emit('adminStart', { ...settings, secondsPerQuestion: 120 });
     const [question] = await questionArrives;
-    // Options are shuffled per game; 'A' is the correct answer in the source pool.
     const correctOption = question.options.indexOf('A');
 
-    // The player's phone "sleeps": the socket drops. The host sees them offline.
     const seenOffline = waitForState(
       host,
       (s) => s.players[0]?.connected === false,
@@ -321,7 +307,6 @@ describe('GameService integration', () => {
     player.disconnect();
     await seenOffline;
 
-    // The phone wakes and reconnects on a brand-new socket, then rejoins.
     const revived = connect();
     const rejoinAck = await playerRejoin(revived, code, playerId);
     expect(rejoinAck.ok).toBe(true);
@@ -329,7 +314,6 @@ describe('GameService integration', () => {
     expect(rejoinAck.playerId).toBe(playerId);
     expect(rejoinAck.state.players[0]?.connected).toBe(true);
 
-    // The revived socket can answer, proving it is re-associated server-side.
     const answered = new Promise<{ correct: boolean }>((resolve) =>
       revived.once('answerResult', resolve),
     );

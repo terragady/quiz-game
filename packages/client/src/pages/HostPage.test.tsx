@@ -162,12 +162,10 @@ describe('HostPage', () => {
         ),
       );
 
-      // Opens on the previous standings: Alice had 1500 - 750 = 750.
       expect(screen.getByText('Alice')).toBeInTheDocument();
       expect(screen.getByText('750')).toBeInTheDocument();
       expect(screen.queryByText('+750')).not.toBeInTheDocument();
 
-      // Let the pre-count beat and the count-up run to completion.
       act(() => {
         vi.advanceTimersByTime(3000);
       });

@@ -2,13 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { GamePhase, PublicGameState } from '@quiz/shared';
 import { useSocket } from '../SocketContext.js';
 
-/**
- * Subscribes to broadcast game state and error messages. Callers manage their
- * own join flow and can seed the initial state via `setState`.
- *
- * Errors are transient: a stale error is cleared automatically when the game
- * moves to a new phase, so a message from one round doesn't linger into the next.
- */
 export function useGameState() {
   const socket = useSocket();
   const [state, setState] = useState<PublicGameState | null>(null);

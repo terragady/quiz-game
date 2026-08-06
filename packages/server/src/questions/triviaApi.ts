@@ -1,10 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Difficulty, Question } from '@quiz/shared';
 
-/**
- * A single result from The Trivia API (https://the-trivia-api.com), v2 shape.
- * Text is returned as plain (already-decoded) UTF-8, unlike Open Trivia DB.
- */
 export interface TriviaApiResult {
   category: string;
   id: string;
@@ -20,7 +16,6 @@ export interface TriviaApiResult {
 
 const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
 
-/** Deterministic default: replaceable in tests. */
 export type Shuffle = <T>(items: T[]) => T[];
 
 const fisherYatesShuffle: Shuffle = (items) => {
@@ -32,7 +27,6 @@ const fisherYatesShuffle: Shuffle = (items) => {
   return result;
 };
 
-/** Stable id derived from the question text, namespaced to this source. */
 function questionId(text: string): string {
   const hash = createHash('sha1').update(text).digest('hex').slice(0, 10);
   return `tta-${hash}`;
@@ -42,7 +36,6 @@ function isDifficulty(value: string): value is Difficulty {
   return DIFFICULTIES.includes(value as Difficulty);
 }
 
-/** Title-case a lowercase category slug, e.g. "arts_and_literature" -> "Arts And Literature". */
 export function formatCategory(raw: string): string {
   return raw
     .replace(/[_-]+/g, ' ')
@@ -52,13 +45,6 @@ export function formatCategory(raw: string): string {
     .join(' ');
 }
 
-/**
- * Convert one Trivia API result into our internal {@link Question} shape:
- * combine the correct and incorrect answers, shuffle them while tracking which
- * one is correct, and derive a stable id.
- *
- * @throws if the difficulty is not one of easy/medium/hard, or the text is empty.
- */
 export function normalizeTriviaApiResult(
   raw: TriviaApiResult,
   shuffle: Shuffle = fisherYatesShuffle,
@@ -94,10 +80,6 @@ export function normalizeTriviaApiResult(
   };
 }
 
-/**
- * Normalize a batch of results, dropping any that fail normalization and
- * de-duplicating by id (the same question can appear across API calls).
- */
 export function normalizeTriviaApiResults(
   results: TriviaApiResult[],
   shuffle: Shuffle = fisherYatesShuffle,

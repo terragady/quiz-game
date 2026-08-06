@@ -15,7 +15,6 @@ export function SocketProvider({
   );
 }
 
-/** Access the shared socket. Throws if used outside a SocketProvider. */
 export function useSocket(): QuizSocket {
   const socket = useContext(SocketContext);
   if (!socket) {

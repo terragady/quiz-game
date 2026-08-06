@@ -39,8 +39,6 @@ export function PlayerPage() {
   const [error, setError] = useState<string | null>(null);
   const [rejoining, setRejoining] = useState(Boolean(stored));
 
-  // The live session used by the reconnect handler; kept in a ref so it never
-  // goes stale inside the long-lived socket 'connect' listener.
   const sessionRef = useRef<{ code: string; playerId: string } | null>(
     stored ? { code: stored.code, playerId: stored.playerId } : null,
   );
@@ -50,8 +48,6 @@ export function PlayerPage() {
 
     const onState = (next: PublicGameState) => {
       setState(next);
-      // Once the game is over, forget the saved session so a later fresh visit
-      // starts at the join form (in-memory reconnect still works this session).
       if (next.phase === 'ended') clearSession();
     };
     const onQuestionStarted = () => {
@@ -85,7 +81,6 @@ export function PlayerPage() {
             setPlayerId(ack.playerId);
             setState(ack.state);
           } else {
-            // The room or player is gone — drop the stale session.
             clearSession();
             sessionRef.current = null;
           }
@@ -96,15 +91,11 @@ export function PlayerPage() {
     [socket],
   );
 
-  // On first mount, resume a saved session if one exists.
   useEffect(() => {
     const session = sessionRef.current;
     if (session) attemptRejoin(session.code, session.playerId);
-    // Runs only on mount; the reconnect listener below covers later reconnects.
   }, [attemptRejoin]);
 
-  // Re-attach to the game whenever the socket (re)connects — this is what
-  // recovers a phone that dropped its connection while the screen was off.
   useEffect(() => {
     const onConnect = () => {
       const session = sessionRef.current;

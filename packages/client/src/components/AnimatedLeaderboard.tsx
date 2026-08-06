@@ -8,31 +8,17 @@ import {
   standingsSignature,
 } from './leaderboardAnimation.js';
 
-/** Height of one row plus the gap below it, in px. Must match the CSS. */
 const ROW_STEP = 72;
-/** Beat before the count-up starts, so viewers register the old standings. */
 const PRE_COUNT_MS = 600;
-/** Duration of the score count-up. */
 const COUNT_MS = 1400;
 
 type Stage = 'previous' | 'counting' | 'final';
 
 const medalClass = ['arow--gold', 'arow--silver', 'arow--bronze'];
 
-/**
- * Host TV leaderboard that replays the round dramatically: it opens on the
- * previous standings, counts every score up to its new total, then slides the
- * rows into their final order.
- *
- * The count-up and slide are progressive enhancement — the final scores and
- * order are always rendered, so the component is correct even without timers.
- */
 export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
   const signature = standingsSignature(rows);
 
-  // These derivations are keyed on `signature`, which changes exactly when the
-  // scored standings change, so the animation restarts once per round rather
-  // than on unrelated re-renders (e.g. a player reconnecting).
   const finalScores = useMemo(() => {
     const map = new Map<string, number>();
     for (const row of rows) map.set(row.playerId, row.score);
@@ -97,7 +83,6 @@ export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
       clearTimeout(timer);
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     };
-    // Restart the animation only when the standings actually change.
   }, [signature]);
 
   if (rows.length === 0) {

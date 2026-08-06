@@ -6,11 +6,6 @@ import {
   validateQuestionsData,
 } from './loader.js';
 
-/**
- * Build the merged, de-duplicated question pool from the source files, validate
- * it, and write it to the committed pool file the server reads. Returns the
- * questions written.
- */
 export function writeQuestionPool(poolPath: string = POOL_QUESTIONS_PATH): Question[] {
   const pool = buildQuestionPool();
   validateQuestionsData(pool);

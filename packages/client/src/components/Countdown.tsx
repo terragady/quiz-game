@@ -4,7 +4,6 @@ function remainingMs(endsAt: number | null): number {
   return endsAt === null ? 0 : Math.max(0, endsAt - Date.now());
 }
 
-/** Live seconds-remaining display driven by an absolute deadline. */
 export function Countdown({ endsAt }: { endsAt: number | null }) {
   const [remaining, setRemaining] = useState(() => remainingMs(endsAt));
 

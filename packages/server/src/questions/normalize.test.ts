@@ -7,7 +7,6 @@ import {
 } from './normalize.js';
 import { validateQuestionsData } from './loader.js';
 
-/** Shuffle that preserves order, so the correct answer stays first. */
 const identity = <T>(items: T[]): T[] => [...items];
 
 function multipleResult(overrides: Partial<OpenTdbResult> = {}): OpenTdbResult {
@@ -44,7 +43,6 @@ describe('normalizeResult', () => {
     expect(question.text).toBe('What does CPU stand for?');
     expect(question.difficulty).toBe('easy');
     expect(question.options).toHaveLength(4);
-    // identity shuffle keeps the correct answer first
     expect(question.correctIndex).toBe(0);
     expect(question.options[question.correctIndex]).toBe(
       'Central Processing Unit',
@@ -52,7 +50,6 @@ describe('normalizeResult', () => {
   });
 
   it('tracks the correct answer through shuffling', () => {
-    // reverse shuffle moves the correct answer (originally first) to the end
     const reverse = <T>(items: T[]): T[] => [...items].reverse();
     const question = normalizeResult(multipleResult(), reverse);
 

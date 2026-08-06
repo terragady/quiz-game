@@ -1,19 +1,3 @@
-/**
- * Fetch trivia questions from the Open Trivia DB (https://opentdb.com), normalize
- * them into our internal format, and write them to the committed questions file.
- *
- * The running app never talks to Open Trivia DB — it only reads the committed
- * JSON. Re-run this script to refresh the question pool:
- *
- *   npm run questions:import
- *   npm run questions:import -- --multiple 250 --boolean 80
- *
- * Open Trivia DB caps each request at 50 questions, rate-limits repeated calls,
- * and (called anonymously) serves a random set each time that can repeat across
- * calls. We therefore keep pulling batches and de-duplicate by a stable id,
- * stopping once we hit the requested count or several batches in a row add no
- * new questions (a sign the reachable pool is exhausted).
- */
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { OPENTDB_QUESTIONS_PATH, validateQuestionsData } from '../questions/loader.js';
@@ -22,12 +6,9 @@ import { normalizeResults, type OpenTdbResult } from '../questions/normalize.js'
 
 const API_URL = 'https://opentdb.com/api.php';
 const MAX_PER_REQUEST = 50;
-/** Open Trivia DB rate-limits to roughly one request per 5s per IP. */
 const REQUEST_SPACING_MS = 5500;
-/** Back off longer after an explicit rate-limit response before retrying. */
 const RATE_LIMIT_BACKOFF_MS = 8000;
 const MAX_RATE_LIMIT_RETRIES = 5;
-/** Give up on a type after this many consecutive batches add nothing new. */
 const MAX_EMPTY_STREAK = 4;
 
 type QuestionType = 'multiple' | 'boolean';
@@ -73,11 +54,6 @@ async function fetchBatch(type: QuestionType, amount: number): Promise<ApiRespon
   return (await response.json()) as ApiResponse;
 }
 
-/**
- * Pull questions of one type into `collected`, de-duplicating by the raw
- * question text across the whole run, until we reach `target` unique of this
- * type or the reachable pool appears exhausted.
- */
 async function fetchType(
   type: QuestionType,
   target: number,

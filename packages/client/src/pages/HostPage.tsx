@@ -7,7 +7,6 @@ import { Leaderboard } from '../components/Leaderboard.js';
 import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
 import { QRCode } from '../components/QRCode.js';
 
-/** Remembered so refreshing the TV rejoins the same game instead of making a new one. */
 const HOST_CODE_KEY = 'quiz.hostCode';
 
 function readStoredCode(): string | undefined {
@@ -22,7 +21,7 @@ function storeCode(code: string): void {
   try {
     localStorage.setItem(HOST_CODE_KEY, code);
   } catch {
-    // Ignore storage failures (private mode, etc.).
+    void 0;
   }
 }
 
@@ -49,7 +48,7 @@ export function HostPage() {
     try {
       localStorage.removeItem(HOST_CODE_KEY);
     } catch {
-      // Ignore.
+      void 0;
     }
     join(undefined);
   }, [join]);

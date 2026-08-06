@@ -24,19 +24,12 @@ type QuizSocket = Socket<
   SocketData
 >;
 
-/** Delay before an empty room is discarded, allowing brief refreshes/reconnects. */
 const ROOM_CLEANUP_GRACE_MS = 5 * 60 * 1000;
 
-/**
- * Bridges Socket.IO connections to per-room {@link GameManager} instances,
- * keyed by game code. Each room broadcasts to a Socket.IO room named after its
- * code and drives its own question countdown.
- */
 export class GameService {
   private readonly games = new Map<string, GameManager>();
   private readonly phaseTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
-  /** playerId -> socketId (player ids are globally unique). */
   private readonly playerSockets = new Map<string, string>();
 
   constructor(
@@ -95,7 +88,6 @@ export class GameService {
       void socket.join(game.code);
       ack({ ok: true, playerId, state: game.getPublicState() });
       this.broadcastState(game.code);
-      // If they reconnected mid-reveal, resend their result so the screen matches.
       if (game.phase === 'reveal') {
         socket.emit('answerResult', game.getAnswerResult(playerId));
       }
@@ -170,8 +162,6 @@ export class GameService {
     socket.on('disconnect', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;
-      // Ignore a stale socket's late disconnect: if the player already
-      // reconnected on a newer socket, the map no longer points here.
       if (
         playerId &&
         game &&
@@ -180,7 +170,6 @@ export class GameService {
         game.setConnected(playerId, false);
         this.playerSockets.delete(playerId);
         this.broadcastState(game.code);
-        // Don't stall the round if the last un-answered player left.
         if (game.phase === 'question' && game.allConnectedAnswered()) {
           this.revealNow(game.code);
         }
@@ -189,14 +178,12 @@ export class GameService {
     });
   }
 
-  /** Stop all pending timers (used on shutdown). */
   dispose(): void {
     for (const code of [...this.phaseTimers.keys()]) this.clearTimer(code);
     for (const timer of this.cleanupTimers.values()) clearTimeout(timer);
     this.cleanupTimers.clear();
   }
 
-  // --- Rooms -----------------------------------------------------------------
 
   private createRoom(): GameManager {
     let code = generateGameCode();
@@ -236,7 +223,6 @@ export class GameService {
     );
   }
 
-  // --- Round flow ------------------------------------------------------------
 
   private socketGame(socket: QuizSocket): GameManager | undefined {
     return socket.data.code ? this.games.get(socket.data.code) : undefined;
@@ -273,10 +259,6 @@ export class GameService {
     this.scheduleAutoAdvance(code);
   }
 
-  /**
-   * Advance one phase (reveal -> leaderboard -> next question/end), emit the
-   * right events for the new phase, and queue the next auto-advance if enabled.
-   */
   private applyAdvance(code: string): void {
     const game = this.games.get(code);
     if (!game) return;
@@ -294,11 +276,6 @@ export class GameService {
     this.scheduleAutoAdvance(code);
   }
 
-  /**
-   * When auto-advance is enabled, queue the transition out of the current
-   * reveal/leaderboard phase after the configured delay. Other phases (question
-   * countdowns, ended) are handled elsewhere or need no timer.
-   */
   private scheduleAutoAdvance(code: string): void {
     const game = this.games.get(code);
     if (!game) return;

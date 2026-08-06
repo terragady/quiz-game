@@ -15,7 +15,6 @@
   --silver: #d6dcec;
   --bronze: #e0975a;
 
-  /* Answer colors (A/B/C/D). */
   --a: #e8455a;
   --b: #2d9cdb;
   --c: #f2b705;
@@ -94,7 +93,6 @@ h1 {
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* Buttons ------------------------------------------------------------------ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -156,7 +154,6 @@ h1 {
   flex-wrap: wrap;
 }
 
-/* Forms -------------------------------------------------------------------- */
 .field {
   display: flex;
   flex-direction: column;
@@ -210,7 +207,6 @@ h1 {
   margin-bottom: 12px;
 }
 
-/* Home --------------------------------------------------------------------- */
 .home__title {
   font-size: clamp(2.6rem, 9vw, 3.8rem);
   font-weight: 900;
@@ -232,7 +228,6 @@ h1 {
   gap: 12px;
 }
 
-/* Join code + QR ----------------------------------------------------------- */
 .code-badge {
   font-size: clamp(3rem, 12vw, 6rem);
   font-weight: 900;
@@ -255,7 +250,6 @@ h1 {
   color: var(--text-dim);
 }
 
-/* Players / lobby ---------------------------------------------------------- */
 .player-chips {
   display: flex;
   flex-wrap: wrap;
@@ -276,7 +270,6 @@ h1 {
   color: var(--good);
 }
 
-/* Question image (host) ---------------------------------------------------- */
 .question-image {
   max-width: min(420px, 80vw);
   max-height: 40vh;
@@ -288,7 +281,6 @@ h1 {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* Answers ------------------------------------------------------------------ */
 .answer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -378,7 +370,6 @@ h1 {
     0 14px 30px -10px rgba(44, 227, 138, 0.6);
 }
 
-/* Countdown ---------------------------------------------------------------- */
 .countdown {
   align-self: center;
   font-size: clamp(1.6rem, 5vw, 2.4rem);
@@ -407,7 +398,6 @@ h1 {
   }
 }
 
-/* Question (host) ---------------------------------------------------------- */
 .question-text {
   font-size: clamp(1.5rem, 5vw, 3rem);
   font-weight: 800;
@@ -417,7 +407,6 @@ h1 {
   margin-inline: auto;
 }
 
-/* Leaderboard -------------------------------------------------------------- */
 .leaderboard {
   list-style: none;
   padding: 0;
@@ -489,7 +478,6 @@ h1 {
   font-weight: 700;
 }
 
-/* Animated leaderboard (host TV) ------------------------------------------- */
 .leaderboard--animated {
   position: relative;
   display: block;
@@ -538,7 +526,6 @@ h1 {
   color: var(--bronze);
 }
 
-/* Feedback (player) -------------------------------------------------------- */
 .feedback {
   text-align: center;
   padding: 24px;

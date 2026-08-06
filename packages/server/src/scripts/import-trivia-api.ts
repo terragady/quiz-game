@@ -1,18 +1,3 @@
-/**
- * Fetch trivia questions from The Trivia API (https://the-trivia-api.com), a
- * second free source alongside Open Trivia DB, normalize them into our internal
- * format, and write them to a committed file the loader merges in.
- *
- * The running app never talks to the API — it only reads the committed JSON.
- * Re-run to grow the pool (the script is additive and de-duplicates):
- *
- *   npm run questions:import:trivia-api
- *   npm run questions:import:trivia-api -- --count 400
- *
- * New questions are de-duplicated by question text against the curated file, the
- * Open Trivia DB file, and whatever is already in this file, so a question that
- * already exists in any source is never added again.
- */
 import { existsSync, writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 import type { Question } from '@quiz/shared';
@@ -32,12 +17,9 @@ import {
 
 const API_URL = 'https://the-trivia-api.com/v2/questions';
 const MAX_PER_REQUEST = 50;
-/** Be polite: space requests out to stay within the free rate limit. */
 const REQUEST_SPACING_MS = 2500;
-/** Back off longer after an explicit rate-limit (HTTP 429) before retrying. */
 const RATE_LIMIT_BACKOFF_MS = 6000;
 const MAX_RATE_LIMIT_RETRIES = 5;
-/** Give up once this many consecutive batches add nothing new. */
 const MAX_EMPTY_STREAK = 5;
 
 function parseArgs(argv: string[]): { count: number } {
@@ -55,7 +37,6 @@ function parseArgs(argv: string[]): { count: number } {
   return { count };
 }
 
-/** HTTP 429 signals rate limiting; the caller backs off and retries. */
 class RateLimitedError extends Error {}
 
 async function fetchBatch(amount: number): Promise<TriviaApiResult[]> {
@@ -78,7 +59,6 @@ async function main(): Promise<void> {
   const { count } = parseArgs(process.argv.slice(2));
   console.log(`Fetching up to ${count} new questions from The Trivia API…`);
 
-  // Questions already present in any source — used to avoid re-adding duplicates.
   const existingOther = [
     ...loadIfPresent(CURATED_QUESTIONS_PATH),
     ...loadIfPresent(OPENTDB_QUESTIONS_PATH),

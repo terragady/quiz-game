@@ -181,7 +181,6 @@ describe('PlayerPage answering', () => {
 
     expect(await screen.findByText(/1st place/i)).toBeInTheDocument();
     expect(screen.getByText('2400')).toBeInTheDocument();
-    // Stats grid values.
     expect(screen.getByText('Correct')).toBeInTheDocument();
     expect(screen.getByText('4.2s')).toBeInTheDocument();
     expect(screen.getByText('1.5s')).toBeInTheDocument();
@@ -249,7 +248,6 @@ describe('PlayerPage reconnection', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Join' }));
     await screen.findByText(/You're in/i);
 
-    // The phone wakes up and Socket.IO reconnects.
     act(() => fake.serverEmit('connect'));
 
     expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({

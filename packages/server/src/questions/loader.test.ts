@@ -95,7 +95,6 @@ describe('withShuffledOptions', () => {
       options: ['Right', 'Wrong1', 'Wrong2', 'Wrong3'],
       correctIndex: 0,
     };
-    // Run many times: however the options land, correctIndex must track "Right".
     for (let i = 0; i < 50; i += 1) {
       const shuffled = withShuffledOptions(source);
       expect(shuffled.options).toHaveLength(4);
@@ -277,7 +276,7 @@ describe('loadQuestionPool', () => {
   it('loads the pre-built committed pool', () => {
     const pool = loadQuestionPool();
     const ids = new Set(pool.map((q) => q.id));
-    expect(ids.size).toBe(pool.length); // no duplicate ids
+    expect(ids.size).toBe(pool.length);
     expect(pool.some((q) => q.category === 'Norway')).toBe(true);
     expect(pool.some((q) => q.category === 'Poland')).toBe(true);
   });

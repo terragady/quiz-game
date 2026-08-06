@@ -1,6 +1,5 @@
 import type { LeaderboardRow } from '@quiz/shared';
 
-/** Ordered standings, highest score first. */
 export function Leaderboard({ rows }: { rows: LeaderboardRow[] }) {
   if (rows.length === 0) {
     return <p className="muted">No scores yet.</p>;

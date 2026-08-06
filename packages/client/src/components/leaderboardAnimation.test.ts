@@ -45,7 +45,6 @@ describe('orderIds', () => {
   });
 
   it('orders by the previous score for the pre-count standings', () => {
-    // previous scores: a=0, b=500, c=100 → b, c, a
     expect(orderIds(rows, previousScoreOf)).toEqual(['b', 'c', 'a']);
   });
 
