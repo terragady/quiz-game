@@ -45,13 +45,13 @@ origin, so it fits comfortably on a free hosting tier.
 
 - **Monorepo:** npm workspaces (`packages/shared`, `packages/server`, `packages/client`)
 - **Server:** Node.js + TypeScript, Express, Socket.IO, run directly with `tsx`
-- **Client:** React 18 + TypeScript, React Router, Vite
+- **Client:** React 19 + TypeScript, React Router, Vite
 - **Shared:** TypeScript types + the typed socket event contract
 - **Tests:** Vitest (server + shared), Vitest + Testing Library (client)
 
 ## Prerequisites
 
-- Node.js >= 20
+- Node.js >= 20.19 (or >= 22.12) — required by Vite 8
 - npm (comes with Node)
 
 ## Getting started
