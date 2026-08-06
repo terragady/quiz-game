@@ -22,8 +22,14 @@ export interface ServerToClientEvents {
 
 /** Events clients emit to the server. */
 export interface ClientToServerEvents {
-  /** Host/TV screen attaches to (or creates) the game. */
-  hostJoin: (ack: (result: ObserverJoinAck) => void) => void;
+  /**
+   * Host/TV screen attaches to a game. With a `code` it rejoins that room if it
+   * still exists (stable across refreshes); otherwise a new room is created.
+   */
+  hostJoin: (
+    payload: { code?: string },
+    ack: (result: ObserverJoinAck) => void,
+  ) => void;
   /** Player joins with a code and nickname. */
   playerJoin: (
     payload: { code: string; nickname: string },

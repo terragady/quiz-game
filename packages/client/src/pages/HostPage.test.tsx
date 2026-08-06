@@ -38,6 +38,7 @@ describe('HostPage', () => {
   let fake: FakeSocket;
 
   beforeEach(() => {
+    localStorage.clear();
     fake = new FakeSocket();
     fake.respondToAck('hostJoin', () => ({
       ok: true,
