@@ -1,17 +1,22 @@
 # Quiz Game
 
 A real-time, multiplayer trivia game in the spirit of PlayStation Buzz! and
-Kahoot. One screen hosts the game (TV/projector), players join from their phones,
-and an admin drives the game from a phone remote.
+Kahoot. One screen hosts the game (TV/projector) and players join from their
+phones. The host both displays the game and drives it (settings, start, reveal,
+next, end) — no separate remote needed.
 
-- **Home** (`/`) — a small landing page with links to the three views.
-- **Host / TV screen** (`/host`) — shows the join code + QR code in the lobby, then
-  the current question, countdown, and leaderboard.
-- **Player** (`/play`) — mobile-first join screen (nickname + code), then big
-  colored A/B/C/D answer buttons.
-- **Admin remote** (`/admin`) — enter the game code, choose settings, start the
-  game, reveal answers, advance questions, and end the game. Optional
+**🎮 Live demo: <https://quiz.michalik.no>** — open `/host` on a big screen and
+share the code, then have everyone join from their phones at `/play`. (Free
+hosting tier: the first load after an idle period takes a few seconds to wake.)
+
+- **Home** (`/`) — a small landing page with links to the views.
+- **Host / TV screen** (`/host`) — shows the join code + QR code and floating
+  player chips in the lobby, along with **game settings and a Start button**.
+  During play it shows the current question, countdown, per-answer distribution,
+  and leaderboard, with **Reveal / Next / End** controls. Optional
   **auto-advance** moves through reveal → leaderboard → next question on a timer.
+- **Player** (`/play`) — mobile-first join screen (nickname + code), then big
+  colored answer buttons.
 
 Each host screen is its own **room** with a unique code; refreshing the TV
 rejoins the same game, and a "New game" button starts a fresh one. Some
@@ -47,7 +52,6 @@ Open:
 - Home (links to all views): <http://localhost:5173/>
 - Host / TV: <http://localhost:5173/host>
 - Player: <http://localhost:5173/play>
-- Admin: <http://localhost:5173/admin>
 
 To play across devices on your local network, use your machine's LAN IP instead
 of `localhost` (the QR code on the host screen uses the browser's origin).
@@ -96,7 +100,7 @@ npm start       # serve client + WebSockets from one origin (PORT, default 3000)
 ```
 
 In production the server serves the built client from `packages/client/dist` as
-static files, with an SPA fallback so client-side routes (`/play`, `/admin`)
+static files, with an SPA fallback so client-side routes (`/host`, `/play`)
 work on refresh. The Socket.IO endpoint lives on the same origin.
 
 ## Deploy to Render (free tier)
@@ -124,5 +128,5 @@ packages/
   server/   Express + Socket.IO game server, question loader, import script
     data/curated-questions.json   Hand-maintained EU/NO/PL + flag questions
     data/questions.json           Imported Open Trivia DB dump
-  client/   React app (host, player, admin views)
+  client/   React app (home, host, player views)
 ```
