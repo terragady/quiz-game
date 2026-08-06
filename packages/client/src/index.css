@@ -399,38 +399,35 @@ h1 {
   text-align: center;
 }
 
-.answer__badge {
+.answer__voters {
   position: relative;
   z-index: 1;
   flex-shrink: 0;
   display: inline-flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  max-width: 55%;
+}
+
+.answer__voter {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-width: 3.4em;
-  padding: 6px 12px;
-  border-radius: 14px;
-  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7em;
+  font-weight: 700;
+  line-height: 1.2;
   background: rgba(255, 255, 255, 0.85);
   color: #10111f;
   box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.6);
 }
 
-.answer__badge-count {
-  font-size: 1.35em;
-  font-weight: 900;
+.answer__voter--more {
+  background: rgba(255, 255, 255, 0.55);
 }
 
-.answer__badge-meta {
-  font-size: 0.62em;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.7;
-}
-
-.answer--correct .answer__badge {
+.answer--correct .answer__voter {
   background: #10111f;
   color: #fff;
 }
@@ -823,7 +820,7 @@ h1 {
   font-size: clamp(1.4rem, 2.6vw, 3rem);
 }
 
-.screen--host .answer__badge {
+.screen--host .answer__voters {
   font-size: clamp(1rem, 1.6vw, 1.6rem);
 }
 

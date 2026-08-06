@@ -86,7 +86,7 @@ export interface PublicGameState {
   endsAt: number | null;
   answeredCount: number;
   playerCount: number;
-  optionCounts: number[] | null;
+  optionVoters: string[][] | null;
   leaderboard: LeaderboardRow[];
 }
 

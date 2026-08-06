@@ -297,21 +297,22 @@ describe('GameManager scoring and reveal', () => {
     expect(game.getPublicState().revealedCorrectIndex).toBe(expectedIndex);
   });
 
-  it('exposes per-option answer counts only during the reveal phase', () => {
+  it('exposes per-option voter nicknames only during the reveal phase', () => {
     const correct = correctOptionIndex(game);
     const incorrect = wrongOptionIndex(game);
     game.submitAnswer(fast, correct);
     game.submitAnswer(slow, correct);
     game.submitAnswer(wrong, incorrect);
 
-    expect(game.getPublicState().optionCounts).toBeNull();
+    expect(game.getPublicState().optionVoters).toBeNull();
 
     game.reveal();
 
-    const counts = game.getPublicState().optionCounts;
-    expect(counts).not.toBeNull();
-    expect(counts?.[correct]).toBe(2);
-    expect(counts?.[incorrect]).toBe(1);
+    const voters = game.getPublicState().optionVoters;
+    expect(voters).not.toBeNull();
+    expect(voters?.[correct]).toEqual(expect.arrayContaining(['Fast', 'Slow']));
+    expect(voters?.[correct]).toHaveLength(2);
+    expect(voters?.[incorrect]).toEqual(['Wrong']);
   });
 
   it('never exposes the correct answer on the public question object', () => {

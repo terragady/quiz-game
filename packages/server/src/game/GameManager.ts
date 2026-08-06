@@ -274,7 +274,7 @@ export class GameManager {
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
-      optionCounts: this.phaseValue === 'reveal' ? this.optionCounts() : null,
+      optionVoters: this.phaseValue === 'reveal' ? this.optionVoters() : null,
       leaderboard: this.leaderboard(),
     };
   }
@@ -363,16 +363,16 @@ export class GameManager {
       .length;
   }
 
-  private optionCounts(): number[] {
+  private optionVoters(): string[][] {
     const question = this.currentQuestion();
-    const counts = question.options.map(() => 0);
+    const voters: string[][] = question.options.map(() => []);
     for (const player of this.players.values()) {
       const index = player.currentAnswer?.optionIndex;
-      if (index !== undefined && index >= 0 && index < counts.length) {
-        counts[index] += 1;
+      if (index !== undefined && index >= 0 && index < voters.length) {
+        voters[index].push(player.nickname);
       }
     }
-    return counts;
+    return voters;
   }
 
   private leaderboard(): LeaderboardRow[] {

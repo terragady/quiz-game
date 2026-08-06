@@ -162,9 +162,7 @@ function HostBody({
       const question = state.currentQuestion;
       if (!question) return null;
       const revealing = state.phase === 'reveal';
-      const counts = state.optionCounts;
-      const totalAnswers =
-        counts?.reduce((sum, value) => sum + value, 0) ?? 0;
+      const voters = state.optionVoters;
       return (
         <div className="stack question-stack">
           <div className="question-meta question-meta--wide">
@@ -201,14 +199,7 @@ function HostBody({
                 correct={
                   revealing ? index === state.revealedCorrectIndex : undefined
                 }
-                count={revealing && counts ? counts[index] : undefined}
-                share={
-                  revealing && counts
-                    ? totalAnswers > 0
-                      ? counts[index] / totalAnswers
-                      : 0
-                    : undefined
-                }
+                voters={revealing && voters ? voters[index] : undefined}
               />
             ))}
           </div>

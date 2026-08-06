@@ -26,7 +26,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 1,
-    optionCounts: null,
+    optionVoters: null,
     leaderboard: [],
     ...overrides,
   };
