@@ -55,6 +55,7 @@ export function Confetti({
     const render = (now: number) => {
       if (now - startedAt > durationMs) {
         context.clearRect(0, 0, width, height);
+        window.removeEventListener('resize', onResize);
         return;
       }
       context.clearRect(0, 0, width, height);

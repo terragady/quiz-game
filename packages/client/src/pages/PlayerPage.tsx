@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
+  BENIGN_ANSWER_ERRORS,
   MAX_NICKNAME_LENGTH,
   type AnswerResult,
   type JoinAck,
@@ -22,12 +23,7 @@ import {
   writeSession,
 } from '../playerSession.js';
 
-const BENIGN_ANSWER_ERRORS = new Set([
-  'Not accepting answers right now.',
-  'Time is up.',
-  'You already answered.',
-  'Invalid option.',
-]);
+const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 
 export function PlayerPage() {
   const socket = useSocket();
@@ -72,7 +68,7 @@ export function PlayerPage() {
     };
     const onAnswerResult = (next: AnswerResult) => setResult(next);
     const onError = (message: string) => {
-      if (BENIGN_ANSWER_ERRORS.has(message)) return;
+      if (BENIGN_ANSWER_ERROR_SET.has(message)) return;
       setError(message);
     };
 

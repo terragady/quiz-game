@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import {
+  ANSWER_REJECTION,
   BASE_POINTS,
   calculateScore,
   MAX_NICKNAME_LENGTH,
@@ -165,7 +166,7 @@ export class GameManager {
       throw new Error('Unknown player.');
     }
     if (this.phaseValue !== 'question') {
-      return { accepted: false, reason: 'Not accepting answers right now.' };
+      return { accepted: false, reason: ANSWER_REJECTION.notAcceptingAnswers };
     }
     const question = this.currentQuestion();
     if (
@@ -173,14 +174,14 @@ export class GameManager {
       optionIndex < 0 ||
       optionIndex >= question.options.length
     ) {
-      return { accepted: false, reason: 'Invalid option.' };
+      return { accepted: false, reason: ANSWER_REJECTION.invalidOption };
     }
     if (player.currentAnswer) {
-      return { accepted: false, reason: 'You already answered.' };
+      return { accepted: false, reason: ANSWER_REJECTION.alreadyAnswered };
     }
     const now = this.now();
     if (this.endsAt !== null && now > this.endsAt) {
-      return { accepted: false, reason: 'Time is up.' };
+      return { accepted: false, reason: ANSWER_REJECTION.timeUp };
     }
     const timeRemainingMs = this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
     player.currentAnswer = { optionIndex, timeRemainingMs };

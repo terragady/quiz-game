@@ -250,8 +250,6 @@ export class GameService {
     this.broadcastState(code, state);
     if (state.endsAt !== null) {
       this.scheduleCountdown(code, state.endsAt);
-    } else {
-      this.beginFirstQuestion(code);
     }
   }
 
