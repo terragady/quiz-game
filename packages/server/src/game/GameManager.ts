@@ -301,6 +301,9 @@ export class GameManager {
       difficulty: question.difficulty,
       text: question.text,
       options: question.options,
+      ...(question.imageUrl !== undefined
+        ? { imageUrl: question.imageUrl }
+        : {}),
     };
   }
 

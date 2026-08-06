@@ -103,6 +103,13 @@ function HostBody({
           </div>
           {!revealing && <Countdown endsAt={state.endsAt} />}
           <h1 className="question-text">{question.text}</h1>
+          {question.imageUrl && (
+            <img
+              className="question-image"
+              src={question.imageUrl}
+              alt="Question image"
+            />
+          )}
           <div
             className={
               question.options.length <= 2

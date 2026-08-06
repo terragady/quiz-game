@@ -10,6 +10,7 @@ import {
   mergeQuestions,
   selectQuestions,
   validateQuestionsData,
+  withShuffledOptions,
 } from './loader.js';
 
 const sample: Question[] = [
@@ -66,6 +67,40 @@ describe('validateQuestionsData', () => {
   it('rejects an empty text field', () => {
     const bad = [{ ...sample[0], text: '   ' }];
     expect(() => validateQuestionsData(bad)).toThrow(/text/);
+  });
+
+  it('accepts an optional imageUrl and preserves it', () => {
+    const withImage = [{ ...sample[0], imageUrl: 'https://example.com/x.png' }];
+    expect(validateQuestionsData(withImage)[0].imageUrl).toBe(
+      'https://example.com/x.png',
+    );
+  });
+
+  it('rejects a blank imageUrl when present', () => {
+    const bad = [{ ...sample[0], imageUrl: '   ' }];
+    expect(() => validateQuestionsData(bad)).toThrow(/imageUrl/);
+  });
+});
+
+describe('withShuffledOptions', () => {
+  it('keeps correctIndex pointing at the correct answer text', () => {
+    const source: Question = {
+      id: 'z',
+      category: 'Test',
+      difficulty: 'easy',
+      text: 'Pick the right one',
+      options: ['Right', 'Wrong1', 'Wrong2', 'Wrong3'],
+      correctIndex: 0,
+    };
+    // Run many times: however the options land, correctIndex must track "Right".
+    for (let i = 0; i < 50; i += 1) {
+      const shuffled = withShuffledOptions(source);
+      expect(shuffled.options).toHaveLength(4);
+      expect(shuffled.options[shuffled.correctIndex]).toBe('Right');
+      expect([...shuffled.options].sort()).toEqual(
+        [...source.options].sort(),
+      );
+    }
   });
 });
 

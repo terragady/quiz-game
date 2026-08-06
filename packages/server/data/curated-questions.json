@@ -350,5 +350,131 @@
     "text": "Which of these countries is NOT one of the five Nordic countries?",
     "options": ["Estonia", "Norway", "Denmark", "Iceland"],
     "correctIndex": 0
+  },
+  {
+    "id": "curated-flag-no",
+    "category": "Flags",
+    "difficulty": "easy",
+    "text": "Which country's flag is this?",
+    "options": ["Norway", "Iceland", "Denmark", "Finland"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/no.png"
+  },
+  {
+    "id": "curated-flag-pl",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Poland", "Indonesia", "Monaco", "Austria"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/pl.png"
+  },
+  {
+    "id": "curated-flag-se",
+    "category": "Flags",
+    "difficulty": "easy",
+    "text": "Which country's flag is this?",
+    "options": ["Sweden", "Norway", "Finland", "Denmark"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/se.png"
+  },
+  {
+    "id": "curated-flag-de",
+    "category": "Flags",
+    "difficulty": "easy",
+    "text": "Which country's flag is this?",
+    "options": ["Germany", "Belgium", "Austria", "Netherlands"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/de.png"
+  },
+  {
+    "id": "curated-flag-fr",
+    "category": "Flags",
+    "difficulty": "easy",
+    "text": "Which country's flag is this?",
+    "options": ["France", "Netherlands", "Italy", "Russia"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/fr.png"
+  },
+  {
+    "id": "curated-flag-it",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Italy", "Ireland", "Mexico", "Hungary"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/it.png"
+  },
+  {
+    "id": "curated-flag-es",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Spain", "Portugal", "Colombia", "Italy"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/es.png"
+  },
+  {
+    "id": "curated-flag-gb",
+    "category": "Flags",
+    "difficulty": "easy",
+    "text": "Which country's flag is this?",
+    "options": ["United Kingdom", "Australia", "New Zealand", "Norway"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/gb.png"
+  },
+  {
+    "id": "curated-flag-ie",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Ireland", "Italy", "Ivory Coast", "India"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ie.png"
+  },
+  {
+    "id": "curated-flag-gr",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Greece", "Cyprus", "Israel", "Finland"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/gr.png"
+  },
+  {
+    "id": "curated-flag-nl",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Netherlands", "Luxembourg", "Russia", "France"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/nl.png"
+  },
+  {
+    "id": "curated-flag-ch",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Switzerland", "Denmark", "Austria", "England"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ch.png"
+  },
+  {
+    "id": "curated-flag-ua",
+    "category": "Flags",
+    "difficulty": "medium",
+    "text": "Which country's flag is this?",
+    "options": ["Ukraine", "Sweden", "Kazakhstan", "Argentina"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/ua.png"
+  },
+  {
+    "id": "curated-flag-pt",
+    "category": "Flags",
+    "difficulty": "hard",
+    "text": "Which country's flag is this?",
+    "options": ["Portugal", "Spain", "Brazil", "Italy"],
+    "correctIndex": 0,
+    "imageUrl": "https://flagcdn.com/w320/pt.png"
   }
 ]

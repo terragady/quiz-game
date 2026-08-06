@@ -98,6 +98,32 @@ describe('HostPage', () => {
     expect(screen.getByText('2/3 answered')).toBeInTheDocument();
   });
 
+  it('renders a question image when one is provided', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'question',
+          endsAt: Date.now() + 20_000,
+          currentQuestion: {
+            id: 'flag1',
+            number: 1,
+            total: 3,
+            category: 'Flags',
+            difficulty: 'easy',
+            text: "Which country's flag is this?",
+            options: ['Norway', 'Denmark', 'Iceland', 'Finland'],
+            imageUrl: 'https://flagcdn.com/w320/no.png',
+          },
+        }),
+      ),
+    );
+
+    const image = screen.getByRole('img');
+    expect(image).toHaveAttribute('src', 'https://flagcdn.com/w320/no.png');
+  });
+
   it('renders the leaderboard standings', () => {
     renderHost(fake);
     act(() =>

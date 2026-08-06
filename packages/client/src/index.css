@@ -1,24 +1,30 @@
 :root {
-  --bg: #0f1020;
-  --bg-elevated: #1b1c34;
-  --bg-card: #23244400;
-  --card: #202244;
+  --bg: #0b0c1a;
+  --bg-elevated: #1a1c33;
+  --card: rgba(30, 32, 60, 0.72);
+  --card-border: rgba(255, 255, 255, 0.08);
   --text: #f5f6ff;
-  --text-dim: #b6b8d8;
-  --primary: #6c5ce7;
-  --primary-strong: #8a7bff;
-  --border: #34366a;
-  --good: #26de81;
+  --text-dim: #a9acce;
+  --primary: #7c5cff;
+  --primary-strong: #a48bff;
+  --accent: #21d4fd;
+  --border: #333663;
+  --good: #2ce38a;
   --bad: #ff5b6e;
+  --gold: #ffd15c;
+  --silver: #d6dcec;
+  --bronze: #e0975a;
 
   /* Answer colors (A/B/C/D). */
-  --a: #e84855;
+  --a: #e8455a;
   --b: #2d9cdb;
-  --c: #f2c94c;
-  --d: #27ae60;
+  --c: #f2b705;
+  --d: #21c17a;
 
-  --radius: 16px;
+  --radius: 20px;
   --gap: 16px;
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.65);
+  --shadow-sm: 0 6px 18px -8px rgba(0, 0, 0, 0.55);
 }
 
 * {
@@ -33,7 +39,12 @@ body,
 }
 
 body {
-  background: radial-gradient(circle at top, #1a1c3a, var(--bg));
+  background:
+    radial-gradient(1100px 700px at 12% -10%, rgba(124, 92, 255, 0.28), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(33, 212, 253, 0.18), transparent 55%),
+    radial-gradient(800px 800px at 50% 120%, rgba(44, 227, 138, 0.12), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--text);
   font-family:
     system-ui,
@@ -48,7 +59,13 @@ h1,
 h2,
 h3 {
   margin: 0 0 0.4em;
-  line-height: 1.1;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 800;
 }
 
 .screen {
@@ -67,11 +84,14 @@ h3 {
 
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: clamp(20px, 4vw, 32px);
+  padding: clamp(22px, 4vw, 36px);
   width: 100%;
   max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 /* Buttons ------------------------------------------------------------------ */
@@ -80,19 +100,25 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 20px;
-  min-height: 52px;
-  border-radius: 12px;
+  padding: 14px 22px;
+  min-height: 54px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--bg-elevated);
   color: var(--text);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
   transition:
-    transform 0.05s ease,
+    transform 0.08s ease,
+    box-shadow 0.2s ease,
     filter 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn:active:not(:disabled) {
@@ -100,21 +126,24 @@ h3 {
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .btn--primary {
-  background: var(--primary);
-  border-color: var(--primary-strong);
+  background: linear-gradient(135deg, var(--primary), #9b6bff 55%, var(--accent));
+  border-color: transparent;
+  color: #0c0d1c;
+  box-shadow: 0 10px 30px -12px rgba(124, 92, 255, 0.8);
 }
 
 .btn--primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 
 .btn--ghost {
   background: transparent;
+  border-color: var(--card-border);
 }
 
 .btn--block {
@@ -138,6 +167,7 @@ h3 {
 
 .field label {
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-dim);
 }
 
@@ -156,9 +186,19 @@ h3 {
   padding: 14px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--bg);
+  background: rgba(11, 12, 26, 0.7);
   color: var(--text);
   font-size: 1.1rem;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--primary-strong);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
 }
 
 .error-banner {
@@ -166,18 +206,24 @@ h3 {
   border: 1px solid var(--bad);
   color: #ffd5db;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 12px;
 }
 
 /* Home --------------------------------------------------------------------- */
 .home__title {
-  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  font-size: clamp(2.6rem, 9vw, 3.8rem);
+  font-weight: 900;
+  background: linear-gradient(120deg, #fff, var(--primary-strong) 60%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .home__subtitle {
   color: var(--text-dim);
   margin-bottom: 24px;
+  font-size: 1.05rem;
 }
 
 .home__links {
@@ -189,16 +235,20 @@ h3 {
 /* Join code + QR ----------------------------------------------------------- */
 .code-badge {
   font-size: clamp(3rem, 12vw, 6rem);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.15em;
-  color: var(--primary-strong);
+  background: linear-gradient(120deg, var(--primary-strong), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .qr {
   background: #fff;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 16px;
   display: inline-block;
+  box-shadow: var(--shadow-sm);
 }
 
 .muted {
@@ -214,9 +264,9 @@ h3 {
 }
 
 .chip {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  padding: 8px 16px;
   border-radius: 999px;
   font-weight: 600;
 }
@@ -226,12 +276,26 @@ h3 {
   color: var(--good);
 }
 
+/* Question image (host) ---------------------------------------------------- */
+.question-image {
+  max-width: min(420px, 80vw);
+  max-height: 40vh;
+  width: auto;
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.04);
+}
+
 /* Answers ------------------------------------------------------------------ */
 .answer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .answer-grid--single {
@@ -241,19 +305,26 @@ h3 {
 .answer {
   min-height: 96px;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   color: #10111f;
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: 14px;
+  padding: 16px 18px;
   text-align: left;
+  box-shadow: var(--shadow-sm);
   transition:
-    transform 0.05s ease,
+    transform 0.08s ease,
+    box-shadow 0.2s ease,
     opacity 0.15s ease;
+}
+
+.answer:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.7);
 }
 
 .answer:active:not(:disabled) {
@@ -265,10 +336,16 @@ h3 {
 }
 
 .answer__letter {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 900;
-  width: 1.4em;
+  width: 1.9em;
+  height: 1.9em;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .answer--0 {
@@ -285,7 +362,7 @@ h3 {
 }
 
 .answer--dim {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 
 .answer--selected {
@@ -294,18 +371,40 @@ h3 {
 }
 
 .answer--correct {
-  outline: 4px solid var(--good);
+  outline: 4px solid #fff;
   outline-offset: 2px;
+  box-shadow:
+    0 0 0 4px var(--good),
+    0 14px 30px -10px rgba(44, 227, 138, 0.6);
 }
 
 /* Countdown ---------------------------------------------------------------- */
 .countdown {
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 800;
+  align-self: center;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 900;
+  min-width: 3.2em;
+  padding: 6px 20px;
+  border-radius: 999px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
 }
 
 .countdown--urgent {
   color: var(--bad);
+  border-color: var(--bad);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
 }
 
 /* Question (host) ---------------------------------------------------------- */
@@ -314,13 +413,15 @@ h3 {
   font-weight: 800;
   text-align: center;
   margin: 16px 0;
+  max-width: 900px;
+  margin-inline: auto;
 }
 
 /* Leaderboard -------------------------------------------------------------- */
 .leaderboard {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -332,31 +433,60 @@ h3 {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
   font-size: 1.2rem;
+  transition: transform 0.15s ease;
+}
+
+.leaderboard__row:nth-child(1) {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, rgba(255, 209, 92, 0.16), transparent);
+  transform: scale(1.02);
+}
+
+.leaderboard__row:nth-child(2) {
+  border-color: var(--silver);
+  background: linear-gradient(90deg, rgba(214, 220, 236, 0.12), transparent);
+}
+
+.leaderboard__row:nth-child(3) {
+  border-color: var(--bronze);
+  background: linear-gradient(90deg, rgba(224, 151, 90, 0.12), transparent);
 }
 
 .leaderboard__rank {
-  font-weight: 800;
+  font-weight: 900;
   color: var(--primary-strong);
   width: 2ch;
+  text-align: center;
+}
+
+.leaderboard__row:nth-child(1) .leaderboard__rank {
+  color: var(--gold);
+}
+.leaderboard__row:nth-child(2) .leaderboard__rank {
+  color: var(--silver);
+}
+.leaderboard__row:nth-child(3) .leaderboard__rank {
+  color: var(--bronze);
 }
 
 .leaderboard__name {
   flex: 1;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .leaderboard__score {
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .leaderboard__delta {
   color: var(--good);
   font-size: 0.9rem;
+  font-weight: 700;
 }
 
 /* Feedback (player) -------------------------------------------------------- */
@@ -374,7 +504,7 @@ h3 {
 }
 
 .feedback__points {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   font-weight: 900;
 }
 

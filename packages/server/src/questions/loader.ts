@@ -71,6 +71,13 @@ function validateQuestion(item: unknown, index: number): Question {
     );
   }
 
+  if (
+    q.imageUrl !== undefined &&
+    (typeof q.imageUrl !== 'string' || q.imageUrl.trim().length === 0)
+  ) {
+    throw new Error(`${where} "imageUrl" must be a non-empty string when present.`);
+  }
+
   return {
     id: q.id as string,
     category: q.category as string,
@@ -78,6 +85,7 @@ function validateQuestion(item: unknown, index: number): Question {
     text: q.text as string,
     options: q.options as string[],
     correctIndex: q.correctIndex,
+    ...(q.imageUrl !== undefined ? { imageUrl: q.imageUrl as string } : {}),
   };
 }
 
@@ -115,6 +123,17 @@ export function loadQuestions(
   return validateQuestionsData(parsed);
 }
 
+/**
+ * Return a copy of the question with its options randomly reordered and the
+ * correctIndex adjusted to follow the correct answer. This keeps the correct
+ * option from always sitting in the same slot for hand-authored questions.
+ */
+export function withShuffledOptions(question: Question): Question {
+  const correctText = question.options[question.correctIndex];
+  const options = shuffle(question.options);
+  return { ...question, options, correctIndex: options.indexOf(correctText) };
+}
+
 /** Combine question lists, keeping the first occurrence of each id. */
 export function mergeQuestions(...lists: Question[][]): Question[] {
   const byId = new Map<string, Question>();
@@ -139,7 +158,7 @@ export function loadQuestionPool(
 ): Question[] {
   const curated = existsSync(curatedPath) ? loadQuestions(curatedPath) : [];
   const imported = existsSync(importedPath) ? loadQuestions(importedPath) : [];
-  const pool = mergeQuestions(curated, imported);
+  const pool = mergeQuestions(curated, imported).map(withShuffledOptions);
   if (pool.length === 0) {
     throw new Error('No questions available: both question files are empty or missing.');
   }

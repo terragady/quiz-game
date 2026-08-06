@@ -20,6 +20,8 @@ export interface Question {
   options: string[];
   /** Index into `options` of the correct answer. */
   correctIndex: number;
+  /** Optional image shown with the question (e.g. a flag to identify). */
+  imageUrl?: string;
 }
 
 /** A question as sent to clients while it is being asked — no correct answer. */
@@ -33,6 +35,8 @@ export interface PublicQuestion {
   difficulty: Difficulty;
   text: string;
   options: string[];
+  /** Optional image shown with the question (e.g. a flag to identify). */
+  imageUrl?: string;
 }
 
 /** Settings chosen by the admin before starting a game. */
