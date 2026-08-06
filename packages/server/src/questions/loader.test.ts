@@ -104,6 +104,22 @@ describe('withShuffledOptions', () => {
       );
     }
   });
+
+  it('maps correctIndex by position when option texts repeat', () => {
+    const source: Question = {
+      id: 'dup',
+      category: 'Test',
+      difficulty: 'easy',
+      text: 'How many?',
+      options: ['0', '0', '1', '0'],
+      correctIndex: 2,
+    };
+    for (let i = 0; i < 50; i += 1) {
+      const shuffled = withShuffledOptions(source);
+      expect(shuffled.options[shuffled.correctIndex]).toBe('1');
+      expect(shuffled.options.filter((o) => o === '0')).toHaveLength(3);
+    }
+  });
 });
 
 describe('filterQuestions', () => {
