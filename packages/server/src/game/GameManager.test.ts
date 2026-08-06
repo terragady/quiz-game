@@ -57,7 +57,7 @@ function startGame(game: GameManager, settings: GameSettings): void {
 const baseSettings: GameSettings = {
   questionCount: 3,
   secondsPerQuestion: 20,
-  category: null,
+  categories: [],
   difficulty: null,
   autoAdvance: false,
   revealSeconds: 5,
@@ -147,8 +147,29 @@ describe('GameManager start', () => {
 
   it('rejects settings whose filter matches no questions', () => {
     expect(() =>
-      game.start({ ...baseSettings, category: 'Nonexistent' }),
+      game.start({ ...baseSettings, categories: ['Nonexistent'] }),
     ).toThrow(/No questions match/);
+  });
+
+  it('draws only from the selected categories', () => {
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 3,
+      categories: ['Science'],
+    });
+    expect(game.getPublicState().currentQuestion?.category).toBe('Science');
+    expect(game.getPublicState().currentQuestion?.total).toBe(2);
+  });
+
+  it('trims and de-duplicates selected categories', () => {
+    game.start({
+      ...baseSettings,
+      categories: ['Science', ' Science ', 'History'],
+    });
+    expect(game.getPublicState().settings.categories).toEqual([
+      'Science',
+      'History',
+    ]);
   });
 
   it('rejects being started twice', () => {
@@ -276,21 +297,22 @@ describe('GameManager scoring and reveal', () => {
     expect(game.getPublicState().revealedCorrectIndex).toBe(expectedIndex);
   });
 
-  it('exposes per-option answer counts only during the reveal phase', () => {
+  it('exposes per-option voter nicknames only during the reveal phase', () => {
     const correct = correctOptionIndex(game);
     const incorrect = wrongOptionIndex(game);
     game.submitAnswer(fast, correct);
     game.submitAnswer(slow, correct);
     game.submitAnswer(wrong, incorrect);
 
-    expect(game.getPublicState().optionCounts).toBeNull();
+    expect(game.getPublicState().optionVoters).toBeNull();
 
     game.reveal();
 
-    const counts = game.getPublicState().optionCounts;
-    expect(counts).not.toBeNull();
-    expect(counts?.[correct]).toBe(2);
-    expect(counts?.[incorrect]).toBe(1);
+    const voters = game.getPublicState().optionVoters;
+    expect(voters).not.toBeNull();
+    expect(voters?.[correct]).toEqual(expect.arrayContaining(['Fast', 'Slow']));
+    expect(voters?.[correct]).toHaveLength(2);
+    expect(voters?.[incorrect]).toEqual(['Wrong']);
   });
 
   it('never exposes the correct answer on the public question object', () => {

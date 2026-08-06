@@ -34,7 +34,7 @@ export interface PublicQuestion {
 export interface GameSettings {
   questionCount: number;
   secondsPerQuestion: number;
-  category: string | null;
+  categories: string[];
   difficulty: Difficulty | null;
   autoAdvance: boolean;
   revealSeconds: number;
@@ -86,7 +86,7 @@ export interface PublicGameState {
   endsAt: number | null;
   answeredCount: number;
   playerCount: number;
-  optionCounts: number[] | null;
+  optionVoters: string[][] | null;
   leaderboard: LeaderboardRow[];
 }
 

@@ -1,4 +1,5 @@
 const LETTERS = ['A', 'B', 'C', 'D'];
+const MAX_VISIBLE_VOTERS = 6;
 
 export function AnswerButton({
   index,
@@ -7,8 +8,7 @@ export function AnswerButton({
   disabled = false,
   selected = false,
   correct,
-  count,
-  share,
+  voters,
   hideLetter = false,
 }: {
   index: number;
@@ -17,8 +17,7 @@ export function AnswerButton({
   disabled?: boolean;
   selected?: boolean;
   correct?: boolean;
-  count?: number;
-  share?: number;
+  voters?: string[];
   hideLetter?: boolean;
 }) {
   const classes = ['answer', `answer--${index}`];
@@ -27,8 +26,8 @@ export function AnswerButton({
   if (correct === false && !selected) classes.push('answer--dim');
   if (hideLetter) classes.push('answer--no-letter');
 
-  const showDistribution = share !== undefined;
-  const percent = share !== undefined ? Math.round(share * 100) : 0;
+  const visibleVoters = voters?.slice(0, MAX_VISIBLE_VOTERS) ?? [];
+  const overflow = (voters?.length ?? 0) - visibleVoters.length;
 
   return (
     <button
@@ -38,22 +37,24 @@ export function AnswerButton({
       onClick={onSelect}
       aria-pressed={selected}
     >
-      {showDistribution && (
-        <span
-          className="answer__fill"
-          style={{ width: `${percent}%` }}
-          aria-hidden="true"
-        />
-      )}
       {!hideLetter && (
         <span className="answer__letter" aria-hidden="true">
           {LETTERS[index] ?? index + 1}
         </span>
       )}
       <span className="answer__label">{label}</span>
-      {showDistribution && (
-        <span className="answer__count">
-          {count ?? 0} · {percent}%
+      {voters !== undefined && (
+        <span className="answer__voters">
+          {visibleVoters.map((nickname, voterIndex) => (
+            <span key={voterIndex} className="answer__voter">
+              {nickname}
+            </span>
+          ))}
+          {overflow > 0 && (
+            <span className="answer__voter answer__voter--more">
+              +{overflow} more
+            </span>
+          )}
         </span>
       )}
     </button>

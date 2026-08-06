@@ -13,7 +13,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     settings: {
       questionCount: 3,
       secondsPerQuestion: 20,
-      category: null,
+      categories: [],
       difficulty: null,
       autoAdvance: false,
       revealSeconds: 5,
@@ -25,7 +25,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 0,
-    optionCounts: null,
+    optionVoters: null,
     leaderboard: [],
     ...overrides,
   };
@@ -94,7 +94,7 @@ describe('HostPage', () => {
     expect(screen.getByTestId('start-button')).toBeDisabled();
   });
 
-  it('shows the answer distribution on reveal', () => {
+  it('shows who picked each answer on reveal', () => {
     renderHost(fake);
     act(() =>
       fake.serverEmit(
@@ -103,7 +103,7 @@ describe('HostPage', () => {
           phase: 'reveal',
           playerCount: 4,
           revealedCorrectIndex: 0,
-          optionCounts: [3, 1, 0, 0],
+          optionVoters: [['Alice', 'Bob', 'Carol'], ['Dave'], [], []],
           currentQuestion: {
             id: 'q1',
             number: 1,
@@ -117,8 +117,41 @@ describe('HostPage', () => {
       ),
     );
 
-    expect(screen.getByText('3 · 75%')).toBeInTheDocument();
-    expect(screen.getByText('1 · 25%')).toBeInTheDocument();
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+    expect(screen.getByText('Bob')).toBeInTheDocument();
+    expect(screen.getByText('Carol')).toBeInTheDocument();
+    expect(screen.getByText('Dave')).toBeInTheDocument();
+  });
+
+  it('caps the visible voters and shows an overflow count', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'reveal',
+          playerCount: 8,
+          revealedCorrectIndex: 0,
+          optionVoters: [
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+            [],
+            [],
+            [],
+          ],
+          currentQuestion: {
+            id: 'q1',
+            number: 1,
+            total: 3,
+            category: 'Science',
+            difficulty: 'easy',
+            text: 'Capital of Japan?',
+            options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
+          },
+        }),
+      ),
+    );
+
+    expect(screen.getByText('+2 more')).toBeInTheDocument();
   });
 
   it('advances the game with the host control buttons during a question', async () => {

@@ -14,5 +14,5 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION
-        value: "20"
+        value: "24"
       # PORT is provided by Render automatically; the server reads process.env.PORT.

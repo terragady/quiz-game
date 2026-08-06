@@ -14,7 +14,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     settings: {
       questionCount: 3,
       secondsPerQuestion: 20,
-      category: null,
+      categories: [],
       difficulty: null,
       autoAdvance: false,
       revealSeconds: 5,
@@ -26,7 +26,7 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 1,
-    optionCounts: null,
+    optionVoters: null,
     leaderboard: [],
     ...overrides,
   };
@@ -62,11 +62,16 @@ function renderPlayer(fake: FakeSocket, entry = '/play') {
   );
 }
 
+function clearNicknameCookie() {
+  document.cookie = 'quiz.nickname=; max-age=0; path=/';
+}
+
 describe('PlayerPage join flow', () => {
   let fake: FakeSocket;
 
   beforeEach(() => {
     localStorage.clear();
+    clearNicknameCookie();
     fake = new FakeSocket();
   });
 
@@ -366,5 +371,38 @@ describe('PlayerPage reconnection', () => {
     act(() => document.dispatchEvent(new Event('visibilitychange')));
 
     expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
+  });
+});
+
+describe('PlayerPage nickname cookie', () => {
+  let fake: FakeSocket;
+
+  beforeEach(() => {
+    localStorage.clear();
+    clearNicknameCookie();
+    fake = new FakeSocket();
+  });
+
+  it('prefills the nickname from the cookie when there is no stored session', () => {
+    document.cookie = 'quiz.nickname=Charlie; path=/';
+    renderPlayer(fake, '/play?code=WXYZ');
+
+    const nicknameInput = screen.getByLabelText('Nickname') as HTMLInputElement;
+    expect(nicknameInput.value).toBe('Charlie');
+  });
+
+  it('remembers the nickname in a cookie after a successful join', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    renderPlayer(fake, '/play?code=WXYZ');
+
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Dana');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+    await screen.findByText(/You're in/i);
+
+    expect(document.cookie).toContain('quiz.nickname=Dana');
   });
 });

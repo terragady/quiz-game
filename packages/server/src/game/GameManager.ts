@@ -140,7 +140,7 @@ export class GameManager {
     const validated = validateSettings(settings);
     const selected = selectQuestions(this.questionPool, {
       count: validated.questionCount,
-      category: validated.category,
+      categories: validated.categories,
       difficulty: validated.difficulty,
     });
     if (selected.length === 0) {
@@ -274,7 +274,7 @@ export class GameManager {
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
-      optionCounts: this.phaseValue === 'reveal' ? this.optionCounts() : null,
+      optionVoters: this.phaseValue === 'reveal' ? this.optionVoters() : null,
       leaderboard: this.leaderboard(),
     };
   }
@@ -363,16 +363,16 @@ export class GameManager {
       .length;
   }
 
-  private optionCounts(): number[] {
+  private optionVoters(): string[][] {
     const question = this.currentQuestion();
-    const counts = question.options.map(() => 0);
+    const voters: string[][] = question.options.map(() => []);
     for (const player of this.players.values()) {
       const index = player.currentAnswer?.optionIndex;
-      if (index !== undefined && index >= 0 && index < counts.length) {
-        counts[index] += 1;
+      if (index !== undefined && index >= 0 && index < voters.length) {
+        voters[index].push(player.nickname);
       }
     }
-    return counts;
+    return voters;
   }
 
   private leaderboard(): LeaderboardRow[] {
@@ -476,7 +476,7 @@ function validateSettings(settings: GameSettings): GameSettings {
   return {
     questionCount: settings.questionCount,
     secondsPerQuestion: settings.secondsPerQuestion,
-    category: settings.category?.trim() ? settings.category.trim() : null,
+    categories: normalizeCategories(settings.categories),
     difficulty: settings.difficulty,
     autoAdvance: Boolean(settings.autoAdvance),
     revealSeconds: settings.revealSeconds,
@@ -484,11 +484,25 @@ function validateSettings(settings: GameSettings): GameSettings {
   };
 }
 
+function normalizeCategories(categories: unknown): string[] {
+  if (!Array.isArray(categories)) return [];
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of categories) {
+    if (typeof value !== 'string') continue;
+    const trimmed = value.trim();
+    if (trimmed.length === 0 || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    result.push(trimmed);
+  }
+  return result;
+}
+
 function defaultSettingsSnapshot(): GameSettings {
   return {
     questionCount: 0,
     secondsPerQuestion: 0,
-    category: null,
+    categories: [],
     difficulty: null,
     autoAdvance: false,
     revealSeconds: 0,

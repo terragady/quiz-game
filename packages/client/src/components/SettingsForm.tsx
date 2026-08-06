@@ -56,23 +56,38 @@ export function SettingsForm({
       </div>
 
       <div className="field">
-        <label htmlFor="category">Category</label>
-        <select
-          id="category"
-          className="select"
-          value={settings.category ?? ''}
-          disabled={disabled}
-          onChange={(e) =>
-            update({ category: e.target.value || null })
-          }
-        >
-          <option value="">Any category</option>
-          {categories.map((category) => (
-            <option key={category.name} value={category.name}>
-              {category.name} ({category.count})
-            </option>
-          ))}
-        </select>
+        <span className="field-label">Categories</span>
+        <p className="muted field-hint">
+          {settings.categories.length === 0
+            ? 'Any category'
+            : `${settings.categories.length} selected`}
+        </p>
+        <div className="category-options" role="group" aria-label="Categories">
+          {categories.map((category) => {
+            const checked = settings.categories.includes(category.name);
+            return (
+              <label key={category.name} className="category-option">
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled={disabled}
+                  onChange={(e) =>
+                    update({
+                      categories: e.target.checked
+                        ? [...settings.categories, category.name]
+                        : settings.categories.filter(
+                            (name) => name !== category.name,
+                          ),
+                    })
+                  }
+                />
+                <span>
+                  {category.name} ({category.count})
+                </span>
+              </label>
+            );
+          })}
+        </div>
       </div>
 
       <div className="field">

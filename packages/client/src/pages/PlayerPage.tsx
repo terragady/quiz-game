@@ -22,6 +22,7 @@ import {
   readSession,
   writeSession,
 } from '../playerSession.js';
+import { readNickname, writeNickname } from '../nicknameCookie.js';
 
 const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 
@@ -35,7 +36,9 @@ export function PlayerPage() {
   const [code, setCode] = useState(
     (stored?.code ?? searchParams.get('code') ?? '').toUpperCase(),
   );
-  const [nickname, setNickname] = useState(stored?.nickname ?? '');
+  const [nickname, setNickname] = useState(
+    stored?.nickname ?? readNickname() ?? '',
+  );
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [state, setState] = useState<PublicGameState | null>(null);
   const [answer, setAnswer] = useState<{
@@ -152,6 +155,7 @@ export function PlayerPage() {
             playerId: ack.playerId,
             nickname: trimmedNickname,
           });
+          writeNickname(trimmedNickname);
           setPlayerId(ack.playerId);
           setState(ack.state);
         } else {
