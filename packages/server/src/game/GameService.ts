@@ -153,6 +153,21 @@ export class GameService {
       }
     });
 
+    socket.on('playerLeave', () => {
+      const { playerId, code } = socket.data;
+      const game = code ? this.games.get(code) : undefined;
+      if (!playerId || !game) return;
+      game.removePlayer(playerId);
+      this.playerSockets.delete(playerId);
+      socket.data.playerId = undefined;
+      void socket.leave(game.code);
+      this.broadcastState(game.code);
+      if (game.phase === 'question' && game.allConnectedAnswered()) {
+        this.revealNow(game.code);
+      }
+      this.scheduleCleanupIfEmpty(game.code);
+    });
+
     socket.on('disconnect', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;

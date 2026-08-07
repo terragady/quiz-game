@@ -1,68 +1,59 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DEFAULT_SETTINGS, type CategorySummary } from '@quiz/shared';
+import { DEFAULT_SETTINGS } from '@quiz/shared';
 import { SettingsForm } from './SettingsForm.js';
 
-const categories: CategorySummary[] = [
-  { name: 'Science', count: 5 },
-  { name: 'Geography', count: 3 },
-];
+describe('SettingsForm', () => {
+  it('updates the number of questions', () => {
+    const onChange = vi.fn();
+    render(
+      <SettingsForm settings={DEFAULT_SETTINGS} onChange={onChange} />,
+    );
 
-describe('SettingsForm categories', () => {
-  it('shows "Any category" when none are selected', () => {
+    fireEvent.change(screen.getByLabelText('Number of questions'), {
+      target: { value: '5' },
+    });
+
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ questionCount: 5 }),
+    );
+  });
+
+  it('updates the difficulty', async () => {
+    const onChange = vi.fn();
+    render(
+      <SettingsForm settings={DEFAULT_SETTINGS} onChange={onChange} />,
+    );
+
+    await userEvent.selectOptions(screen.getByLabelText('Difficulty'), 'hard');
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ difficulty: 'hard' }),
+    );
+  });
+
+  it('reveals auto-advance timing fields when enabled', () => {
     render(
       <SettingsForm
-        settings={{ ...DEFAULT_SETTINGS, categories: [] }}
-        categories={categories}
+        settings={{ ...DEFAULT_SETTINGS, autoAdvance: true }}
         onChange={() => {}}
       />,
     );
-    expect(screen.getByText('Any category')).toBeInTheDocument();
+
+    expect(screen.getByLabelText('Seconds on answer reveal')).toBeInTheDocument();
+    expect(screen.getByLabelText('Seconds on leaderboard')).toBeInTheDocument();
   });
 
-  it('adds a category when its checkbox is checked', async () => {
-    const onChange = vi.fn();
+  it('hides auto-advance timing fields when disabled', () => {
     render(
       <SettingsForm
-        settings={{ ...DEFAULT_SETTINGS, categories: [] }}
-        categories={categories}
-        onChange={onChange}
-      />,
-    );
-
-    await userEvent.click(screen.getByLabelText('Science (5)'));
-
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ categories: ['Science'] }),
-    );
-  });
-
-  it('removes a category when its checkbox is unchecked', async () => {
-    const onChange = vi.fn();
-    render(
-      <SettingsForm
-        settings={{ ...DEFAULT_SETTINGS, categories: ['Science', 'Geography'] }}
-        categories={categories}
-        onChange={onChange}
-      />,
-    );
-
-    await userEvent.click(screen.getByLabelText('Science (5)'));
-
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ categories: ['Geography'] }),
-    );
-  });
-
-  it('reports how many categories are selected', () => {
-    render(
-      <SettingsForm
-        settings={{ ...DEFAULT_SETTINGS, categories: ['Science', 'Geography'] }}
-        categories={categories}
+        settings={{ ...DEFAULT_SETTINGS, autoAdvance: false }}
         onChange={() => {}}
       />,
     );
-    expect(screen.getByText('2 selected')).toBeInTheDocument();
+
+    expect(screen.queryByLabelText('Seconds on answer reveal')).toBeNull();
+    expect(screen.queryByLabelText('Seconds on leaderboard')).toBeNull();
   });
 });

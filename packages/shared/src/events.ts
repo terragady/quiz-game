@@ -32,6 +32,7 @@ export interface ClientToServerEvents {
   hostNext: () => void;
   hostEnd: () => void;
   submitAnswer: (payload: { optionIndex: number }) => void;
+  playerLeave: () => void;
 }
 
 export type InterServerEvents = Record<string, never>;

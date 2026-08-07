@@ -66,6 +66,12 @@ function clearNicknameCookie() {
   document.cookie = 'quiz.nickname=; max-age=0; path=/';
 }
 
+function answerButtons(): HTMLElement[] {
+  return screen
+    .getAllByRole('button')
+    .filter((button) => button.classList.contains('answer'));
+}
+
 describe('PlayerPage join flow', () => {
   let fake: FakeSocket;
 
@@ -138,9 +144,7 @@ describe('PlayerPage answering', () => {
 
   it('renders one button per option for a four-option question', async () => {
     act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
-    await waitFor(() =>
-      expect(screen.getAllByRole('button')).toHaveLength(4),
-    );
+    await waitFor(() => expect(answerButtons()).toHaveLength(4));
   });
 
   it('shows the question category as a chip', async () => {
@@ -150,9 +154,7 @@ describe('PlayerPage answering', () => {
 
   it('renders two buttons for a true/false question', async () => {
     act(() => fake.serverEmit('gameState', questionState(['True', 'False'])));
-    await waitFor(() =>
-      expect(screen.getAllByRole('button')).toHaveLength(2),
-    );
+    await waitFor(() => expect(answerButtons()).toHaveLength(2));
   });
 
   it('locks the buttons after an answer is submitted', async () => {
@@ -163,7 +165,7 @@ describe('PlayerPage answering', () => {
     expect(fake.emittedArgs('submitAnswer')[0]?.[0]).toEqual({
       optionIndex: 0,
     });
-    for (const button of screen.getAllByRole('button')) {
+    for (const button of answerButtons()) {
       expect(button).toBeDisabled();
     }
   });
@@ -171,7 +173,7 @@ describe('PlayerPage answering', () => {
   it('unlocks answering on a new question even without a questionStarted event', async () => {
     act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q1')));
     await userEvent.click(await screen.findByRole('button', { name: /A/ }));
-    for (const button of screen.getAllByRole('button')) {
+    for (const button of answerButtons()) {
       expect(button).toBeDisabled();
     }
 
@@ -179,7 +181,10 @@ describe('PlayerPage answering', () => {
       fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q2', 2)),
     );
 
-    const buttons = await screen.findAllByRole('button');
+    await waitFor(() =>
+      expect(answerButtons()[0]).not.toBeDisabled(),
+    );
+    const buttons = answerButtons();
     for (const button of buttons) {
       expect(button).not.toBeDisabled();
     }
@@ -188,6 +193,16 @@ describe('PlayerPage answering', () => {
     expect(fake.emittedArgs('submitAnswer').at(-1)?.[0]).toEqual({
       optionIndex: 1,
     });
+  });
+
+  it('leaves the game, clears the session, and returns to the join form', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Leave game' }));
+
+    expect(fake.emittedArgs('playerLeave')).toHaveLength(1);
+    expect(localStorage.getItem('quiz.playerSession')).toBeNull();
+    expect(
+      await screen.findByRole('button', { name: 'Join' }),
+    ).toBeInTheDocument();
   });
 
   it('does not show a banner for a benign answer rejection', async () => {
@@ -285,6 +300,26 @@ describe('PlayerPage reconnection', () => {
       code: 'WXYZ',
       playerId: 'p1',
     });
+  });
+
+  it('prefers a QR code in the URL over a stored session for a different game', async () => {
+    localStorage.setItem(
+      'quiz.playerSession',
+      JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
+    );
+    fake.respondToAck('playerRejoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+
+    renderPlayer(fake, '/play?code=NEWW');
+
+    const codeInput = (await screen.findByLabelText(
+      'Game code',
+    )) as HTMLInputElement;
+    expect(codeInput.value).toBe('NEWW');
+    expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
   });
 
   it('falls back to the join form when the stored session has expired', async () => {

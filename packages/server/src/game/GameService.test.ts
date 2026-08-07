@@ -385,6 +385,33 @@ describe('GameService integration', () => {
     expect(result.correct).toBe(true);
   });
 
+  it('removes a player from the room when they leave', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    expect(hostAck.ok).toBe(true);
+    if (!hostAck.ok) return;
+    const code = hostAck.state.code;
+
+    const alice = connect();
+    await playerJoin(alice, code, 'Alice');
+    const bob = connect();
+    await playerJoin(bob, code, 'Bob');
+    await waitForState(host, (s) => s.players.length === 2);
+
+    const bobGone = waitForState(
+      host,
+      (s) => s.players.length === 1 && s.players[0]?.nickname === 'Alice',
+    );
+    bob.emit('playerLeave');
+    const state = await bobGone;
+    expect(state.playerCount).toBe(1);
+    expect(state.players.map((p) => p.nickname)).toEqual(['Alice']);
+
+    // Bob can rejoin fresh under the same nickname since he was removed.
+    const bobAgain = await playerJoin(bob, code, 'Bob');
+    expect(bobAgain.ok).toBe(true);
+  });
+
   it('rejects a rejoin for an unknown player id', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
