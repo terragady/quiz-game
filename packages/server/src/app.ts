@@ -36,6 +36,10 @@ export function createGameServer(
   options: GameServerOptions = {},
 ): GameServerHandles {
   const app = express();
+  // Render (and most PaaS providers) put a reverse proxy in front of the app,
+  // so the client IP arrives in the X-Forwarded-For header. Trust the first
+  // proxy hop so express-rate-limit can identify clients correctly.
+  app.set('trust proxy', 1);
   app.get('/healthz', (_req, res) => {
     res.json({ status: 'ok' });
   });
