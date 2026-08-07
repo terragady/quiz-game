@@ -34,13 +34,14 @@ export function PlayerPage() {
 
   const storedRef = useRef(readSession());
   const stored = storedRef.current;
-  // A code in the URL (e.g. from scanning a new game's QR code) always wins,
-  // and we only auto-rejoin a stored session when it matches that code.
+  // Always try to rejoin a stored session first so refreshing the page keeps
+  // you in your game. A code in the URL (e.g. from scanning a new game's QR
+  // code) only decides what the join form is prefilled with; it takes over
+  // when there is no stored session, or if the rejoin attempt fails.
   const urlCode = (searchParams.get('code') ?? '').toUpperCase();
-  const rejoinSession =
-    stored && (!urlCode || urlCode === stored.code)
-      ? { code: stored.code, playerId: stored.playerId }
-      : null;
+  const rejoinSession = stored
+    ? { code: stored.code, playerId: stored.playerId }
+    : null;
 
   const [code, setCode] = useState(
     (urlCode || stored?.code || '').toUpperCase(),

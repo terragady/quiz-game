@@ -323,7 +323,7 @@ describe('PlayerPage reconnection', () => {
     });
   });
 
-  it('prefers a QR code in the URL over a stored session for a different game', async () => {
+  it('rejoins the stored session even when the URL points at a different game', async () => {
     localStorage.setItem(
       'quiz.playerSession',
       JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
@@ -331,7 +331,26 @@ describe('PlayerPage reconnection', () => {
     fake.respondToAck('playerRejoin', () => ({
       ok: true,
       playerId: 'p1',
-      state: baseState(),
+      state: baseState({ playerCount: 1 }),
+    }));
+
+    renderPlayer(fake, '/play?code=NEWW');
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+    });
+  });
+
+  it('falls back to the join form prefilled with the URL code when the stored session cannot be rejoined', async () => {
+    localStorage.setItem(
+      'quiz.playerSession',
+      JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
+    );
+    fake.respondToAck('playerRejoin', () => ({
+      ok: false,
+      error: 'Your game session has expired.',
     }));
 
     renderPlayer(fake, '/play?code=NEWW');
@@ -340,7 +359,6 @@ describe('PlayerPage reconnection', () => {
       'Game code',
     )) as HTMLInputElement;
     expect(codeInput.value).toBe('NEWW');
-    expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
   });
 
   it('falls back to the join form when the stored session has expired', async () => {
