@@ -30,7 +30,7 @@ const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 
 export function PlayerPage() {
   const socket = useSocket();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const storedRef = useRef(readSession());
   const stored = storedRef.current;
@@ -43,9 +43,11 @@ export function PlayerPage() {
     ? { code: stored.code, playerId: stored.playerId }
     : null;
 
-  const [code, setCode] = useState(
-    (urlCode || stored?.code || '').toUpperCase(),
-  );
+  // Only prefill the join form's code from a real URL code (e.g. a fresh QR
+  // scan). We deliberately do not fall back to the stored session's code: that
+  // is handled by auto-rejoin, and showing it here would just leave a stale
+  // code in the field once its game is gone.
+  const [code, setCode] = useState(urlCode);
   const [nickname, setNickname] = useState(
     stored?.nickname ?? readNickname() ?? '',
   );
@@ -97,6 +99,22 @@ export function PlayerPage() {
     };
   }, [socket, playerId]);
 
+  // Keep the URL's code in sync with the game you are actually in, so a stale
+  // code left over from an earlier QR scan never lingers in the address bar.
+  const syncUrlCode = useCallback(
+    (nextCode: string) => {
+      setSearchParams(
+        (params) => {
+          if (params.get('code') === nextCode) return params;
+          params.set('code', nextCode);
+          return params;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
   const attemptRejoin = useCallback(
     (rejoinCode: string, rejoinPlayerId: string) => {
       socket.emit(
@@ -107,6 +125,7 @@ export function PlayerPage() {
             sessionRef.current = { code: rejoinCode, playerId: ack.playerId };
             setPlayerId(ack.playerId);
             setState(ack.state);
+            syncUrlCode(rejoinCode);
           } else {
             clearSession();
             sessionRef.current = null;
@@ -115,7 +134,7 @@ export function PlayerPage() {
         },
       );
     },
-    [socket],
+    [socket, syncUrlCode],
   );
 
   useEffect(() => {
@@ -169,6 +188,7 @@ export function PlayerPage() {
           writeNickname(trimmedNickname);
           setPlayerId(ack.playerId);
           setState(ack.state);
+          syncUrlCode(trimmedCode);
         } else {
           setError(ack.error);
         }
