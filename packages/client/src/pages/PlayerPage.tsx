@@ -32,9 +32,16 @@ export function PlayerPage() {
 
   const storedRef = useRef(readSession());
   const stored = storedRef.current;
+  // A code in the URL (e.g. from scanning a new game's QR code) always wins,
+  // and we only auto-rejoin a stored session when it matches that code.
+  const urlCode = (searchParams.get('code') ?? '').toUpperCase();
+  const rejoinSession =
+    stored && (!urlCode || urlCode === stored.code)
+      ? { code: stored.code, playerId: stored.playerId }
+      : null;
 
   const [code, setCode] = useState(
-    (stored?.code ?? searchParams.get('code') ?? '').toUpperCase(),
+    (urlCode || stored?.code || '').toUpperCase(),
   );
   const [nickname, setNickname] = useState(
     stored?.nickname ?? readNickname() ?? '',
@@ -47,7 +54,7 @@ export function PlayerPage() {
   } | null>(null);
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [rejoining, setRejoining] = useState(Boolean(stored));
+  const [rejoining, setRejoining] = useState(Boolean(rejoinSession));
 
   const currentQuestionId = state?.currentQuestion?.id ?? null;
   const selectedIndex =
@@ -56,7 +63,7 @@ export function PlayerPage() {
     result && result.questionId === currentQuestionId ? result : null;
 
   const sessionRef = useRef<{ code: string; playerId: string } | null>(
-    stored ? { code: stored.code, playerId: stored.playerId } : null,
+    rejoinSession,
   );
 
   useEffect(() => {
@@ -165,6 +172,18 @@ export function PlayerPage() {
     );
   };
 
+  const leaveGame = useCallback(() => {
+    socket.emit('playerLeave');
+    clearSession();
+    sessionRef.current = null;
+    setPlayerId(null);
+    setState(null);
+    setAnswer(null);
+    setResult(null);
+    setError(null);
+    setRejoining(false);
+  }, [socket]);
+
   const handleAnswer = (index: number) => {
     const question = state?.currentQuestion;
     if (state?.phase !== 'question' || !question || selectedIndex !== null) {
@@ -230,6 +249,13 @@ export function PlayerPage() {
         result={shownResult}
         onAnswer={handleAnswer}
       />
+      <button
+        type="button"
+        className="btn btn--ghost btn--small player-leave"
+        onClick={leaveGame}
+      >
+        Leave game
+      </button>
     </main>
   );
 }

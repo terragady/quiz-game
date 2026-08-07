@@ -125,6 +125,10 @@ export class GameManager {
     return this.players.has(playerId);
   }
 
+  removePlayer(playerId: string): boolean {
+    return this.players.delete(playerId);
+  }
+
   setConnected(playerId: string, connected: boolean): void {
     const player = this.players.get(playerId);
     if (player) {

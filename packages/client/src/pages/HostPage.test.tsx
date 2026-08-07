@@ -83,6 +83,52 @@ describe('HostPage', () => {
     expect(fake.emittedArgs('hostStart')).toHaveLength(1);
   });
 
+  it('disables Start when a settings field is cleared and shows a hint', async () => {
+    const user = userEvent.setup();
+    renderHost(fake);
+
+    await user.clear(screen.getByLabelText('Number of questions'));
+
+    expect(screen.getByTestId('start-button')).toBeDisabled();
+    expect(
+      screen.getByText('Fix the highlighted settings to start.'),
+    ).toBeInTheDocument();
+  });
+
+  it('shows a toast when a player disconnects during play', async () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'question',
+          playerCount: 1,
+          endsAt: Date.now() + 20_000,
+          players: [
+            {
+              id: 'p1',
+              nickname: 'Alice',
+              score: 0,
+              connected: false,
+              hasAnswered: false,
+            },
+          ],
+          currentQuestion: {
+            id: 'q1',
+            number: 1,
+            total: 3,
+            category: 'Science',
+            difficulty: 'easy',
+            text: 'Capital of Japan?',
+            options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
+          },
+        }),
+      ),
+    );
+
+    expect(await screen.findByText('Alice disconnected')).toBeInTheDocument();
+  });
+
   it('disables Start until at least one player has joined', () => {
     fake.respondToAck('hostJoin', () => ({
       ok: true,

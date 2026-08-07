@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   DEFAULT_SETTINGS,
-  type CategorySummary,
   type GamePhase,
   type GameSettings,
   type ObserverJoinAck,
   type PublicGameState,
 } from '@quiz/shared';
 import { useGameState } from '../hooks/useGameState.js';
+import { useToasts } from '../hooks/useToasts.js';
 import { AnswerButton } from '../components/AnswerButton.js';
 import { Countdown } from '../components/Countdown.js';
 import { Confetti } from '../components/Confetti.js';
@@ -15,6 +15,11 @@ import { Leaderboard } from '../components/Leaderboard.js';
 import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
 import { QRCode } from '../components/QRCode.js';
 import { SettingsForm } from '../components/SettingsForm.js';
+import { ToastStack } from '../components/ToastStack.js';
+import {
+  getSettingsErrors,
+  hasSettingsErrors,
+} from '../settingsValidation.js';
 
 const HOST_CODE_KEY = 'quiz.hostCode';
 
@@ -36,15 +41,34 @@ function storeCode(code: string): void {
 
 export function HostPage() {
   const { socket, state, setState, error } = useGameState();
-  const [categories, setCategories] = useState<CategorySummary[]>([]);
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
+  const { toasts, push: pushToast, dismiss: dismissToast } = useToasts();
+  const connectedRef = useRef<Map<string, boolean> | null>(null);
+
+  useEffect(() => {
+    if (!state) {
+      connectedRef.current = null;
+      return;
+    }
+    const previous = connectedRef.current;
+    const active = state.phase !== 'lobby' && state.phase !== 'ended';
+    if (previous && active) {
+      for (const player of state.players) {
+        if (previous.get(player.id) === true && !player.connected) {
+          pushToast(`${player.nickname} disconnected`);
+        }
+      }
+    }
+    connectedRef.current = new Map(
+      state.players.map((player) => [player.id, player.connected]),
+    );
+  }, [state, pushToast]);
 
   const join = useCallback(
     (code?: string) => {
       socket.emit('hostJoin', { code }, (ack: ObserverJoinAck) => {
         if (ack.ok) {
           setState(ack.state);
-          setCategories(ack.categories);
           storeCode(ack.state.code);
         }
       });
@@ -97,10 +121,10 @@ export function HostPage() {
 
   return (
     <main className="screen screen--host">
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
       {error && <div className="error-banner">{error}</div>}
       <HostBody
         state={state}
-        categories={categories}
         settings={settings}
         onSettingsChange={setSettings}
         onStart={startGame}
@@ -119,7 +143,6 @@ function joinUrl(code: string): string {
 
 function HostBody({
   state,
-  categories,
   settings,
   onSettingsChange,
   onStart,
@@ -128,7 +151,6 @@ function HostBody({
   onNewGame,
 }: {
   state: PublicGameState;
-  categories: CategorySummary[];
   settings: GameSettings;
   onSettingsChange: (settings: GameSettings) => void;
   onStart: () => void;
@@ -141,7 +163,6 @@ function HostBody({
       return (
         <Lobby
           state={state}
-          categories={categories}
           settings={settings}
           onSettingsChange={onSettingsChange}
           onStart={onStart}
@@ -273,18 +294,18 @@ function nextLabel(phase: GamePhase): string {
 
 function Lobby({
   state,
-  categories,
   settings,
   onSettingsChange,
   onStart,
 }: {
   state: PublicGameState;
-  categories: CategorySummary[];
   settings: GameSettings;
   onSettingsChange: (settings: GameSettings) => void;
   onStart: () => void;
 }) {
   const url = joinUrl(state.code);
+  const settingsErrors = getSettingsErrors(settings);
+  const settingsInvalid = hasSettingsErrors(settingsErrors);
   return (
     <div className="lobby-layout">
       <div className="lobby-join stack">
@@ -312,14 +333,14 @@ function Lobby({
         <h2>Game settings</h2>
         <SettingsForm
           settings={settings}
-          categories={categories}
+          errors={settingsErrors}
           onChange={onSettingsChange}
         />
         <button
           type="button"
           className="btn btn--primary btn--block"
           data-testid="start-button"
-          disabled={state.playerCount === 0}
+          disabled={state.playerCount === 0 || settingsInvalid}
           onClick={onStart}
         >
           Start game
@@ -327,6 +348,11 @@ function Lobby({
         {state.playerCount === 0 && (
           <p className="muted center-text">
             Waiting for at least one player to join…
+          </p>
+        )}
+        {state.playerCount > 0 && settingsInvalid && (
+          <p className="muted center-text">
+            Fix the highlighted settings to start.
           </p>
         )}
       </div>

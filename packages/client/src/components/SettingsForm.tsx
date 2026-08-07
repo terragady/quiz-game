@@ -1,20 +1,21 @@
 import {
+  DEFAULT_SETTINGS,
   SETTINGS_LIMITS,
-  type CategorySummary,
   type Difficulty,
   type GameSettings,
 } from '@quiz/shared';
+import type { SettingsErrors } from '../settingsValidation.js';
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 
 export function SettingsForm({
   settings,
-  categories,
+  errors = {},
   disabled = false,
   onChange,
 }: {
   settings: GameSettings;
-  categories: CategorySummary[];
+  errors?: SettingsErrors;
   disabled?: boolean;
   onChange: (settings: GameSettings) => void;
 }) {
@@ -23,72 +24,27 @@ export function SettingsForm({
 
   return (
     <div>
-      <div className="field">
-        <label htmlFor="questionCount">Number of questions</label>
-        <input
-          id="questionCount"
-          className="input"
-          type="number"
-          min={SETTINGS_LIMITS.minQuestionCount}
-          max={SETTINGS_LIMITS.maxQuestionCount}
-          value={settings.questionCount}
-          disabled={disabled}
-          onChange={(e) =>
-            update({ questionCount: Number(e.target.value) })
-          }
-        />
-      </div>
+      <NumberField
+        id="questionCount"
+        label="Number of questions"
+        value={settings.questionCount}
+        min={SETTINGS_LIMITS.minQuestionCount}
+        max={SETTINGS_LIMITS.maxQuestionCount}
+        disabled={disabled}
+        error={errors.questionCount}
+        onChange={(value) => update({ questionCount: value })}
+      />
 
-      <div className="field">
-        <label htmlFor="secondsPerQuestion">Seconds per question</label>
-        <input
-          id="secondsPerQuestion"
-          className="input"
-          type="number"
-          min={SETTINGS_LIMITS.minSecondsPerQuestion}
-          max={SETTINGS_LIMITS.maxSecondsPerQuestion}
-          value={settings.secondsPerQuestion}
-          disabled={disabled}
-          onChange={(e) =>
-            update({ secondsPerQuestion: Number(e.target.value) })
-          }
-        />
-      </div>
-
-      <div className="field">
-        <span className="field-label">Categories</span>
-        <p className="muted field-hint">
-          {settings.categories.length === 0
-            ? 'Any category'
-            : `${settings.categories.length} selected`}
-        </p>
-        <div className="category-options" role="group" aria-label="Categories">
-          {categories.map((category) => {
-            const checked = settings.categories.includes(category.name);
-            return (
-              <label key={category.name} className="category-option">
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={(e) =>
-                    update({
-                      categories: e.target.checked
-                        ? [...settings.categories, category.name]
-                        : settings.categories.filter(
-                            (name) => name !== category.name,
-                          ),
-                    })
-                  }
-                />
-                <span>
-                  {category.name} ({category.count})
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </div>
+      <NumberField
+        id="secondsPerQuestion"
+        label="Seconds per question"
+        value={settings.secondsPerQuestion}
+        min={SETTINGS_LIMITS.minSecondsPerQuestion}
+        max={SETTINGS_LIMITS.maxSecondsPerQuestion}
+        disabled={disabled}
+        error={errors.secondsPerQuestion}
+        onChange={(value) => update({ secondsPerQuestion: value })}
+      />
 
       <div className="field">
         <label htmlFor="difficulty">Difficulty</label>
@@ -118,7 +74,24 @@ export function SettingsForm({
           type="checkbox"
           checked={settings.autoAdvance}
           disabled={disabled}
-          onChange={(e) => update({ autoAdvance: e.target.checked })}
+          onChange={(e) => {
+            const autoAdvance = e.target.checked;
+            update(
+              autoAdvance
+                ? { autoAdvance }
+                : {
+                    autoAdvance,
+                    revealSeconds: Number.isNaN(settings.revealSeconds)
+                      ? DEFAULT_SETTINGS.revealSeconds
+                      : settings.revealSeconds,
+                    leaderboardSeconds: Number.isNaN(
+                      settings.leaderboardSeconds,
+                    )
+                      ? DEFAULT_SETTINGS.leaderboardSeconds
+                      : settings.leaderboardSeconds,
+                  },
+            );
+          }}
         />
         <label htmlFor="autoAdvance">
           Advance automatically (reveal → leaderboard → next)
@@ -127,39 +100,69 @@ export function SettingsForm({
 
       {settings.autoAdvance && (
         <>
-          <div className="field">
-            <label htmlFor="revealSeconds">Seconds on answer reveal</label>
-            <input
-              id="revealSeconds"
-              className="input"
-              type="number"
-              min={SETTINGS_LIMITS.minRevealSeconds}
-              max={SETTINGS_LIMITS.maxRevealSeconds}
-              value={settings.revealSeconds}
-              disabled={disabled}
-              onChange={(e) =>
-                update({ revealSeconds: Number(e.target.value) })
-              }
-            />
-          </div>
+          <NumberField
+            id="revealSeconds"
+            label="Seconds on answer reveal"
+            value={settings.revealSeconds}
+            min={SETTINGS_LIMITS.minRevealSeconds}
+            max={SETTINGS_LIMITS.maxRevealSeconds}
+            disabled={disabled}
+            error={errors.revealSeconds}
+            onChange={(value) => update({ revealSeconds: value })}
+          />
 
-          <div className="field">
-            <label htmlFor="leaderboardSeconds">Seconds on leaderboard</label>
-            <input
-              id="leaderboardSeconds"
-              className="input"
-              type="number"
-              min={SETTINGS_LIMITS.minLeaderboardSeconds}
-              max={SETTINGS_LIMITS.maxLeaderboardSeconds}
-              value={settings.leaderboardSeconds}
-              disabled={disabled}
-              onChange={(e) =>
-                update({ leaderboardSeconds: Number(e.target.value) })
-              }
-            />
-          </div>
+          <NumberField
+            id="leaderboardSeconds"
+            label="Seconds on leaderboard"
+            value={settings.leaderboardSeconds}
+            min={SETTINGS_LIMITS.minLeaderboardSeconds}
+            max={SETTINGS_LIMITS.maxLeaderboardSeconds}
+            disabled={disabled}
+            error={errors.leaderboardSeconds}
+            onChange={(value) => update({ leaderboardSeconds: value })}
+          />
         </>
       )}
+    </div>
+  );
+}
+
+function NumberField({
+  id,
+  label,
+  value,
+  min,
+  max,
+  disabled,
+  error,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  disabled: boolean;
+  error?: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        className="input"
+        type="number"
+        min={min}
+        max={max}
+        value={Number.isNaN(value) ? '' : value}
+        disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        onChange={(e) =>
+          onChange(e.target.value === '' ? NaN : Number(e.target.value))
+        }
+      />
+      {error && <p className="field-error">{error}</p>}
     </div>
   );
 }
