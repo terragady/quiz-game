@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { PublicGameState } from '@quiz/shared';
 import { PlayerPage } from './PlayerPage.js';
 import { SocketProvider } from '../SocketContext.js';
@@ -52,11 +52,21 @@ function questionState(
   });
 }
 
+function LocationProbe() {
+  const location = useLocation();
+  return <div data-testid="location-search">{location.search}</div>;
+}
+
+function currentSearch(): string {
+  return screen.getByTestId('location-search').textContent ?? '';
+}
+
 function renderPlayer(fake: FakeSocket, entry = '/play') {
   return render(
     <MemoryRouter initialEntries={[entry]}>
       <SocketProvider socket={fake.asSocket()}>
         <PlayerPage />
+        <LocationProbe />
       </SocketProvider>
     </MemoryRouter>,
   );
@@ -100,6 +110,25 @@ describe('PlayerPage join flow', () => {
       nickname: 'Alice',
     });
     expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+  });
+
+  it('syncs the URL code to the game actually joined, replacing a stale one', async () => {
+    fake.respondToAck('playerJoin', () => ({
+      ok: true,
+      playerId: 'p1',
+      state: baseState(),
+    }));
+    // Arrive with a stale code left over from an earlier scan.
+    renderPlayer(fake, '/play?code=OLDD');
+
+    const codeInput = screen.getByLabelText('Game code') as HTMLInputElement;
+    await userEvent.clear(codeInput);
+    await userEvent.type(codeInput, 'newg');
+    await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
+    await userEvent.click(screen.getByRole('button', { name: 'Join' }));
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(currentSearch()).toBe('?code=NEWG');
   });
 
   it('shows an error when the join is rejected', async () => {
@@ -195,7 +224,18 @@ describe('PlayerPage answering', () => {
     });
   });
 
-  it('leaves the game, clears the session, and returns to the join form', async () => {
+  it('leaves the game via the menu and confirmation, then returns to the join form', async () => {
+    // Leave is tucked behind a menu and guarded by a confirmation dialog.
+    expect(
+      screen.queryByRole('menuitem', { name: 'Leave game' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Game options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Leave game' }));
+
+    // Nothing happens until the dialog is confirmed.
+    expect(fake.emittedArgs('playerLeave')).toHaveLength(0);
+
     await userEvent.click(screen.getByRole('button', { name: 'Leave game' }));
 
     expect(fake.emittedArgs('playerLeave')).toHaveLength(1);
@@ -203,6 +243,16 @@ describe('PlayerPage answering', () => {
     expect(
       await screen.findByRole('button', { name: 'Join' }),
     ).toBeInTheDocument();
+  });
+
+  it('does not leave the game when the confirmation is cancelled', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Game options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Leave game' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Stay' }));
+
+    expect(fake.emittedArgs('playerLeave')).toHaveLength(0);
+    expect(localStorage.getItem('quiz.playerSession')).not.toBeNull();
+    expect(screen.getByText(/You're in/i)).toBeInTheDocument();
   });
 
   it('does not show a banner for a benign answer rejection', async () => {
@@ -302,7 +352,7 @@ describe('PlayerPage reconnection', () => {
     });
   });
 
-  it('prefers a QR code in the URL over a stored session for a different game', async () => {
+  it('rejoins the stored session even when the URL points at a different game', async () => {
     localStorage.setItem(
       'quiz.playerSession',
       JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
@@ -310,7 +360,26 @@ describe('PlayerPage reconnection', () => {
     fake.respondToAck('playerRejoin', () => ({
       ok: true,
       playerId: 'p1',
-      state: baseState(),
+      state: baseState({ playerCount: 1 }),
+    }));
+
+    renderPlayer(fake, '/play?code=NEWW');
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+    });
+  });
+
+  it('falls back to the join form prefilled with the URL code when the stored session cannot be rejoined', async () => {
+    localStorage.setItem(
+      'quiz.playerSession',
+      JSON.stringify({ code: 'WXYZ', playerId: 'p1', nickname: 'Alice' }),
+    );
+    fake.respondToAck('playerRejoin', () => ({
+      ok: false,
+      error: 'Your game session has expired.',
     }));
 
     renderPlayer(fake, '/play?code=NEWW');
@@ -319,7 +388,6 @@ describe('PlayerPage reconnection', () => {
       'Game code',
     )) as HTMLInputElement;
     expect(codeInput.value).toBe('NEWW');
-    expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
   });
 
   it('falls back to the join form when the stored session has expired', async () => {
@@ -336,6 +404,10 @@ describe('PlayerPage reconnection', () => {
 
     expect(await screen.findByRole('button', { name: 'Join' })).toBeVisible();
     expect(localStorage.getItem('quiz.playerSession')).toBeNull();
+    // The dead game's code must not linger in the join form.
+    expect((screen.getByLabelText('Game code') as HTMLInputElement).value).toBe(
+      '',
+    );
   });
 
   it('re-attaches by emitting playerRejoin when the socket reconnects', async () => {

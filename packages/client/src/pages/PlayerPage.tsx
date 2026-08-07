@@ -17,6 +17,8 @@ import {
 import { useSocket } from '../SocketContext.js';
 import { AnswerButton } from '../components/AnswerButton.js';
 import { Countdown } from '../components/Countdown.js';
+import { OverflowMenu } from '../components/OverflowMenu.js';
+import { ConfirmDialog } from '../components/ConfirmDialog.js';
 import {
   clearSession,
   readSession,
@@ -28,21 +30,24 @@ const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 
 export function PlayerPage() {
   const socket = useSocket();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const storedRef = useRef(readSession());
   const stored = storedRef.current;
-  // A code in the URL (e.g. from scanning a new game's QR code) always wins,
-  // and we only auto-rejoin a stored session when it matches that code.
+  // Always try to rejoin a stored session first so refreshing the page keeps
+  // you in your game. A code in the URL (e.g. from scanning a new game's QR
+  // code) only decides what the join form is prefilled with; it takes over
+  // when there is no stored session, or if the rejoin attempt fails.
   const urlCode = (searchParams.get('code') ?? '').toUpperCase();
-  const rejoinSession =
-    stored && (!urlCode || urlCode === stored.code)
-      ? { code: stored.code, playerId: stored.playerId }
-      : null;
+  const rejoinSession = stored
+    ? { code: stored.code, playerId: stored.playerId }
+    : null;
 
-  const [code, setCode] = useState(
-    (urlCode || stored?.code || '').toUpperCase(),
-  );
+  // Only prefill the join form's code from a real URL code (e.g. a fresh QR
+  // scan). We deliberately do not fall back to the stored session's code: that
+  // is handled by auto-rejoin, and showing it here would just leave a stale
+  // code in the field once its game is gone.
+  const [code, setCode] = useState(urlCode);
   const [nickname, setNickname] = useState(
     stored?.nickname ?? readNickname() ?? '',
   );
@@ -55,6 +60,7 @@ export function PlayerPage() {
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rejoining, setRejoining] = useState(Boolean(rejoinSession));
+  const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
 
   const currentQuestionId = state?.currentQuestion?.id ?? null;
   const selectedIndex =
@@ -93,6 +99,22 @@ export function PlayerPage() {
     };
   }, [socket, playerId]);
 
+  // Keep the URL's code in sync with the game you are actually in, so a stale
+  // code left over from an earlier QR scan never lingers in the address bar.
+  const syncUrlCode = useCallback(
+    (nextCode: string) => {
+      setSearchParams(
+        (params) => {
+          if (params.get('code') === nextCode) return params;
+          params.set('code', nextCode);
+          return params;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
   const attemptRejoin = useCallback(
     (rejoinCode: string, rejoinPlayerId: string) => {
       socket.emit(
@@ -103,6 +125,7 @@ export function PlayerPage() {
             sessionRef.current = { code: rejoinCode, playerId: ack.playerId };
             setPlayerId(ack.playerId);
             setState(ack.state);
+            syncUrlCode(rejoinCode);
           } else {
             clearSession();
             sessionRef.current = null;
@@ -111,7 +134,7 @@ export function PlayerPage() {
         },
       );
     },
-    [socket],
+    [socket, syncUrlCode],
   );
 
   useEffect(() => {
@@ -165,6 +188,7 @@ export function PlayerPage() {
           writeNickname(trimmedNickname);
           setPlayerId(ack.playerId);
           setState(ack.state);
+          syncUrlCode(trimmedCode);
         } else {
           setError(ack.error);
         }
@@ -176,6 +200,7 @@ export function PlayerPage() {
     socket.emit('playerLeave');
     clearSession();
     sessionRef.current = null;
+    setConfirmLeaveOpen(false);
     setPlayerId(null);
     setState(null);
     setAnswer(null);
@@ -241,6 +266,23 @@ export function PlayerPage() {
 
   return (
     <main className="screen">
+      <div className="player-topbar">
+        <OverflowMenu label="Game options">
+          {(close) => (
+            <button
+              type="button"
+              role="menuitem"
+              className="overflow-menu__item"
+              onClick={() => {
+                close();
+                setConfirmLeaveOpen(true);
+              }}
+            >
+              Leave game
+            </button>
+          )}
+        </OverflowMenu>
+      </div>
       {error && <div className="error-banner">{error}</div>}
       <PlayerBody
         state={state}
@@ -249,13 +291,15 @@ export function PlayerPage() {
         result={shownResult}
         onAnswer={handleAnswer}
       />
-      <button
-        type="button"
-        className="btn btn--ghost btn--small player-leave"
-        onClick={leaveGame}
-      >
-        Leave game
-      </button>
+      <ConfirmDialog
+        open={confirmLeaveOpen}
+        title="Leave this game?"
+        message="You'll lose your spot and your score."
+        confirmLabel="Leave game"
+        cancelLabel="Stay"
+        onConfirm={leaveGame}
+        onCancel={() => setConfirmLeaveOpen(false)}
+      />
     </main>
   );
 }
