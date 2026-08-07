@@ -195,7 +195,18 @@ describe('PlayerPage answering', () => {
     });
   });
 
-  it('leaves the game, clears the session, and returns to the join form', async () => {
+  it('leaves the game via the menu and confirmation, then returns to the join form', async () => {
+    // Leave is tucked behind a menu and guarded by a confirmation dialog.
+    expect(
+      screen.queryByRole('menuitem', { name: 'Leave game' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Game options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Leave game' }));
+
+    // Nothing happens until the dialog is confirmed.
+    expect(fake.emittedArgs('playerLeave')).toHaveLength(0);
+
     await userEvent.click(screen.getByRole('button', { name: 'Leave game' }));
 
     expect(fake.emittedArgs('playerLeave')).toHaveLength(1);
@@ -203,6 +214,16 @@ describe('PlayerPage answering', () => {
     expect(
       await screen.findByRole('button', { name: 'Join' }),
     ).toBeInTheDocument();
+  });
+
+  it('does not leave the game when the confirmation is cancelled', async () => {
+    await userEvent.click(screen.getByRole('button', { name: 'Game options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Leave game' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Stay' }));
+
+    expect(fake.emittedArgs('playerLeave')).toHaveLength(0);
+    expect(localStorage.getItem('quiz.playerSession')).not.toBeNull();
+    expect(screen.getByText(/You're in/i)).toBeInTheDocument();
   });
 
   it('does not show a banner for a benign answer rejection', async () => {
