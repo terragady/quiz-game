@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import type { PublicGameState } from '@quiz/shared';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import type { PublicGameState } from '@quiz/shared';
-import { PlayerPage } from './PlayerPage.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+
 import { SocketProvider } from '../SocketContext.js';
 import { FakeSocket } from '../test/fakeSocket.js';
+import { PlayerPage } from './PlayerPage.js';
 
 function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
   return {
@@ -178,12 +179,16 @@ describe('PlayerPage answering', () => {
   });
 
   it('renders one button per option for a four-option question', async () => {
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
     await waitFor(() => expect(answerButtons()).toHaveLength(4));
   });
 
   it('shows the question category as a chip', async () => {
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
     expect(await screen.findByText(/Science/)).toBeInTheDocument();
   });
 
@@ -193,7 +198,9 @@ describe('PlayerPage answering', () => {
   });
 
   it('locks the buttons after an answer is submitted', async () => {
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
     const first = await screen.findByRole('button', { name: /A/ });
     await userEvent.click(first);
 
@@ -206,19 +213,22 @@ describe('PlayerPage answering', () => {
   });
 
   it('unlocks answering on a new question even without a questionStarted event', async () => {
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q1')));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q1')),
+    );
     await userEvent.click(await screen.findByRole('button', { name: /A/ }));
     for (const button of answerButtons()) {
       expect(button).toBeDisabled();
     }
 
     act(() =>
-      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'], 'q2', 2)),
+      fake.serverEmit(
+        'gameState',
+        questionState(['A', 'B', 'C', 'D'], 'q2', 2),
+      ),
     );
 
-    await waitFor(() =>
-      expect(answerButtons()[0]).not.toBeDisabled(),
-    );
+    await waitFor(() => expect(answerButtons()[0]).not.toBeDisabled());
     const buttons = answerButtons();
     for (const button of buttons) {
       expect(button).not.toBeDisabled();
@@ -262,8 +272,12 @@ describe('PlayerPage answering', () => {
   });
 
   it('does not show a banner for a benign answer rejection', async () => {
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
-    act(() => fake.serverEmit('errorMessage', 'Not accepting answers right now.'));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
+    act(() =>
+      fake.serverEmit('errorMessage', 'Not accepting answers right now.'),
+    );
 
     expect(
       screen.queryByText('Not accepting answers right now.'),
@@ -276,7 +290,9 @@ describe('PlayerPage answering', () => {
       await screen.findByText('You are not in a game.'),
     ).toBeInTheDocument();
 
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
 
     await waitFor(() =>
       expect(
@@ -363,7 +379,9 @@ describe('PlayerPage answering', () => {
 
   it('sends a reaction between questions but not while answering', async () => {
     const user = userEvent.setup();
-    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    act(() =>
+      fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])),
+    );
     expect(screen.queryByRole('group', { name: 'Send a reaction' })).toBeNull();
 
     act(() =>
@@ -436,7 +454,9 @@ describe('PlayerPage answering', () => {
     );
 
     expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+    expect(
+      JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null'),
+    ).toEqual({
       code: 'WXYZ',
       playerId: 'p1',
       nickname: 'Alice',
@@ -467,7 +487,9 @@ describe('PlayerPage answering', () => {
     );
 
     expect(await screen.findByText(/Get ready/i)).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+    expect(
+      JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null'),
+    ).toEqual({
       code: 'WXYZ',
       playerId: 'p1',
       nickname: 'Alice',

@@ -1,4 +1,5 @@
 import type { LeaderboardRow } from '@quiz/shared';
+
 import { SHOW_STREAK_FROM } from './StreakBadge.js';
 
 export interface Award {

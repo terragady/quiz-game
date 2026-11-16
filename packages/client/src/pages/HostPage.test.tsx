@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { PublicGameState } from '@quiz/shared';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { PublicGameState } from '@quiz/shared';
-import { HostPage } from './HostPage.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
 import { SocketProvider } from '../SocketContext.js';
 import { FakeSocket } from '../test/fakeSocket.js';
+import { HostPage } from './HostPage.js';
 
 function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
   return {
@@ -230,12 +231,7 @@ describe('HostPage', () => {
           phase: 'reveal',
           playerCount: 8,
           revealedCorrectIndex: 0,
-          optionVoters: [
-            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-            [],
-            [],
-            [],
-          ],
+          optionVoters: [['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], [], [], []],
           currentQuestion: {
             id: 'q1',
             number: 1,
@@ -445,13 +441,22 @@ describe('HostPage', () => {
         baseState({
           phase: 'ended',
           leaderboard: [
-            { playerId: 'p1', nickname: 'Alice', score: 900, rank: 1, lastPoints: 0, streak: 0 },
+            {
+              playerId: 'p1',
+              nickname: 'Alice',
+              score: 900,
+              rank: 1,
+              lastPoints: 0,
+              streak: 0,
+            },
           ],
         }),
       ),
     );
 
-    expect(screen.getByRole('list', { name: 'Podium' })).toHaveTextContent('Alice');
+    expect(screen.getByRole('list', { name: 'Podium' })).toHaveTextContent(
+      'Alice',
+    );
     expect(localStorage.getItem('quiz.hostCode')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Play again' }));
@@ -511,16 +516,46 @@ describe('HostPage', () => {
         baseState({
           phase: 'ended',
           leaderboard: [
-            { playerId: 'p1', nickname: 'Alice', score: 990, rank: 1, lastPoints: 0, streak: 0, stats: stats({ correct: 5, fastestCorrectMs: 2400, bestStreak: 2 }) },
-            { playerId: 'p2', nickname: 'Bob', score: 800, rank: 2, lastPoints: 0, streak: 0, stats: stats({ correct: 4, fastestCorrectMs: 900, bestStreak: 4 }) },
+            {
+              playerId: 'p1',
+              nickname: 'Alice',
+              score: 990,
+              rank: 1,
+              lastPoints: 0,
+              streak: 0,
+              stats: stats({
+                correct: 5,
+                fastestCorrectMs: 2400,
+                bestStreak: 2,
+              }),
+            },
+            {
+              playerId: 'p2',
+              nickname: 'Bob',
+              score: 800,
+              rank: 2,
+              lastPoints: 0,
+              streak: 0,
+              stats: stats({
+                correct: 4,
+                fastestCorrectMs: 900,
+                bestStreak: 4,
+              }),
+            },
           ],
         }),
       ),
     );
 
-    expect(screen.getByText('Fastest finger').closest('li')).toHaveTextContent('Bob 0.9s');
-    expect(screen.getByText('Sharpshooter').closest('li')).toHaveTextContent('Alice 5 correct');
-    expect(screen.getByText('Hot streak').closest('li')).toHaveTextContent('Bob 4 in a row');
+    expect(screen.getByText('Fastest finger').closest('li')).toHaveTextContent(
+      'Bob 0.9s',
+    );
+    expect(screen.getByText('Sharpshooter').closest('li')).toHaveTextContent(
+      'Alice 5 correct',
+    );
+    expect(screen.getByText('Hot streak').closest('li')).toHaveTextContent(
+      'Bob 4 in a row',
+    );
   });
 
   it('shows a streak badge from three correct answers in a row', async () => {
@@ -531,14 +566,30 @@ describe('HostPage', () => {
         baseState({
           phase: 'leaderboard',
           leaderboard: [
-            { playerId: 'p1', nickname: 'Alice', score: 990, rank: 1, lastPoints: 0, streak: 3 },
-            { playerId: 'p2', nickname: 'Bob', score: 500, rank: 2, lastPoints: 0, streak: 2 },
+            {
+              playerId: 'p1',
+              nickname: 'Alice',
+              score: 990,
+              rank: 1,
+              lastPoints: 0,
+              streak: 3,
+            },
+            {
+              playerId: 'p2',
+              nickname: 'Bob',
+              score: 500,
+              rank: 2,
+              lastPoints: 0,
+              streak: 2,
+            },
           ],
         }),
       ),
     );
 
-    expect(await screen.findByText('🔥3', {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(
+      await screen.findByText('🔥3', {}, { timeout: 3000 }),
+    ).toBeInTheDocument();
     expect(screen.queryByText('🔥2')).not.toBeInTheDocument();
   });
 

@@ -1,5 +1,5 @@
-import { useMemo, type CSSProperties } from 'react';
 import { CATEGORY_ICONS, categoryIcon } from '@quiz/shared';
+import { useMemo, type CSSProperties } from 'react';
 
 const ALL_CATEGORIES = Object.keys(CATEGORY_ICONS);
 const SPIN_ITEMS = 14;
@@ -13,7 +13,8 @@ export function CategoryReel({ category }: { category: string }) {
     const others = ALL_CATEGORIES.filter((name) => name !== category);
     const spin = Array.from(
       { length: SPIN_ITEMS },
-      (_, index) => others[(index * 5 + Math.floor(Math.random() * 3)) % others.length],
+      (_, index) =>
+        others[(index * 5 + Math.floor(Math.random() * 3)) % others.length],
     );
     return [...spin, category];
   }, [category]);

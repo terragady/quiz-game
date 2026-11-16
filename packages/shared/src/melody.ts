@@ -14,7 +14,13 @@ export interface MelodyNote {
 }
 
 const SEMITONES: Record<string, number> = {
-  C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2,
+  C: -9,
+  D: -7,
+  E: -5,
+  F: -4,
+  G: -2,
+  A: 0,
+  B: 2,
 };
 
 const NOTE_PATTERN = /^(?:R|([A-G])(#|b)?([0-8])):(\d+(?:\.\d+)?)$/;
@@ -35,6 +41,9 @@ export function parseMelody(notes: string): MelodyNote[] {
 }
 
 export function melodySeconds(melody: Melody): number {
-  const beats = parseMelody(melody.notes).reduce((sum, note) => sum + note.beats, 0);
+  const beats = parseMelody(melody.notes).reduce(
+    (sum, note) => sum + note.beats,
+    0,
+  );
   return (beats * 60) / melody.bpm;
 }

@@ -2,12 +2,12 @@
   "name": "quiz-game",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "workspaces": [
     "packages/shared",
     "packages/server",
     "packages/client"
   ],
+  "type": "module",
   "scripts": {
     "dev": "concurrently -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "npm run dev -w @quiz/server",

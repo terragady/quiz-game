@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { calculateScore } from './scoring.js';
+
 import { BASE_POINTS } from './constants.js';
+import { calculateScore } from './scoring.js';
 
 describe('calculateScore', () => {
   const duration = 20_000;

@@ -1,8 +1,15 @@
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { OPENTDB_QUESTIONS_PATH, validateQuestionsData } from '../questions/loader.js';
+
 import { writeQuestionPool } from '../questions/buildPool.js';
-import { normalizeResults, type OpenTdbResult } from '../questions/normalize.js';
+import {
+  OPENTDB_QUESTIONS_PATH,
+  validateQuestionsData,
+} from '../questions/loader.js';
+import {
+  normalizeResults,
+  type OpenTdbResult,
+} from '../questions/normalize.js';
 
 const API_URL = 'https://opentdb.com/api.php';
 const MAX_PER_REQUEST = 50;
@@ -41,7 +48,10 @@ function parseArgs(argv: string[]): { multiple: number; boolean: number } {
   return { multiple, boolean: booleanCount };
 }
 
-async function fetchBatch(type: QuestionType, amount: number): Promise<ApiResponse> {
+async function fetchBatch(
+  type: QuestionType,
+  amount: number,
+): Promise<ApiResponse> {
   const params = new URLSearchParams({
     amount: String(amount),
     type,
@@ -119,7 +129,9 @@ async function main(): Promise<void> {
 
   const questions = normalizeResults(raw);
   if (questions.length === 0) {
-    throw new Error('No questions fetched — aborting without writing the file.');
+    throw new Error(
+      'No questions fetched — aborting without writing the file.',
+    );
   }
   validateQuestionsData(questions);
 

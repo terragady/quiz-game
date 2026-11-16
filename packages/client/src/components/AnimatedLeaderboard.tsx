@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import type { LeaderboardRow } from '@quiz/shared';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { PointsDelta } from './Leaderboard.js';
 import {
   easeOutCubic,
   lerpScore,
@@ -8,7 +10,6 @@ import {
   standingsSignature,
 } from './leaderboardAnimation.js';
 import { StreakBadge } from './StreakBadge.js';
-import { PointsDelta } from './Leaderboard.js';
 
 const ROW_STEP = 72;
 const PRE_COUNT_MS = 600;
@@ -108,8 +109,7 @@ export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
             className={`arow ${isTopThree ? medalClass[position] : ''}`}
             style={{
               transform: `translateY(${position * ROW_STEP}px)`,
-              transition:
-                stage === 'previous' ? 'none' : 'transform 0.7s ease',
+              transition: stage === 'previous' ? 'none' : 'transform 0.7s ease',
             }}
           >
             <span className="leaderboard__rank">{position + 1}</span>

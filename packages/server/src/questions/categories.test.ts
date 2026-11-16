@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { CATEGORY_ICONS } from '@quiz/shared';
+import { describe, expect, it } from 'vitest';
+
 import { tidyCategory } from './categories.js';
 
 describe('tidyCategory', () => {
@@ -15,7 +16,13 @@ describe('tidyCategory', () => {
   });
 
   it('only produces categories that have an icon', () => {
-    for (const raw of ['Flags', 'Mythology', 'Sports', 'Celebrities', 'Unknown']) {
+    for (const raw of [
+      'Flags',
+      'Mythology',
+      'Sports',
+      'Celebrities',
+      'Unknown',
+    ]) {
       expect(CATEGORY_ICONS[tidyCategory(raw)]).toBeDefined();
     }
   });

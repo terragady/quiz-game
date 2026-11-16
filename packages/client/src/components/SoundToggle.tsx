@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { isMuted, setMuted } from '../audio.js';
 
 export function SoundToggle() {

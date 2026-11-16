@@ -1,5 +1,6 @@
-import { beforeEach, describe, it, expect } from 'vitest';
 import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
+import { beforeEach, describe, it, expect } from 'vitest';
+
 import { GameManager } from './GameManager.js';
 
 const CORRECT_ANSWER = 'Correct';
@@ -436,7 +437,11 @@ describe('GameManager end-of-game stats', () => {
     const right = game.addPlayer('Right');
     const wrongPlayer = game.addPlayer('Wrong');
     game.addPlayer('Quiet');
-    startGame(game, { ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 1,
+      secondsPerQuestion: 20,
+    });
 
     game.submitAnswer(right, correctOptionIndex(game));
     clock = 1000 + 5000;
@@ -504,7 +509,9 @@ describe('GameManager play again', () => {
     expect(state.phase).toBe('lobby');
     expect(state.currentQuestion).toBeNull();
     expect(state.endsAt).toBeNull();
-    expect(state.players.map((p) => [p.nickname, p.score, p.connected])).toEqual([
+    expect(
+      state.players.map((p) => [p.nickname, p.score, p.connected]),
+    ).toEqual([
       ['Alice', 0, true],
       ['Bob', 0, false],
     ]);
@@ -785,8 +792,13 @@ describe('GameManager settings from older clients', () => {
   it('uses the defaults for switches that are missing', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: makePool() });
     game.addPlayer('Alice');
-    const { categoryIntro, showVoters, wrongAnswerPenalty, musicQuestions, ...older } =
-      baseSettings;
+    const {
+      categoryIntro,
+      showVoters,
+      wrongAnswerPenalty,
+      musicQuestions,
+      ...older
+    } = baseSettings;
     void categoryIntro;
     void showVoters;
     void wrongAnswerPenalty;
@@ -827,7 +839,10 @@ describe('GameManager music questions', () => {
   }
 
   const pool = (): Question[] => [
-    ...Array.from({ length: 10 }, (_, i) => ({ ...makePool()[0], id: `n${i}` })),
+    ...Array.from({ length: 10 }, (_, i) => ({
+      ...makePool()[0],
+      id: `n${i}`,
+    })),
     tune('t1'),
     tune('t2'),
     tune('t3'),
@@ -836,7 +851,11 @@ describe('GameManager music questions', () => {
   it('mixes in about one tune for every five questions and sends the melody', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: pool() });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: true });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 10,
+      musicQuestions: true,
+    });
 
     const ids = playedQuestions(game, 10);
     expect(ids.filter((id) => id.startsWith('t'))).toHaveLength(2);
@@ -845,15 +864,25 @@ describe('GameManager music questions', () => {
   it('leaves tunes out when the setting is off', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: pool() });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: false });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 10,
+      musicQuestions: false,
+    });
 
-    expect(playedQuestions(game, 10).some((id) => id.startsWith('t'))).toBe(false);
+    expect(playedQuestions(game, 10).some((id) => id.startsWith('t'))).toBe(
+      false,
+    );
   });
 
   it('passes the melody to the screens', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: [tune('t1')] });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 5, musicQuestions: true });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 5,
+      musicQuestions: true,
+    });
     expect(game.getPublicState().currentQuestion?.melody).toEqual({
       bpm: 120,
       notes: 'C4:1 D4:1',

@@ -1,6 +1,9 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+
 import type { Question } from '@quiz/shared';
+
+import { writeQuestionPool } from '../questions/buildPool.js';
 import {
   CURATED_QUESTIONS_PATH,
   OPENTDB_QUESTIONS_PATH,
@@ -9,7 +12,6 @@ import {
   normalizeQuestionText,
   validateQuestionsData,
 } from '../questions/loader.js';
-import { writeQuestionPool } from '../questions/buildPool.js';
 import {
   normalizeTriviaApiResults,
   type TriviaApiResult,
@@ -28,7 +30,9 @@ function parseArgs(argv: string[]): { count: number } {
     if (argv[i] === '--count') {
       const value = Number(argv[i + 1]);
       if (!Number.isInteger(value) || value < 0) {
-        throw new Error(`--count must be a non-negative integer (got "${argv[i + 1]}").`);
+        throw new Error(
+          `--count must be a non-negative integer (got "${argv[i + 1]}").`,
+        );
       }
       count = value;
       i += 1;
@@ -66,7 +70,9 @@ async function main(): Promise<void> {
   const existingTrivia = loadIfPresent(TRIVIA_API_QUESTIONS_PATH);
 
   const seenText = new Set<string>(
-    [...existingOther, ...existingTrivia].map((q) => normalizeQuestionText(q.text)),
+    [...existingOther, ...existingTrivia].map((q) =>
+      normalizeQuestionText(q.text),
+    ),
   );
   const seenId = new Set<string>(existingTrivia.map((q) => q.id));
   const collected: Question[] = [...existingTrivia];

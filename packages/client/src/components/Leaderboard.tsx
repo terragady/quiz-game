@@ -1,4 +1,5 @@
 import type { LeaderboardRow } from '@quiz/shared';
+
 import { StreakBadge } from './StreakBadge.js';
 
 export function Leaderboard({
@@ -40,6 +41,8 @@ export function PointsDelta({ points }: { points: number }) {
   return points > 0 ? (
     <span className="leaderboard__delta">+{points}</span>
   ) : (
-    <span className="leaderboard__delta leaderboard__delta--lost">−{-points}</span>
+    <span className="leaderboard__delta leaderboard__delta--lost">
+      −{-points}
+    </span>
   );
 }

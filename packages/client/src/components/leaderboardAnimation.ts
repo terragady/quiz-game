@@ -10,8 +10,7 @@ export function orderIds(
 ): string[] {
   return [...rows]
     .sort(
-      (a, b) =>
-        scoreOf(b) - scoreOf(a) || a.nickname.localeCompare(b.nickname),
+      (a, b) => scoreOf(b) - scoreOf(a) || a.nickname.localeCompare(b.nickname),
     )
     .map((row) => row.playerId);
 }

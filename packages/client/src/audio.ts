@@ -60,7 +60,10 @@ function tone(
   oscillator.type = type;
   oscillator.frequency.setValueAtTime(frequency, start);
   if (slideTo) {
-    oscillator.frequency.exponentialRampToValueAtTime(slideTo, start + duration);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      slideTo,
+      start + duration,
+    );
   }
   gain.gain.setValueAtTime(0.0001, start);
   gain.gain.exponentialRampToValueAtTime(volume, start + 0.01);

@@ -16,7 +16,11 @@ export function readSession(): PlayerSession | null {
       typeof parsed.playerId === 'string' &&
       typeof parsed.nickname === 'string'
     ) {
-      return { code: parsed.code, playerId: parsed.playerId, nickname: parsed.nickname };
+      return {
+        code: parsed.code,
+        playerId: parsed.playerId,
+        nickname: parsed.nickname,
+      };
     }
     return null;
   } catch {

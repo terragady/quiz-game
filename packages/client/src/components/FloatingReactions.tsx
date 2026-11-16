@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { useSocket } from '../SocketContext.js';
 
 const FLOAT_MS = 2600;
@@ -20,7 +21,13 @@ export function FloatingReactions() {
 
   useEffect(() => {
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    const onReaction = ({ emoji, nickname }: { emoji: string; nickname: string }) => {
+    const onReaction = ({
+      emoji,
+      nickname,
+    }: {
+      emoji: string;
+      nickname: string;
+    }) => {
       const id = nextId++;
       const left = 6 + Math.random() * 88;
       setReactions((current) =>

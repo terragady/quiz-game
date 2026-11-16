@@ -1,11 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
 import {
   parseMelody,
   type CategorySummary,
   type Difficulty,
   type Question,
 } from '@quiz/shared';
+
 import { withTidyCategories } from './categories.js';
 
 const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
@@ -45,9 +47,7 @@ function validateQuestion(item: unknown, index: number): Question {
   requireNonEmptyString(q.text, `${where} "text"`);
 
   if (!isDifficulty(q.difficulty)) {
-    throw new Error(
-      `${where} "difficulty" must be one of easy, medium, hard.`,
-    );
+    throw new Error(`${where} "difficulty" must be one of easy, medium, hard.`);
   }
 
   if (!Array.isArray(q.options) || q.options.length < 2) {
@@ -72,7 +72,9 @@ function validateQuestion(item: unknown, index: number): Question {
     q.imageUrl !== undefined &&
     (typeof q.imageUrl !== 'string' || q.imageUrl.trim().length === 0)
   ) {
-    throw new Error(`${where} "imageUrl" must be a non-empty string when present.`);
+    throw new Error(
+      `${where} "imageUrl" must be a non-empty string when present.`,
+    );
   }
 
   if (q.melody !== undefined) {
@@ -84,7 +86,9 @@ function validateQuestion(item: unknown, index: number): Question {
       melody.bpm <= 0 ||
       typeof melody.notes !== 'string'
     ) {
-      throw new Error(`${where} "melody" must have a positive "bpm" and "notes".`);
+      throw new Error(
+        `${where} "melody" must have a positive "bpm" and "notes".`,
+      );
     }
     try {
       parseMelody(melody.notes);
@@ -103,7 +107,9 @@ function validateQuestion(item: unknown, index: number): Question {
     options: q.options as string[],
     correctIndex: q.correctIndex,
     ...(q.imageUrl !== undefined ? { imageUrl: q.imageUrl as string } : {}),
-    ...(q.melody !== undefined ? { melody: q.melody as Question['melody'] } : {}),
+    ...(q.melody !== undefined
+      ? { melody: q.melody as Question['melody'] }
+      : {}),
   };
 }
 
@@ -115,8 +121,7 @@ function requireNonEmptyString(value: unknown, label: string): void {
 
 function isDifficulty(value: unknown): value is Difficulty {
   return (
-    typeof value === 'string' &&
-    DIFFICULTIES.includes(value as Difficulty)
+    typeof value === 'string' && DIFFICULTIES.includes(value as Difficulty)
   );
 }
 
@@ -185,9 +190,32 @@ export function dedupeByText(questions: Question[]): Question[] {
 // Words that don't change what a question asks, so "What is the capital of
 // Finland?" and "What is the capital city of Finland?" read as the same.
 const FILLER_WORDS = new Set([
-  'a', 'an', 'the', 'of', 'is', 'was', 'which', 'what', 'who', 'in', 'on',
-  'to', 'for', 'by', 'do', 'does', 'did', 'are', 'has', 'have', 'these',
-  'following', 'city', 'total', 'just', 'name',
+  'a',
+  'an',
+  'the',
+  'of',
+  'is',
+  'was',
+  'which',
+  'what',
+  'who',
+  'in',
+  'on',
+  'to',
+  'for',
+  'by',
+  'do',
+  'does',
+  'did',
+  'are',
+  'has',
+  'have',
+  'these',
+  'following',
+  'city',
+  'total',
+  'just',
+  'name',
 ]);
 
 function contentWords(text: string): Set<string> {
@@ -219,7 +247,9 @@ export function dropRewordedDuplicates(questions: Question[]): Question[] {
     if (question.imageUrl || question.melody || question.options.length < 3) {
       return true;
     }
-    const answer = normalizeQuestionText(question.options[question.correctIndex]);
+    const answer = normalizeQuestionText(
+      question.options[question.correctIndex],
+    );
     const words = contentWords(question.text);
     const seen = seenByAnswer.get(answer) ?? [];
     if (seen.some((earlier) => asksTheSame(earlier, words))) return false;
@@ -236,7 +266,9 @@ export function buildQuestionPool(
 ): Question[] {
   const curated = existsSync(curatedPath) ? loadQuestions(curatedPath) : [];
   const openTdb = existsSync(openTdbPath) ? loadQuestions(openTdbPath) : [];
-  const triviaApi = existsSync(triviaApiPath) ? loadQuestions(triviaApiPath) : [];
+  const triviaApi = existsSync(triviaApiPath)
+    ? loadQuestions(triviaApiPath)
+    : [];
   return withTidyCategories(
     dropRewordedDuplicates(
       dedupeByText(mergeQuestions(curated, openTdb, triviaApi)),

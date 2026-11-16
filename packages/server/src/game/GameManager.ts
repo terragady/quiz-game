@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import {
   ANSWER_REJECTION,
   BASE_POINTS,
@@ -19,6 +20,7 @@ import {
   type PublicQuestion,
   type Question,
 } from '@quiz/shared';
+
 import {
   selectQuestions,
   shuffle,
@@ -97,7 +99,6 @@ export class GameManager {
     return this.phaseValue;
   }
 
-
   addPlayer(nickname: string): string {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -158,7 +159,6 @@ export class GameManager {
     }
   }
 
-
   start(settings: GameSettings): void {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -213,7 +213,8 @@ export class GameManager {
     if (this.endsAt !== null && now > this.endsAt) {
       return { accepted: false, reason: ANSWER_REJECTION.timeUp };
     }
-    const timeRemainingMs = this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
+    const timeRemainingMs =
+      this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
     player.currentAnswer = { optionIndex, timeRemainingMs };
     return { accepted: true };
   }
@@ -231,7 +232,7 @@ export class GameManager {
       return;
     }
     const question = this.currentQuestion();
-    const durationMs = (this.settings().secondsPerQuestion) * 1000;
+    const durationMs = this.settings().secondsPerQuestion * 1000;
     for (const player of this.players.values()) {
       const answer = player.currentAnswer;
       const correct = answer?.optionIndex === question.correctIndex;
@@ -247,7 +248,10 @@ export class GameManager {
       player.lastPoints = points;
       player.score += points;
       player.streak = correct ? player.streak + 1 : 0;
-      player.stats.bestStreak = Math.max(player.stats.bestStreak, player.streak);
+      player.stats.bestStreak = Math.max(
+        player.stats.bestStreak,
+        player.streak,
+      );
       this.recordStats(player, answer, correct, durationMs);
     }
     this.endsAt = null;
@@ -305,7 +309,6 @@ export class GameManager {
     this.phaseValue = 'lobby';
   }
 
-
   getAnswerResult(playerId: string): AnswerResult {
     const player = this.players.get(playerId);
     if (!player) {
@@ -332,7 +335,9 @@ export class GameManager {
       players: this.publicPlayers(),
       currentQuestion: this.publicQuestion(),
       revealedCorrectIndex:
-        this.phaseValue === 'reveal' ? this.currentQuestion().correctIndex : null,
+        this.phaseValue === 'reveal'
+          ? this.currentQuestion().correctIndex
+          : null,
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
@@ -345,7 +350,6 @@ export class GameManager {
       leaderboard: this.leaderboard(),
     };
   }
-
 
   private pickQuestions(settings: GameSettings): Question[] {
     const filters = {
@@ -424,7 +428,10 @@ export class GameManager {
     stats.totalResponseMs += responseMs;
     if (correct) {
       stats.correct += 1;
-      if (stats.fastestCorrectMs === null || responseMs < stats.fastestCorrectMs) {
+      if (
+        stats.fastestCorrectMs === null ||
+        responseMs < stats.fastestCorrectMs
+      ) {
         stats.fastestCorrectMs = responseMs;
       }
     } else {
@@ -499,9 +506,7 @@ export class GameManager {
   }
 
   private leaderboard(): LeaderboardRow[] {
-    const sorted = [...this.players.values()].sort(
-      (a, b) => b.score - a.score,
-    );
+    const sorted = [...this.players.values()].sort((a, b) => b.score - a.score);
     const includeStats = this.phaseValue === 'ended';
     let rank = 0;
     let previousScore: number | null = null;
@@ -618,13 +623,19 @@ function validateSettings(settings: GameSettings): GameSettings {
     autoAdvance: Boolean(settings.autoAdvance),
     revealSeconds: settings.revealSeconds,
     leaderboardSeconds: settings.leaderboardSeconds,
-    categoryIntro: booleanOr(settings.categoryIntro, DEFAULT_SETTINGS.categoryIntro),
+    categoryIntro: booleanOr(
+      settings.categoryIntro,
+      DEFAULT_SETTINGS.categoryIntro,
+    ),
     showVoters: booleanOr(settings.showVoters, DEFAULT_SETTINGS.showVoters),
     wrongAnswerPenalty: booleanOr(
       settings.wrongAnswerPenalty,
       DEFAULT_SETTINGS.wrongAnswerPenalty,
     ),
-    musicQuestions: booleanOr(settings.musicQuestions, DEFAULT_SETTINGS.musicQuestions),
+    musicQuestions: booleanOr(
+      settings.musicQuestions,
+      DEFAULT_SETTINGS.musicQuestions,
+    ),
   };
 }
 

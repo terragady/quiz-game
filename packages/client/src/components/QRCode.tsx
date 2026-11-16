@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
 import QRCodeLib from 'qrcode';
+import { useEffect, useState } from 'react';
 
-export function QRCode({ value, size = 220 }: { value: string; size?: number }) {
+export function QRCode({
+  value,
+  size = 220,
+}: {
+  value: string;
+  size?: number;
+}) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
   useEffect(() => {

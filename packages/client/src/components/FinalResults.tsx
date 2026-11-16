@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react';
 import type { LeaderboardRow } from '@quiz/shared';
-import { Leaderboard } from './Leaderboard.js';
+import type { CSSProperties } from 'react';
+
 import { pickAwards } from './awards.js';
+import { Leaderboard } from './Leaderboard.js';
 
 // Seconds after the final screen opens when each podium place appears.
 // Third place goes first so the winner is the last surprise.

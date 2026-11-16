@@ -1,12 +1,4 @@
 import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-} from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
   BENIGN_ANSWER_ERRORS,
   MAX_NICKNAME_LENGTH,
   categoryIcon,
@@ -16,23 +8,33 @@ import {
   type PlayerStats,
   type PublicGameState,
 } from '@quiz/shared';
-import { useSocket } from '../SocketContext.js';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import { AnswerButton } from '../components/AnswerButton.js';
+import { ConfirmDialog } from '../components/ConfirmDialog.js';
 import { Countdown } from '../components/Countdown.js';
 import { OverflowMenu } from '../components/OverflowMenu.js';
-import { ConfirmDialog } from '../components/ConfirmDialog.js';
 import { ReactionBar } from '../components/ReactionBar.js';
 import { SHOW_STREAK_FROM } from '../components/StreakBadge.js';
-import {
-  clearSession,
-  readSession,
-  writeSession,
-} from '../playerSession.js';
 import { readNickname, writeNickname } from '../nicknameCookie.js';
+import { clearSession, readSession, writeSession } from '../playerSession.js';
+import { useSocket } from '../SocketContext.js';
 
 const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
 // Reactions are offered between questions, never while answering.
-const REACTION_PHASES = new Set<GamePhase>(['lobby', 'reveal', 'leaderboard', 'ended']);
+const REACTION_PHASES = new Set<GamePhase>([
+  'lobby',
+  'reveal',
+  'leaderboard',
+  'ended',
+]);
 
 export function PlayerPage() {
   const socket = useSocket();
@@ -397,9 +399,7 @@ function PlayerBody({
             </span>
           </div>
           {locked ? (
-            <p className="center-text">
-              Answer locked in — sit tight!
-            </p>
+            <p className="center-text">Answer locked in — sit tight!</p>
           ) : (
             <p className="center-text">
               {question.melody

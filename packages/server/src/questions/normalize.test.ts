@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
+
+import { validateQuestionsData } from './loader.js';
 import type { OpenTdbResult } from './normalize.js';
 import {
   decodeApiText,
   normalizeResult,
   normalizeResults,
 } from './normalize.js';
-import { validateQuestionsData } from './loader.js';
 
 const identity = <T>(items: T[]): T[] => [...items];
 

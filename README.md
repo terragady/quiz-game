@@ -131,15 +131,15 @@ requests are spaced out and capped at 50 questions each.
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Run server + client with hot reload |
-| `npm run build` | Build the client bundle into `packages/client/dist` |
-| `npm start` | Run the production server (serves the built client + WebSockets) |
-| `npm test` | Run all workspace test suites |
-| `npm run typecheck` | Type-check all workspaces |
-| `npm run lint` | Lint the whole repo |
-| `npm run questions:import` | Refresh the Open Trivia DB questions |
+| Command                    | Description                                                      |
+| -------------------------- | ---------------------------------------------------------------- |
+| `npm run dev`              | Run server + client with hot reload                              |
+| `npm run build`            | Build the client bundle into `packages/client/dist`              |
+| `npm start`                | Run the production server (serves the built client + WebSockets) |
+| `npm test`                 | Run all workspace test suites                                    |
+| `npm run typecheck`        | Type-check all workspaces                                        |
+| `npm run lint`             | Lint the whole repo                                              |
+| `npm run questions:import` | Refresh the Open Trivia DB questions                             |
 
 ## Production build
 

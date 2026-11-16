@@ -39,16 +39,12 @@ body,
 
 body {
   background:
-    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 24px 24px,
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 24px
+      24px,
     var(--bg);
   background-attachment: fixed;
   color: var(--text);
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -831,19 +827,31 @@ input[type='checkbox'] {
 
 .podium__place--1 .podium__block {
   height: clamp(110px, 22vh, 210px);
-  background: linear-gradient(180deg, rgba(255, 209, 92, 0.35), rgba(255, 209, 92, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 209, 92, 0.35),
+    rgba(255, 209, 92, 0.06)
+  );
   border-color: rgba(255, 209, 92, 0.6);
 }
 
 .podium__place--2 .podium__block {
   height: clamp(80px, 15vh, 150px);
-  background: linear-gradient(180deg, rgba(214, 220, 236, 0.28), rgba(214, 220, 236, 0.05));
+  background: linear-gradient(
+    180deg,
+    rgba(214, 220, 236, 0.28),
+    rgba(214, 220, 236, 0.05)
+  );
   border-color: rgba(214, 220, 236, 0.5);
 }
 
 .podium__place--3 .podium__block {
   height: clamp(60px, 11vh, 110px);
-  background: linear-gradient(180deg, rgba(224, 151, 90, 0.3), rgba(224, 151, 90, 0.05));
+  background: linear-gradient(
+    180deg,
+    rgba(224, 151, 90, 0.3),
+    rgba(224, 151, 90, 0.05)
+  );
   border-color: rgba(224, 151, 90, 0.5);
 }
 
@@ -1244,7 +1252,13 @@ input[type='checkbox'] {
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--card-border);
-  mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(
+    180deg,
+    transparent,
+    #000 22%,
+    #000 78%,
+    transparent
+  );
   animation: reel-land 0.35s ease-out 1.1s both;
 }
 

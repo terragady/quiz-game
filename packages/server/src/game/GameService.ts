@@ -1,4 +1,3 @@
-import type { Server, Socket } from 'socket.io';
 import type {
   ClientToServerEvents,
   GameSettings,
@@ -12,9 +11,11 @@ import {
   REACTIONS,
   START_COUNTDOWN_SECONDS,
 } from '@quiz/shared';
-import { GameManager } from './GameManager.js';
-import { generateGameCode } from './code.js';
+import type { Server, Socket } from 'socket.io';
+
 import { listCategories } from '../questions/loader.js';
+import { generateGameCode } from './code.js';
+import { GameManager } from './GameManager.js';
 
 type QuizServer = Server<
   ClientToServerEvents,
@@ -38,8 +39,14 @@ export interface GameServiceOptions {
 
 export class GameService {
   private readonly games = new Map<string, GameManager>();
-  private readonly phaseTimers = new Map<string, ReturnType<typeof setTimeout>>();
-  private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly phaseTimers = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >();
+  private readonly cleanupTimers = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >();
   private readonly playerSockets = new Map<string, string>();
   private readonly lastReactionAt = new Map<string, number>();
   private readonly startCountdownMs: number;
@@ -182,7 +189,10 @@ export class GameService {
       const nickname = game.nicknameOf(playerId);
       if (!nickname) return;
       const now = Date.now();
-      if (now - (this.lastReactionAt.get(playerId) ?? 0) < REACTION_COOLDOWN_MS) {
+      if (
+        now - (this.lastReactionAt.get(playerId) ?? 0) <
+        REACTION_COOLDOWN_MS
+      ) {
         return;
       }
       this.lastReactionAt.set(playerId, now);
@@ -208,11 +218,7 @@ export class GameService {
     socket.on('disconnect', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;
-      if (
-        playerId &&
-        game &&
-        this.playerSockets.get(playerId) === socket.id
-      ) {
+      if (playerId && game && this.playerSockets.get(playerId) === socket.id) {
         game.setConnected(playerId, false);
         this.playerSockets.delete(playerId);
         this.lastReactionAt.delete(playerId);
@@ -230,7 +236,6 @@ export class GameService {
     for (const timer of this.cleanupTimers.values()) clearTimeout(timer);
     this.cleanupTimers.clear();
   }
-
 
   private createRoom(): GameManager {
     let code = generateGameCode();
@@ -274,7 +279,6 @@ export class GameService {
       setTimeout(() => this.removeRoom(code), ROOM_CLEANUP_GRACE_MS),
     );
   }
-
 
   private socketGame(socket: QuizSocket): GameManager | undefined {
     return socket.data.code ? this.games.get(socket.data.code) : undefined;
@@ -422,7 +426,9 @@ export class GameService {
     if (!game) return;
     for (const [playerId, socketId] of this.playerSockets) {
       if (game.hasPlayer(playerId)) {
-        this.io.to(socketId).emit('answerResult', game.getAnswerResult(playerId));
+        this.io
+          .to(socketId)
+          .emit('answerResult', game.getAnswerResult(playerId));
       }
     }
     this.broadcastState(code);

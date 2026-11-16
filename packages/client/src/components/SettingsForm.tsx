@@ -5,6 +5,7 @@ import {
   type Difficulty,
   type GameSettings,
 } from '@quiz/shared';
+
 import type { SettingsErrors } from '../settingsValidation.js';
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];

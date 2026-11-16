@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
 import type { Melody } from '@quiz/shared';
+import { useEffect, useRef } from 'react';
+
 import { playMelody, unlockAudio } from '../audio.js';
 
 // Shown on the host screen for name-that-tune questions. The tune plays by

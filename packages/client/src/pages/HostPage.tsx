@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   DEFAULT_SETTINGS,
   categoryIcon,
@@ -7,26 +6,25 @@ import {
   type ObserverJoinAck,
   type PublicGameState,
 } from '@quiz/shared';
-import { useGameState } from '../hooks/useGameState.js';
-import { useToasts } from '../hooks/useToasts.js';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { unlockAudio } from '../audio.js';
+import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
 import { AnswerButton } from '../components/AnswerButton.js';
-import { Countdown } from '../components/Countdown.js';
 import { CategoryReel } from '../components/CategoryReel.js';
 import { Confetti } from '../components/Confetti.js';
+import { Countdown } from '../components/Countdown.js';
 import { FinalResults } from '../components/FinalResults.js';
-import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
+import { FloatingReactions } from '../components/FloatingReactions.js';
 import { QRCode } from '../components/QRCode.js';
 import { SettingsForm } from '../components/SettingsForm.js';
-import { ToastStack } from '../components/ToastStack.js';
-import { FloatingReactions } from '../components/FloatingReactions.js';
 import { SoundToggle } from '../components/SoundToggle.js';
-import { useHostSounds } from '../hooks/useHostSounds.js';
-import { unlockAudio } from '../audio.js';
+import { ToastStack } from '../components/ToastStack.js';
 import { TunePlayer } from '../components/TunePlayer.js';
-import {
-  getSettingsErrors,
-  hasSettingsErrors,
-} from '../settingsValidation.js';
+import { useGameState } from '../hooks/useGameState.js';
+import { useHostSounds } from '../hooks/useHostSounds.js';
+import { useToasts } from '../hooks/useToasts.js';
+import { getSettingsErrors, hasSettingsErrors } from '../settingsValidation.js';
 
 const HOST_CODE_KEY = 'quiz.hostCode';
 
@@ -307,7 +305,11 @@ function HostBody({
             >
               Play again
             </button>
-            <button type="button" className="btn btn--ghost" onClick={onNewGame}>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={onNewGame}
+            >
               New game
             </button>
           </div>

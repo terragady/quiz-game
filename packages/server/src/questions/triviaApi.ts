@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+
 import type { Difficulty, Question } from '@quiz/shared';
 
 export interface TriviaApiResult {
@@ -51,7 +52,9 @@ export function normalizeTriviaApiResult(
 ): Question {
   const difficulty = raw.difficulty?.trim();
   if (!isDifficulty(difficulty)) {
-    throw new Error(`Unexpected difficulty "${raw.difficulty}" from The Trivia API.`);
+    throw new Error(
+      `Unexpected difficulty "${raw.difficulty}" from The Trivia API.`,
+    );
   }
 
   const text = raw.question?.text?.trim();

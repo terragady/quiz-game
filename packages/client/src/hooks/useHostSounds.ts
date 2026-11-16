@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { melodySeconds, type PublicGameState } from '@quiz/shared';
+import { useEffect, useRef } from 'react';
+
 import { playMelody, sounds } from '../audio.js';
 import { REEL_SPIN_SECONDS } from '../components/CategoryReel.js';
 import { PODIUM_REVEAL_SECONDS } from '../components/FinalResults.js';

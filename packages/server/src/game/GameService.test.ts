@@ -1,6 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AddressInfo } from 'node:net';
-import { io as createClient, type Socket } from 'socket.io-client';
+
 import type {
   ClientToServerEvents,
   GameSettings,
@@ -11,6 +10,9 @@ import type {
   Question,
   ServerToClientEvents,
 } from '@quiz/shared';
+import { io as createClient, type Socket } from 'socket.io-client';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
 import { createGameServer, type GameServerHandles } from '../app.js';
 
 type ClientSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -107,9 +109,7 @@ function playerRejoin(
   );
 }
 
-function nextQuestion(
-  socket: ClientSocket,
-): Promise<[PublicQuestion, number]> {
+function nextQuestion(socket: ClientSocket): Promise<[PublicQuestion, number]> {
   return new Promise((resolve) =>
     socket.once('questionStarted', (question, endsAt) =>
       resolve([question, endsAt]),
@@ -225,10 +225,13 @@ describe('GameService integration', () => {
     const localPort = (server.httpServer.address() as AddressInfo).port;
     const local: ClientSocket[] = [];
     const localConnect = (): ClientSocket => {
-      const socket: ClientSocket = createClient(`http://localhost:${localPort}`, {
-        forceNew: true,
-        transports: ['websocket'],
-      });
+      const socket: ClientSocket = createClient(
+        `http://localhost:${localPort}`,
+        {
+          forceNew: true,
+          transports: ['websocket'],
+        },
+      );
       local.push(socket);
       return socket;
     };
@@ -277,7 +280,10 @@ describe('GameService integration', () => {
     });
     await questionArrives;
 
-    const leaderboardShown = waitForState(host, (s) => s.phase === 'leaderboard');
+    const leaderboardShown = waitForState(
+      host,
+      (s) => s.phase === 'leaderboard',
+    );
     player.emit('submitAnswer', { optionIndex: 0 });
     const leaderboardState = await leaderboardShown;
     expect(leaderboardState.phase).toBe('leaderboard');
@@ -444,10 +450,13 @@ describe('GameService category intro', () => {
     const introPort = (server.httpServer.address() as AddressInfo).port;
     const local: ClientSocket[] = [];
     const localConnect = (): ClientSocket => {
-      const socket: ClientSocket = createClient(`http://localhost:${introPort}`, {
-        forceNew: true,
-        transports: ['websocket'],
-      });
+      const socket: ClientSocket = createClient(
+        `http://localhost:${introPort}`,
+        {
+          forceNew: true,
+          transports: ['websocket'],
+        },
+      );
       local.push(socket);
       return socket;
     };
@@ -459,14 +468,22 @@ describe('GameService category intro', () => {
       if (!hostAck.ok) throw new Error('host join failed');
       const player = localConnect();
       await new Promise<JoinAck>((resolve) =>
-        player.emit('playerJoin', { code: hostAck.state.code, nickname: 'Alice' }, resolve),
+        player.emit(
+          'playerJoin',
+          { code: hostAck.state.code, nickname: 'Alice' },
+          resolve,
+        ),
       );
 
       const introShown = waitForState(host, (s) => s.phase === 'intro');
       const questionArrives = nextQuestion(player);
       host.emit('hostStart', { ...settings, categoryIntro: true });
       const intro = await introShown;
-      expect(intro.upcoming).toEqual({ category: 'Science', number: 1, total: 2 });
+      expect(intro.upcoming).toEqual({
+        category: 'Science',
+        number: 1,
+        total: 2,
+      });
       const [question] = await questionArrives;
       expect(question.number).toBe(1);
     } finally {
@@ -519,10 +536,17 @@ describe('GameService play again', () => {
     const hostLobby = waitForState(host, (s) => s.phase === 'lobby');
     const playerLobby = waitForState(player, (s) => s.phase === 'lobby');
     host.emit('hostPlayAgain');
-    const [hostState, playerState] = await Promise.all([hostLobby, playerLobby]);
+    const [hostState, playerState] = await Promise.all([
+      hostLobby,
+      playerLobby,
+    ]);
     expect(hostState.code).toBe(code);
     expect(playerState.players).toEqual([
-      expect.objectContaining({ id: playerAck.playerId, nickname: 'Alice', score: 0 }),
+      expect.objectContaining({
+        id: playerAck.playerId,
+        nickname: 'Alice',
+        score: 0,
+      }),
     ]);
 
     const secondQuestion = nextQuestion(player);

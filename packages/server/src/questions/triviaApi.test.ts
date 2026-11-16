@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import {
   formatCategory,
   normalizeTriviaApiResult,
@@ -63,19 +64,28 @@ describe('normalizeTriviaApiResult', () => {
 
   it('throws on an unexpected difficulty', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ difficulty: 'impossible' }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ difficulty: 'impossible' }),
+        identityShuffle,
+      ),
     ).toThrow(/difficulty/i);
   });
 
   it('throws when the question text is empty', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ question: { text: '   ' } }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ question: { text: '   ' } }),
+        identityShuffle,
+      ),
     ).toThrow(/empty/i);
   });
 
   it('throws when answers are missing', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ incorrectAnswers: [] }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ incorrectAnswers: [] }),
+        identityShuffle,
+      ),
     ).toThrow(/answers/i);
   });
 });
