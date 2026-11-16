@@ -1584,5 +1584,389 @@
     "options": ["Queen Elizabeth II", "Marie Curie", "Taylor Swift", "Winston Churchill"],
     "correctIndex": 0,
     "imageUrl": "/images/people/queen-elizabeth-ii.jpg"
+  },
+  {
+    "id": "curated-tune-ode-to-joy",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Ode to Joy (Beethoven)", "Für Elise (Beethoven)", "Eine kleine Nachtmusik (Mozart)", "Spring (Vivaldi)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 132,
+      "notes": "E4:1 E4:1 F4:1 G4:1 G4:1 F4:1 E4:1 D4:1 C4:1 C4:1 D4:1 E4:1 E4:1.5 D4:0.5 D4:2"
+    }
+  },
+  {
+    "id": "curated-tune-fur-elise",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Für Elise (Beethoven)", "Moonlight Sonata (Beethoven)", "Ode to Joy (Beethoven)", "Turkish March (Mozart)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "E5:0.5 D#5:0.5 E5:0.5 D#5:0.5 E5:0.5 B4:0.5 D5:0.5 C5:0.5 A4:1.5 R:0.5 C4:0.5 E4:0.5 A4:0.5 B4:1.5 R:0.5 E4:0.5 G#4:0.5 B4:0.5 C5:1.5"
+    }
+  },
+  {
+    "id": "curated-tune-twinkle",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Twinkle, Twinkle, Little Star", "Mary Had a Little Lamb", "Row, Row, Row Your Boat", "London Bridge Is Falling Down"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 120,
+      "notes": "C4:1 C4:1 G4:1 G4:1 A4:1 A4:1 G4:2 F4:1 F4:1 E4:1 E4:1 D4:1 D4:1 C4:2"
+    }
+  },
+  {
+    "id": "curated-tune-happy-birthday",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Happy Birthday to You", "For He's a Jolly Good Fellow", "Auld Lang Syne", "Jingle Bells"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 110,
+      "notes": "G4:0.75 G4:0.25 A4:1 G4:1 C5:1 B4:2 G4:0.75 G4:0.25 A4:1 G4:1 D5:1 C5:2"
+    }
+  },
+  {
+    "id": "curated-tune-jingle-bells",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Jingle Bells", "Deck the Halls", "We Wish You a Merry Christmas", "Silent Night"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "E4:1 E4:1 E4:2 E4:1 E4:1 E4:2 E4:1 G4:1 C4:1.5 D4:0.5 E4:4"
+    }
+  },
+  {
+    "id": "curated-tune-frere-jacques",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Frère Jacques", "Row, Row, Row Your Boat", "Twinkle, Twinkle, Little Star", "London Bridge Is Falling Down"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 130,
+      "notes": "C4:1 D4:1 E4:1 C4:1 C4:1 D4:1 E4:1 C4:1 E4:1 F4:1 G4:2 E4:1 F4:1 G4:2"
+    }
+  },
+  {
+    "id": "curated-tune-mountain-king",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["In the Hall of the Mountain King (Grieg)", "Morning Mood (Grieg)", "Ride of the Valkyries (Wagner)", "Dance of the Sugar Plum Fairy (Tchaikovsky)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "B3:0.5 C#4:0.5 D4:0.5 E4:0.5 F#4:0.5 D4:0.5 F#4:1 F4:0.5 C#4:0.5 F4:1 E4:0.5 C4:0.5 E4:1 B3:0.5 C#4:0.5 D4:0.5 E4:0.5 F#4:0.5 D4:0.5 F#4:0.5 B4:0.5 A4:0.5 F#4:0.5 D4:0.5 F#4:0.5 A4:2"
+    }
+  },
+  {
+    "id": "curated-tune-beethoven-5",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Symphony No. 5 (Beethoven)", "Symphony No. 9 (Beethoven)", "Symphony No. 40 (Mozart)", "New World Symphony (Dvořák)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 108,
+      "notes": "G4:0.5 G4:0.5 G4:0.5 Eb4:3 R:1 F4:0.5 F4:0.5 F4:0.5 D4:3"
+    }
+  },
+  {
+    "id": "curated-tune-nachtmusik",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Eine kleine Nachtmusik (Mozart)", "The Four Seasons (Vivaldi)", "Turkish March (Mozart)", "Canon in D (Pachelbel)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 130,
+      "notes": "G4:1 R:0.5 D4:0.5 G4:1 R:0.5 D4:0.5 G4:0.5 D4:0.5 G4:0.5 B4:0.5 D5:2"
+    }
+  },
+  {
+    "id": "curated-tune-bridal-chorus",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Bridal Chorus (\"Here Comes the Bride\")", "Wedding March (Mendelssohn)", "Canon in D (Pachelbel)", "Ave Maria (Schubert)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 80,
+      "notes": "C4:1 F4:0.75 F4:0.25 F4:2 C4:1 G4:0.75 E4:0.25 F4:2"
+    }
+  },
+  {
+    "id": "curated-tune-william-tell",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["William Tell Overture (Rossini)", "Can-Can (Offenbach)", "Radetzky March (Strauss)", "Ride of the Valkyries (Wagner)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 140,
+      "notes": "G4:0.25 G4:0.25 G4:0.5 G4:0.25 G4:0.25 G4:0.5 G4:0.25 G4:0.25 C5:0.5 D5:0.5 E5:1 G4:0.25 G4:0.25 G4:0.5 G4:0.25 G4:0.25 G4:0.5 G4:0.25 G4:0.25 C5:0.5 E5:0.5 D5:1"
+    }
+  },
+  {
+    "id": "curated-tune-can-can",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Can-Can (Offenbach)", "William Tell Overture (Rossini)", "The Blue Danube (Strauss)", "Habanera (Bizet)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "C4:1 D4:0.5 F4:0.5 E4:0.5 D4:0.5 G4:1 G4:1 G4:0.5 A4:0.5 E4:0.5 F4:0.5 D4:1 D4:1 D4:0.5 F4:0.5 E4:0.5 D4:0.5 C4:0.5 C5:0.5 B4:0.5 A4:0.5 G4:0.5 F4:0.5 E4:0.5 D4:0.5 C4:1"
+    }
+  },
+  {
+    "id": "curated-tune-brahms-lullaby",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Lullaby (Brahms)", "Twinkle, Twinkle, Little Star", "Silent Night", "Greensleeves"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "E4:0.5 E4:0.5 G4:2 E4:0.5 E4:0.5 G4:2 E4:0.5 G4:0.5 C5:1 B4:1.5 A4:0.5 A4:1 G4:1"
+    }
+  },
+  {
+    "id": "curated-tune-toreador",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Name that tune!",
+    "options": ["Toreador Song (Bizet)", "Habanera (Bizet)", "Can-Can (Offenbach)", "La donna è mobile (Verdi)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 110,
+      "notes": "C5:0.75 D5:0.25 C5:1 A4:1 A4:1 A4:0.5 G4:0.5 A4:0.5 Bb4:0.5 A4:3"
+    }
+  },
+  {
+    "id": "curated-tune-morning-mood",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Morning Mood (Grieg)", "In the Hall of the Mountain King (Grieg)", "Spring (Vivaldi)", "Clair de Lune (Debussy)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 120,
+      "notes": "G4:0.5 E4:0.5 D4:0.5 C4:0.5 D4:0.5 E4:0.5 G4:0.5 E4:0.5 D4:0.5 C4:0.5 D4:0.25 E4:0.25 D4:0.25 E4:0.25 G4:0.5 E4:0.5 G4:0.5 A4:0.5 E4:0.5 A4:0.5 G4:0.5 E4:0.5 D4:0.5 C4:1.5"
+    }
+  },
+  {
+    "id": "curated-tune-blue-danube",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["The Blue Danube (Strauss)", "Radetzky March (Strauss)", "Swan Lake (Tchaikovsky)", "Can-Can (Offenbach)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 170,
+      "notes": "D4:1 D4:1 F#4:1 A4:1 A4:2 R:1 A5:1 A5:2 R:1 F#5:1 F#5:2 R:1 D4:1 D4:1 F#4:1 A4:1 A4:2 R:1 A5:1 A5:2 R:1 G5:1 G5:2"
+    }
+  },
+  {
+    "id": "curated-tune-swan-lake",
+    "category": "Music",
+    "difficulty": "hard",
+    "text": "Name that tune!",
+    "options": ["Swan Lake (Tchaikovsky)", "The Nutcracker (Tchaikovsky)", "The Blue Danube (Strauss)", "Clair de Lune (Debussy)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "F#4:3 B3:0.5 C#4:0.5 D4:0.5 E4:0.5 F#4:1.5 D4:0.5 F#4:1.5 D4:0.5 F#4:1.5 B3:0.5 D4:0.5 B3:0.5 G3:0.5 D4:0.5 B3:3"
+    }
+  },
+  {
+    "id": "curated-tune-greensleeves",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Greensleeves", "Scarborough Fair", "Auld Lang Syne", "Danny Boy"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 120,
+      "notes": "A4:1 C5:2 D5:1 E5:1.5 F5:0.5 E5:1 D5:2 B4:1 G4:1.5 A4:0.5 B4:1 C5:2 A4:1"
+    }
+  },
+  {
+    "id": "curated-tune-marseillaise",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["La Marseillaise (France)", "God Save the King (UK)", "The Star-Spangled Banner (USA)", "Ode to Joy (EU anthem)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 110,
+      "notes": "D4:0.75 D4:0.25 G4:1 G4:1 A4:1 A4:1 D5:1.5 B4:0.5 G4:0.75 G4:0.25 B4:0.75 G4:0.25 E4:1 C5:2 A4:0.75 F#4:0.25 G4:2"
+    }
+  },
+  {
+    "id": "curated-tune-god-save-the-king",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["God Save the King (UK)", "La Marseillaise (France)", "The Star-Spangled Banner (USA)", "Rule, Britannia!"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "G4:1 G4:1 A4:1 F#4:1.5 G4:0.5 A4:1 B4:1 B4:1 C5:1 B4:1.5 A4:0.5 G4:1"
+    }
+  },
+  {
+    "id": "curated-tune-star-spangled",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["The Star-Spangled Banner (USA)", "God Save the King (UK)", "La Marseillaise (France)", "America the Beautiful"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "G4:0.75 E4:0.25 C4:1 E4:1 G4:1 C5:2 E5:0.75 D5:0.25 C5:1 E4:1 F#4:1 G4:2"
+    }
+  },
+  {
+    "id": "curated-tune-canon-in-d",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Canon in D (Pachelbel)", "Air on the G String (Bach)", "Eine kleine Nachtmusik (Mozart)", "Spring (Vivaldi)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 70,
+      "notes": "F#5:1 E5:1 D5:1 C#5:1 B4:1 A4:1 B4:1 C#5:1"
+    }
+  },
+  {
+    "id": "curated-tune-turkish-march",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Turkish March (Mozart)", "Für Elise (Beethoven)", "Flight of the Bumblebee (Rimsky-Korsakov)", "Eine kleine Nachtmusik (Mozart)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 120,
+      "notes": "B4:0.25 A4:0.25 G#4:0.25 A4:0.25 C5:1 D5:0.25 C5:0.25 B4:0.25 C5:0.25 E5:1 F5:0.25 E5:0.25 D#5:0.25 E5:0.25 B5:0.25 A5:0.25 G#5:0.25 A5:0.25 B5:0.25 A5:0.25 G#5:0.25 A5:0.25 C6:1"
+    }
+  },
+  {
+    "id": "curated-tune-spring",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Spring from The Four Seasons (Vivaldi)", "Canon in D (Pachelbel)", "Morning Mood (Grieg)", "Eine kleine Nachtmusik (Mozart)"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 120,
+      "notes": "E5:1 G#5:1 G#5:1 G#5:1 F#5:0.5 E5:0.5 B5:3 B5:0.5 A5:0.5 G#5:1 G#5:1 G#5:1 F#5:0.5 E5:0.5 B5:3"
+    }
+  },
+  {
+    "id": "curated-tune-row-your-boat",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Row, Row, Row Your Boat", "Frère Jacques", "Twinkle, Twinkle, Little Star", "Mary Had a Little Lamb"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "C4:1.5 C4:1.5 C4:1 D4:0.5 E4:1.5 E4:1 D4:0.5 E4:1 F4:0.5 G4:3"
+    }
+  },
+  {
+    "id": "curated-tune-mary-lamb",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Mary Had a Little Lamb", "Twinkle, Twinkle, Little Star", "Old MacDonald Had a Farm", "London Bridge Is Falling Down"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 130,
+      "notes": "E4:1 D4:1 C4:1 D4:1 E4:1 E4:1 E4:2 D4:1 D4:1 D4:2 E4:1 G4:1 G4:2"
+    }
+  },
+  {
+    "id": "curated-tune-london-bridge",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["London Bridge Is Falling Down", "Mary Had a Little Lamb", "Frère Jacques", "Old MacDonald Had a Farm"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 130,
+      "notes": "G4:1.5 A4:0.5 G4:1 F4:1 E4:1 F4:1 G4:2 D4:1 E4:1 F4:2 E4:1 F4:1 G4:2"
+    }
+  },
+  {
+    "id": "curated-tune-old-macdonald",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Old MacDonald Had a Farm", "Mary Had a Little Lamb", "London Bridge Is Falling Down", "Row, Row, Row Your Boat"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 140,
+      "notes": "G4:1 G4:1 G4:1 D4:1 E4:1 E4:1 D4:2 B4:1 B4:1 A4:1 A4:1 G4:3"
+    }
+  },
+  {
+    "id": "curated-tune-auld-lang-syne",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Auld Lang Syne", "Greensleeves", "Danny Boy", "Amazing Grace"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "C4:1 F4:1.5 F4:0.5 F4:1 A4:1 G4:1.5 F4:0.5 G4:1 A4:1 F4:1.5 F4:0.5 A4:1 C5:1 D5:3"
+    }
+  },
+  {
+    "id": "curated-tune-korobeiniki",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Korobeiniki (the Tetris theme)", "Kalinka", "Kazachok", "The Volga Boatmen"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 150,
+      "notes": "E5:1 B4:0.5 C5:0.5 D5:1 C5:0.5 B4:0.5 A4:1 A4:0.5 C5:0.5 E5:1 D5:0.5 C5:0.5 B4:1.5 C5:0.5 D5:1 E5:1 C5:1 A4:1 A4:2"
+    }
+  },
+  {
+    "id": "curated-tune-amazing-grace",
+    "category": "Music",
+    "difficulty": "medium",
+    "text": "Name that tune!",
+    "options": ["Amazing Grace", "Auld Lang Syne", "Danny Boy", "Silent Night"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 80,
+      "notes": "C4:1 F4:2 A4:0.5 F4:0.5 A4:2 G4:1 F4:2 D4:1 C4:2"
+    }
+  },
+  {
+    "id": "curated-tune-silent-night",
+    "category": "Music",
+    "difficulty": "easy",
+    "text": "Name that tune!",
+    "options": ["Silent Night", "Amazing Grace", "Jingle Bells", "Brahms' Lullaby"],
+    "correctIndex": 0,
+    "melody": {
+      "bpm": 100,
+      "notes": "G4:1.5 A4:0.5 G4:1 E4:3 G4:1.5 A4:0.5 G4:1 E4:3"
+    }
   }
 ]

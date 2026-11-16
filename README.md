@@ -36,7 +36,21 @@ hosting tier: the first load after an idle period takes a few seconds to wake.)
 Each host screen is its own **room** with a unique code; refreshing the TV
 rejoins the same game, and a "New game" button starts a fresh one. Some
 questions are **picture questions** — guess the flag, the landmark, or the
-famous person — with the image shown on the host screen.
+famous person — with the image shown on the host screen — and some are
+**name-that-tune questions**, where the host screen plays a short melody.
+
+The host can switch these on or off before each game:
+
+- Show the category before each question (a short spinning reveal).
+- Include name-that-tune questions (about one question in five).
+- Show who picked which answer. When it's off, the TV only shows how many
+  people picked each answer.
+- Wrong answers cost 250 points (never below zero; not answering costs nothing).
+
+Players can send emoji reactions from their phones between questions, and they
+float up on the TV. The final screen has a podium and a few awards (fastest
+answer, most correct, longest streak). Within a room, questions don't repeat
+from one game to the next until the pool runs out.
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single
 origin, so it fits comfortably on a free hosting tier.
@@ -74,29 +88,46 @@ of `localhost` (the QR code on the host screen uses the browser's origin).
 
 ## Questions
 
-At runtime the game pool is the merge of two committed files, so the app has no
-runtime dependency on any external service:
+The game plays from one committed file, `packages/server/data/questions.json`
+(about 7,300 questions), so it has no runtime dependency on any external
+service. That file is built from three source files:
 
-- `packages/server/data/curated-questions.json` — a hand-maintained set of
-  English questions focused on Europe, Norway, and Poland, plus picture
-  questions (flags, landmarks, and famous people) whose images are served
-  locally from `packages/client/public/images`. Edit this by hand; the importer
-  never touches it.
-- `packages/server/data/questions.json` — the [Open Trivia DB](https://opentdb.com)
-  dump, produced (and overwritten) by the import script.
+- `curated-questions.json` — a hand-maintained set of English questions focused
+  on Europe, Norway, and Poland, plus picture questions (flags, landmarks, and
+  famous people) whose images are served locally from
+  `packages/client/public/images`. Edit this by hand; the importers never touch
+  it.
+- `opentdb-questions.json` — imported from [Open Trivia DB](https://opentdb.com).
+  The importer overwrites this file.
+- `trivia-api-questions.json` — imported from
+  [The Trivia API](https://the-trivia-api.com). The importer adds to this file.
 
-Options are shuffled when the pool loads, so the correct answer never sits in a
-fixed slot. To refresh the imported pool:
+All of them live in `packages/server/data`. Building the pool drops duplicates:
+questions with the same text, and questions that ask the same thing in other
+words with the same answer (e.g. "capital of Finland" and "capital city of
+Finland"). Curated questions win over imported ones. Imported categories are
+grouped into a short list (Geography, History, Science & Nature, and so on).
 
-```bash
-npm run questions:import                        # ~150 multiple-choice + ~50 true/false
-npm run questions:import -- --multiple 50 --boolean 20
+Name-that-tune questions are written out as notes in `curated-questions.json`,
+so there are no audio files. Only out-of-copyright tunes (classical pieces,
+folk songs, anthems) belong there:
+
+```json
+"melody": { "bpm": 132, "notes": "E4:1 E4:1 F4:1 G4:1 R:1 C4:2" }
 ```
 
-The import script fetches questions, decodes them, shuffles the options (tracking
-the correct answer), de-duplicates, validates, and overwrites `questions.json`
-only. Open Trivia DB is rate-limited, so requests are spaced out and each is
-capped at 50 questions.
+Each note is a pitch and octave (`C4`, `F#5`, `Bb3`) or `R` for a rest,
+followed by its length in beats.
+
+```bash
+npm run questions:import                                 # Open Trivia DB
+npm run questions:import -- --multiple 3000 --boolean 500
+npm run questions:import:trivia-api -w @quiz/server -- --count 500
+npm run questions:build -w @quiz/server                  # rebuild the pool only
+```
+
+Both importers rebuild the pool when they finish. The APIs are rate-limited, so
+requests are spaced out and capped at 50 questions each.
 
 ## Scripts
 
@@ -108,7 +139,7 @@ capped at 50 questions.
 | `npm test` | Run all workspace test suites |
 | `npm run typecheck` | Type-check all workspaces |
 | `npm run lint` | Lint the whole repo |
-| `npm run questions:import` | Refresh questions from Open Trivia DB |
+| `npm run questions:import` | Refresh the Open Trivia DB questions |
 
 ## Production build
 
@@ -138,6 +169,11 @@ Render provides `PORT` automatically. WebSockets work on the free tier; note the
 free instance sleeps after inactivity, so the first request after idle takes a
 few seconds to wake.
 
+## Future ideas
+
+- Custom questions: let people write their own question sets and play them.
+- Questions with more than one right answer, where players pick several.
+
 ## Project structure
 
 ```
@@ -145,6 +181,8 @@ packages/
   shared/   Types + socket event contract (consumed as TS source)
   server/   Express + Socket.IO game server, question loader, import script
     data/curated-questions.json   Hand-maintained EU/NO/PL + picture questions
-    data/questions.json           Imported Open Trivia DB dump
+    data/opentdb-questions.json   Imported from Open Trivia DB
+    data/trivia-api-questions.json  Imported from The Trivia API
+    data/questions.json           The merged pool the game plays from
   client/   React app (home, host, player views)
 ```

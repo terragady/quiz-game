@@ -62,6 +62,10 @@ const baseSettings: GameSettings = {
   autoAdvance: false,
   revealSeconds: 5,
   leaderboardSeconds: 8,
+  categoryIntro: false,
+  showVoters: true,
+  wrongAnswerPenalty: false,
+  musicQuestions: false,
 };
 
 describe('GameManager lobby', () => {
@@ -90,6 +94,14 @@ describe('GameManager lobby', () => {
   it('rejects a duplicate nickname case-insensitively', () => {
     game.addPlayer('Alice');
     expect(() => game.addPlayer('alice')).toThrow(/taken/);
+  });
+
+  it('hands the nickname of a disconnected player to a new join', () => {
+    const oldId = game.addPlayer('Alice');
+    game.setConnected(oldId, false);
+    const newId = game.addPlayer('alice');
+    expect(game.hasPlayer(oldId)).toBe(false);
+    expect(game.getPublicState().players.map((p) => p.id)).toEqual([newId]);
   });
 
   it('rejects joining after the game has started', () => {
@@ -459,6 +471,392 @@ describe('GameManager end-of-game stats', () => {
       unanswered: 1,
       averageResponseMs: null,
       fastestCorrectMs: null,
+    });
+  });
+});
+
+describe('GameManager play again', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  it('sends a finished game back to the lobby with the same players and zero scores', () => {
+    const alice = game.addPlayer('Alice');
+    const bob = game.addPlayer('Bob');
+    game.setConnected(bob, false);
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    game.end();
+
+    game.resetToLobby();
+
+    const state = game.getPublicState();
+    expect(state.code).toBe('ABCD');
+    expect(state.phase).toBe('lobby');
+    expect(state.currentQuestion).toBeNull();
+    expect(state.endsAt).toBeNull();
+    expect(state.players.map((p) => [p.nickname, p.score, p.connected])).toEqual([
+      ['Alice', 0, true],
+      ['Bob', 0, false],
+    ]);
+    expect(state.leaderboard.every((row) => row.lastPoints === 0)).toBe(true);
+    expect(game.hasPlayer(alice)).toBe(true);
+    expect(game.hasPlayer(bob)).toBe(true);
+  });
+
+  it('starts the next round with fresh stats and lets new players join', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    game.end();
+    game.resetToLobby();
+
+    game.addPlayer('Carol');
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.reveal();
+    game.end();
+
+    const aliceRow = game
+      .getPublicState()
+      .leaderboard.find((row) => row.nickname === 'Alice');
+    expect(aliceRow?.score).toBe(0);
+    expect(aliceRow?.stats).toMatchObject({ correct: 0, unanswered: 1 });
+  });
+
+  it('ignores a repeat press in the lobby and refuses mid-game', () => {
+    game.addPlayer('Alice');
+    game.resetToLobby();
+    expect(game.phase).toBe('lobby');
+    startGame(game, baseSettings);
+    expect(() => game.resetToLobby()).toThrow('The game has not ended yet.');
+    expect(game.phase).toBe('question');
+  });
+});
+
+describe('GameManager streaks', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  function playQuestion(playerId: string, correct: boolean): void {
+    game.submitAnswer(
+      playerId,
+      correct ? correctOptionIndex(game) : wrongOptionIndex(game),
+    );
+    game.reveal();
+  }
+
+  it('counts correct answers in a row and resets on a miss', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, baseSettings);
+
+    playQuestion(alice, true);
+    expect(game.getAnswerResult(alice).streak).toBe(1);
+    game.advance();
+    game.advance();
+    playQuestion(alice, true);
+    expect(game.getPublicState().leaderboard[0].streak).toBe(2);
+    game.advance();
+    game.advance();
+    playQuestion(alice, false);
+    expect(game.getAnswerResult(alice).streak).toBe(0);
+
+    game.advance();
+    game.advance();
+    expect(game.phase).toBe('ended');
+    expect(game.getPublicState().leaderboard[0].stats?.bestStreak).toBe(2);
+  });
+
+  it('starts every player at zero after Play again', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    playQuestion(alice, true);
+    game.end();
+    game.resetToLobby();
+
+    const row = game.getPublicState().leaderboard[0];
+    expect(row.streak).toBe(0);
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.reveal();
+    game.end();
+    expect(game.getPublicState().leaderboard[0].stats?.bestStreak).toBe(0);
+  });
+});
+
+describe('GameManager question memory', () => {
+  let game: GameManager;
+
+  beforeEach(() => {
+    game = new GameManager({ code: 'ABCD', questionPool: makePool() });
+    game.addPlayer('Alice');
+  });
+
+  function playRound(questionCount: number): string[] {
+    startGame(game, { ...baseSettings, questionCount });
+    const ids: string[] = [];
+    for (;;) {
+      const question = game.getPublicState().currentQuestion;
+      if (question && game.phase === 'question') ids.push(question.id);
+      game.advance();
+      if (game.phase === 'ended') break;
+    }
+    game.resetToLobby();
+    return ids;
+  }
+
+  it('does not repeat questions from an earlier round in the same room', () => {
+    const first = playRound(2);
+    const second = playRound(1);
+    expect(first).toHaveLength(2);
+    expect(first).not.toContain(second[0]);
+  });
+
+  it('starts over once there are not enough new questions left', () => {
+    playRound(2);
+    const second = playRound(2);
+    expect(second).toHaveLength(2);
+    const third = playRound(3);
+    expect(new Set(third).size).toBe(3);
+  });
+});
+
+describe('GameManager category intro', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+      introMs: 2000,
+    });
+  });
+
+  it('shows only the category before each question opens', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, categoryIntro: true });
+
+    const intro = game.getPublicState();
+    expect(intro.phase).toBe('intro');
+    expect(intro.currentQuestion).toBeNull();
+    expect(intro.upcoming).toEqual({
+      category: expect.any(String),
+      number: 1,
+      total: 3,
+    });
+    expect(intro.endsAt).toBe(3000);
+    expect(game.submitAnswer(alice, 0).accepted).toBe(false);
+
+    clock = 3000;
+    game.startQuestion();
+    const question = game.getPublicState();
+    expect(question.phase).toBe('question');
+    expect(question.upcoming).toBeNull();
+    expect(question.currentQuestion?.category).toBe(intro.upcoming?.category);
+    expect(question.endsAt).toBe(3000 + 20_000);
+  });
+
+  it('goes through the intro again for the next question', () => {
+    game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, categoryIntro: true });
+    game.advance();
+    expect(game.phase).toBe('question');
+    game.advance();
+    game.advance();
+    game.advance();
+    expect(game.phase).toBe('intro');
+    expect(game.getPublicState().upcoming?.number).toBe(2);
+  });
+});
+
+describe('GameManager anonymous votes', () => {
+  it('sends only counts when names are hidden', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: makePool() });
+    const alice = game.addPlayer('Alice');
+    const bob = game.addPlayer('Bob');
+    startGame(game, { ...baseSettings, showVoters: false });
+    const correct = correctOptionIndex(game);
+    game.submitAnswer(alice, correct);
+    game.submitAnswer(bob, correct);
+    game.reveal();
+
+    const state = game.getPublicState();
+    expect(state.optionVoters).toBeNull();
+    expect(state.optionCounts?.[correct]).toBe(2);
+    expect(state.optionCounts?.reduce((a, b) => a + b, 0)).toBe(2);
+  });
+
+  it('sends names and counts by default', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: makePool() });
+    const alice = game.addPlayer('Alice');
+    startGame(game, baseSettings);
+    const correct = correctOptionIndex(game);
+    game.submitAnswer(alice, correct);
+    game.reveal();
+
+    const state = game.getPublicState();
+    expect(state.optionVoters?.[correct]).toEqual(['Alice']);
+    expect(state.optionCounts?.[correct]).toBe(1);
+  });
+});
+
+describe('GameManager wrong answer penalty', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  it('takes points for a wrong answer but never goes below zero', () => {
+    const alice = game.addPlayer('Alice');
+    const bob = game.addPlayer('Bob');
+    startGame(game, { ...baseSettings, wrongAnswerPenalty: true });
+
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.submitAnswer(bob, wrongOptionIndex(game));
+    game.reveal();
+    const aliceScore = game.getAnswerResult(alice).totalScore;
+    expect(game.getAnswerResult(bob).pointsAwarded).toBe(0);
+    expect(game.getAnswerResult(bob).totalScore).toBe(0);
+
+    game.advance();
+    game.advance();
+    game.submitAnswer(alice, wrongOptionIndex(game));
+    game.reveal();
+    expect(game.getAnswerResult(alice).pointsAwarded).toBe(-250);
+    expect(game.getAnswerResult(alice).totalScore).toBe(aliceScore - 250);
+  });
+
+  it('costs nothing to skip a question', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, wrongAnswerPenalty: true });
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    const score = game.getAnswerResult(alice).totalScore;
+
+    game.advance();
+    game.advance();
+    game.reveal();
+    expect(game.getAnswerResult(alice).pointsAwarded).toBe(0);
+    expect(game.getAnswerResult(alice).totalScore).toBe(score);
+  });
+
+  it('is off by default', () => {
+    const alice = game.addPlayer('Alice');
+    game.addPlayer('Bob');
+    startGame(game, baseSettings);
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    game.advance();
+    game.advance();
+    game.submitAnswer(alice, wrongOptionIndex(game));
+    game.reveal();
+    expect(game.getAnswerResult(alice).pointsAwarded).toBe(0);
+  });
+});
+
+describe('GameManager settings from older clients', () => {
+  it('uses the defaults for switches that are missing', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: makePool() });
+    game.addPlayer('Alice');
+    const { categoryIntro, showVoters, wrongAnswerPenalty, musicQuestions, ...older } =
+      baseSettings;
+    void categoryIntro;
+    void showVoters;
+    void wrongAnswerPenalty;
+    void musicQuestions;
+    game.start(older as GameSettings);
+    expect(game.getPublicState().settings).toMatchObject({
+      categoryIntro: true,
+      showVoters: true,
+      wrongAnswerPenalty: false,
+      musicQuestions: true,
+    });
+  });
+});
+
+describe('GameManager music questions', () => {
+  function tune(id: string): Question {
+    return {
+      id,
+      category: 'Music',
+      difficulty: 'easy',
+      text: 'Which tune is this?',
+      options: [CORRECT_ANSWER, 'Wrong1', 'Wrong2', 'Wrong3'],
+      correctIndex: 0,
+      melody: { bpm: 120, notes: 'C4:1 D4:1' },
+    };
+  }
+
+  function playedQuestions(game: GameManager, count: number): string[] {
+    const ids: string[] = [];
+    for (let i = 0; i < count; i += 1) {
+      const question = game.getPublicState().currentQuestion;
+      if (question) ids.push(question.id);
+      game.advance();
+      game.advance();
+      game.advance();
+    }
+    return ids;
+  }
+
+  const pool = (): Question[] => [
+    ...Array.from({ length: 10 }, (_, i) => ({ ...makePool()[0], id: `n${i}` })),
+    tune('t1'),
+    tune('t2'),
+    tune('t3'),
+  ];
+
+  it('mixes in about one tune for every five questions and sends the melody', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: pool() });
+    game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: true });
+
+    const ids = playedQuestions(game, 10);
+    expect(ids.filter((id) => id.startsWith('t'))).toHaveLength(2);
+  });
+
+  it('leaves tunes out when the setting is off', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: pool() });
+    game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: false });
+
+    expect(playedQuestions(game, 10).some((id) => id.startsWith('t'))).toBe(false);
+  });
+
+  it('passes the melody to the screens', () => {
+    const game = new GameManager({ code: 'ABCD', questionPool: [tune('t1')] });
+    game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 5, musicQuestions: true });
+    expect(game.getPublicState().currentQuestion?.melody).toEqual({
+      bpm: 120,
+      notes: 'C4:1 D4:1',
     });
   });
 });

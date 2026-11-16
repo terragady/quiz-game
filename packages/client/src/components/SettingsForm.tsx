@@ -1,6 +1,7 @@
 import {
   DEFAULT_SETTINGS,
   SETTINGS_LIMITS,
+  WRONG_ANSWER_PENALTY,
   type Difficulty,
   type GameSettings,
 } from '@quiz/shared';
@@ -67,6 +68,38 @@ export function SettingsForm({
           ))}
         </select>
       </div>
+
+      <CheckboxField
+        id="categoryIntro"
+        label="Show the category before each question"
+        checked={settings.categoryIntro}
+        disabled={disabled}
+        onChange={(categoryIntro) => update({ categoryIntro })}
+      />
+
+      <CheckboxField
+        id="musicQuestions"
+        label="Include name-that-tune questions"
+        checked={settings.musicQuestions}
+        disabled={disabled}
+        onChange={(musicQuestions) => update({ musicQuestions })}
+      />
+
+      <CheckboxField
+        id="showVoters"
+        label="Show who picked which answer"
+        checked={settings.showVoters}
+        disabled={disabled}
+        onChange={(showVoters) => update({ showVoters })}
+      />
+
+      <CheckboxField
+        id="wrongAnswerPenalty"
+        label={`Wrong answers cost ${WRONG_ANSWER_PENALTY} points`}
+        checked={settings.wrongAnswerPenalty}
+        disabled={disabled}
+        onChange={(wrongAnswerPenalty) => update({ wrongAnswerPenalty })}
+      />
 
       <div className="field field--inline">
         <input
@@ -163,6 +196,33 @@ function NumberField({
         }
       />
       {error && <p className="field-error">{error}</p>}
+    </div>
+  );
+}
+
+function CheckboxField({
+  id,
+  label,
+  checked,
+  disabled,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  disabled: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="field field--inline">
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <label htmlFor={id}>{label}</label>
     </div>
   );
 }

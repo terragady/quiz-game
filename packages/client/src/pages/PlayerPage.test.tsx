@@ -19,6 +19,10 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
       autoAdvance: false,
       revealSeconds: 5,
       leaderboardSeconds: 8,
+      categoryIntro: false,
+      showVoters: true,
+      wrongAnswerPenalty: false,
+      musicQuestions: false,
     },
     players: [],
     currentQuestion: null,
@@ -26,6 +30,8 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 1,
+    upcoming: null,
+    optionCounts: null,
     optionVoters: null,
     leaderboard: [],
     ...overrides,
@@ -178,7 +184,7 @@ describe('PlayerPage answering', () => {
 
   it('shows the question category as a chip', async () => {
     act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
-    expect(await screen.findByText('Science')).toBeInTheDocument();
+    expect(await screen.findByText(/Science/)).toBeInTheDocument();
   });
 
   it('renders two buttons for a true/false question', async () => {
@@ -290,6 +296,87 @@ describe('PlayerPage answering', () => {
     expect(await screen.findByText(/Get ready/i)).toBeInTheDocument();
   });
 
+  it('celebrates a streak of three correct answers on the reveal', async () => {
+    const revealState = (): PublicGameState => ({
+      ...questionState(['A', 'B', 'C', 'D']),
+      phase: 'reveal',
+      endsAt: null,
+      revealedCorrectIndex: 0,
+    });
+    act(() => fake.serverEmit('gameState', revealState()));
+    act(() =>
+      fake.serverEmit('answerResult', {
+        questionId: 'q1',
+        correct: true,
+        correctIndex: 0,
+        selectedIndex: 0,
+        pointsAwarded: 800,
+        totalScore: 2400,
+        rank: 1,
+        streak: 3,
+      }),
+    );
+
+    expect(await screen.findByText('🔥 3 in a row!')).toBeInTheDocument();
+  });
+
+  it('shows the upcoming category during the intro', async () => {
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'intro',
+          endsAt: Date.now() + 2000,
+          upcoming: { category: 'Geography', number: 1, total: 5 },
+        }),
+      ),
+    );
+
+    expect(await screen.findByText('Geography')).toBeInTheDocument();
+    expect(screen.getByText('Question 1 of 5')).toBeInTheDocument();
+  });
+
+  it('shows points lost to the wrong-answer penalty', async () => {
+    act(() =>
+      fake.serverEmit('gameState', {
+        ...questionState(['A', 'B', 'C', 'D']),
+        phase: 'reveal',
+        endsAt: null,
+        revealedCorrectIndex: 0,
+      }),
+    );
+    act(() =>
+      fake.serverEmit('answerResult', {
+        questionId: 'q1',
+        correct: false,
+        correctIndex: 0,
+        selectedIndex: 1,
+        pointsAwarded: -250,
+        totalScore: 550,
+        rank: 2,
+        streak: 0,
+      }),
+    );
+
+    expect(await screen.findByText('−250')).toBeInTheDocument();
+  });
+
+  it('sends a reaction between questions but not while answering', async () => {
+    const user = userEvent.setup();
+    act(() => fake.serverEmit('gameState', questionState(['A', 'B', 'C', 'D'])));
+    expect(screen.queryByRole('group', { name: 'Send a reaction' })).toBeNull();
+
+    act(() =>
+      fake.serverEmit('gameState', {
+        ...questionState(['A', 'B', 'C', 'D']),
+        phase: 'leaderboard',
+        currentQuestion: null,
+      }),
+    );
+    await user.click(await screen.findByRole('button', { name: '🎉' }));
+    expect(fake.emittedArgs('sendReaction')).toEqual([['🎉']]);
+  });
+
   it('shows placement and stats when the game ends', async () => {
     act(() =>
       fake.serverEmit(
@@ -303,12 +390,14 @@ describe('PlayerPage answering', () => {
               score: 2400,
               rank: 1,
               lastPoints: 0,
+              streak: 0,
               stats: {
                 correct: 3,
                 incorrect: 1,
                 unanswered: 1,
                 averageResponseMs: 4200,
                 fastestCorrectMs: 1500,
+                bestStreak: 3,
               },
             },
           ],
@@ -321,6 +410,68 @@ describe('PlayerPage answering', () => {
     expect(screen.getByText('Correct')).toBeInTheDocument();
     expect(screen.getByText('4.2s')).toBeInTheDocument();
     expect(screen.getByText('1.5s')).toBeInTheDocument();
+  });
+
+  it('returns to the lobby and saves the seat again when the host plays again', async () => {
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(await screen.findByText(/Game over/i)).toBeInTheDocument();
+    expect(localStorage.getItem('quiz.playerSession')).toBeNull();
+
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'lobby',
+          players: [
+            {
+              id: 'p1',
+              nickname: 'Alice',
+              score: 0,
+              connected: true,
+              hasAnswered: false,
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+      nickname: 'Alice',
+    });
+  });
+
+  it('saves the seat again when it first hears of the next round mid-countdown', async () => {
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(await screen.findByText(/Game over/i)).toBeInTheDocument();
+
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'countdown',
+          endsAt: Date.now() + 5_000,
+          players: [
+            {
+              id: 'p1',
+              nickname: 'Alice',
+              score: 0,
+              connected: true,
+              hasAnswered: false,
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText(/Get ready/i)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+      nickname: 'Alice',
+    });
   });
 });
 

@@ -18,6 +18,10 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
       autoAdvance: false,
       revealSeconds: 5,
       leaderboardSeconds: 8,
+      categoryIntro: false,
+      showVoters: true,
+      wrongAnswerPenalty: false,
+      musicQuestions: false,
     },
     players: [],
     currentQuestion: null,
@@ -25,6 +29,8 @@ function baseState(overrides: Partial<PublicGameState> = {}): PublicGameState {
     endsAt: null,
     answeredCount: 0,
     playerCount: 0,
+    upcoming: null,
+    optionCounts: null,
     optionVoters: null,
     leaderboard: [],
     ...overrides,
@@ -169,6 +175,52 @@ describe('HostPage', () => {
     expect(screen.getByText('Dave')).toBeInTheDocument();
   });
 
+  it('shows only vote counts when votes are anonymous', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'reveal',
+          playerCount: 3,
+          revealedCorrectIndex: 0,
+          optionCounts: [2, 1, 0, 0],
+          optionVoters: null,
+          currentQuestion: {
+            id: 'q1',
+            number: 1,
+            total: 3,
+            category: 'Science',
+            difficulty: 'easy',
+            text: 'Capital of Japan?',
+            options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
+          },
+        }),
+      ),
+    );
+
+    expect(screen.getByText('2 votes')).toBeInTheDocument();
+    expect(screen.getByText('1 vote')).toBeInTheDocument();
+    expect(screen.queryByText('Alice')).not.toBeInTheDocument();
+  });
+
+  it('spins to the next category before the question', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'intro',
+          endsAt: Date.now() + 2000,
+          upcoming: { category: 'Music', number: 2, total: 10 },
+        }),
+      ),
+    );
+
+    expect(screen.getByText('Question 2 of 10')).toBeInTheDocument();
+    expect(screen.getByText('Next category: Music')).toBeInTheDocument();
+  });
+
   it('caps the visible voters and shows an overflow count', () => {
     renderHost(fake);
     act(() =>
@@ -257,7 +309,7 @@ describe('HostPage', () => {
     expect(screen.getByText('Capital of Japan?')).toBeInTheDocument();
     expect(screen.getByText('Tokyo')).toBeInTheDocument();
     expect(screen.getByText('2/3 answered')).toBeInTheDocument();
-    expect(screen.getByText('Science')).toBeInTheDocument();
+    expect(screen.getByText(/Science/)).toBeInTheDocument();
   });
 
   it('renders a question image when one is provided', () => {
@@ -286,6 +338,48 @@ describe('HostPage', () => {
     expect(image).toHaveAttribute('src', 'https://flagcdn.com/w320/no.png');
   });
 
+  it('offers to replay the tune on a name-that-tune question', async () => {
+    renderHost(fake);
+    const question = {
+      id: 'tune1',
+      number: 1,
+      total: 3,
+      category: 'Music',
+      difficulty: 'easy' as const,
+      text: 'Name that tune! 🎵',
+      options: ['Ode to Joy', 'Für Elise', 'Canon in D', 'Swan Lake'],
+      melody: { bpm: 120, notes: 'E4:1 E4:1 F4:1 G4:1' },
+    };
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'question',
+          endsAt: Date.now() + 20_000,
+          currentQuestion: question,
+        }),
+      ),
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Play the tune again' }),
+    );
+
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'reveal',
+          currentQuestion: question,
+          revealedCorrectIndex: 0,
+        }),
+      ),
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Play the tune again' }),
+    ).toBeNull();
+  });
+
   it('animates the leaderboard from the previous standings to the final scores', () => {
     vi.useFakeTimers({
       toFake: [
@@ -311,6 +405,7 @@ describe('HostPage', () => {
                 score: 1500,
                 rank: 1,
                 lastPoints: 750,
+                streak: 0,
               },
               {
                 playerId: 'p2',
@@ -318,6 +413,7 @@ describe('HostPage', () => {
                 score: 500,
                 rank: 2,
                 lastPoints: 0,
+                streak: 0,
               },
             ],
           }),
@@ -338,5 +434,119 @@ describe('HostPage', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('offers Play again and New game on the final screen', async () => {
+    const user = userEvent.setup();
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'ended',
+          leaderboard: [
+            { playerId: 'p1', nickname: 'Alice', score: 900, rank: 1, lastPoints: 0, streak: 0 },
+          ],
+        }),
+      ),
+    );
+
+    expect(screen.getByRole('list', { name: 'Podium' })).toHaveTextContent('Alice');
+    expect(localStorage.getItem('quiz.hostCode')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Play again' }));
+    expect(fake.emittedArgs('hostPlayAgain')).toHaveLength(1);
+    expect(fake.emittedArgs('hostJoin')).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'New game' }));
+    expect(fake.emittedArgs('hostJoin')).toHaveLength(2);
+  });
+
+  it('remembers the room code again when the game goes back to the lobby', () => {
+    renderHost(fake);
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(localStorage.getItem('quiz.hostCode')).toBeNull();
+
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'lobby' })));
+    expect(localStorage.getItem('quiz.hostCode')).toBe('WXYZ');
+  });
+
+  it('puts the top three on the podium and splits a long rest into two columns', () => {
+    renderHost(fake);
+    const leaderboard = Array.from({ length: 8 }, (_, index) => ({
+      playerId: `p${index + 1}`,
+      nickname: `Player ${index + 1}`,
+      score: 990 - index * 10,
+      rank: index + 1,
+      lastPoints: 0,
+      streak: 0,
+    }));
+    act(() =>
+      fake.serverEmit('gameState', baseState({ phase: 'ended', leaderboard })),
+    );
+
+    const podium = screen.getByRole('list', { name: 'Podium' });
+    expect(podium).toHaveTextContent('Player 1');
+    expect(podium).toHaveTextContent('Player 3');
+    expect(podium).not.toHaveTextContent('Player 4');
+    const rest = screen.getByText('Player 8').closest('ol');
+    expect(rest).toHaveClass('leaderboard--two-columns');
+    expect(rest).toHaveTextContent('Player 4');
+  });
+
+  it('hands out end-of-game awards from the players stats', () => {
+    renderHost(fake);
+    const stats = (overrides: object) => ({
+      correct: 0,
+      incorrect: 0,
+      unanswered: 0,
+      averageResponseMs: null,
+      fastestCorrectMs: null,
+      bestStreak: 0,
+      ...overrides,
+    });
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'ended',
+          leaderboard: [
+            { playerId: 'p1', nickname: 'Alice', score: 990, rank: 1, lastPoints: 0, streak: 0, stats: stats({ correct: 5, fastestCorrectMs: 2400, bestStreak: 2 }) },
+            { playerId: 'p2', nickname: 'Bob', score: 800, rank: 2, lastPoints: 0, streak: 0, stats: stats({ correct: 4, fastestCorrectMs: 900, bestStreak: 4 }) },
+          ],
+        }),
+      ),
+    );
+
+    expect(screen.getByText('Fastest finger').closest('li')).toHaveTextContent('Bob 0.9s');
+    expect(screen.getByText('Sharpshooter').closest('li')).toHaveTextContent('Alice 5 correct');
+    expect(screen.getByText('Hot streak').closest('li')).toHaveTextContent('Bob 4 in a row');
+  });
+
+  it('shows a streak badge from three correct answers in a row', async () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'leaderboard',
+          leaderboard: [
+            { playerId: 'p1', nickname: 'Alice', score: 990, rank: 1, lastPoints: 0, streak: 3 },
+            { playerId: 'p2', nickname: 'Bob', score: 500, rank: 2, lastPoints: 0, streak: 2 },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText('🔥3', {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.queryByText('🔥2')).not.toBeInTheDocument();
+  });
+
+  it('floats emoji reactions from players across the screen', () => {
+    renderHost(fake);
+    act(() => fake.serverEmit('reaction', { nickname: 'Alice', emoji: '😂' }));
+
+    expect(screen.getByText('😂')).toBeInTheDocument();
+    expect(screen.getAllByText('Alice').length).toBeGreaterThan(1);
   });
 });
