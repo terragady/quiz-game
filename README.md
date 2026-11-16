@@ -48,8 +48,10 @@ The host can switch these on or off before each game:
 - Wrong answers cost 250 points (never below zero; not answering costs nothing).
 
 Players can send emoji reactions from their phones between questions, and they
-float up on the TV. The final screen has a podium and a few awards (fastest
-answer, most correct, longest streak). Within a room, questions don't repeat
+float up on the TV. Phones buzz when a question opens and when the answer is
+revealed (on Android; iPhones don't allow it), and both the TV and the phones
+stay awake during a game. The final screen has a podium and a few awards
+(fastest answer, most correct, longest streak). Within a room, questions don't repeat
 from one game to the next until the pool runs out.
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single

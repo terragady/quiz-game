@@ -20,6 +20,8 @@ import { Countdown } from '../components/Countdown.js';
 import { OverflowMenu } from '../components/OverflowMenu.js';
 import { ReactionBar } from '../components/ReactionBar.js';
 import { SHOW_STREAK_FROM } from '../components/StreakBadge.js';
+import { BUZZ, buzz } from '../haptics.js';
+import { useWakeLock } from '../hooks/useWakeLock.js';
 import { readNickname, writeNickname } from '../nicknameCookie.js';
 import { clearSession, readSession, writeSession } from '../playerSession.js';
 import { useSocket } from '../SocketContext.js';
@@ -316,6 +318,15 @@ export function PlayerPage() {
   const currentQuestionId = state?.currentQuestion?.id ?? null;
   const selectedIndex =
     answer && answer.questionId === currentQuestionId ? answer.index : null;
+  const phase = state?.phase;
+  useWakeLock(playerId !== null && phase !== 'ended');
+
+  useEffect(() => {
+    if (phase === 'question') {
+      buzz(BUZZ.questionOpen);
+    }
+  }, [phase, currentQuestionId]);
+
   const shownResult =
     result && result.questionId === currentQuestionId ? result : null;
 
@@ -353,7 +364,10 @@ export function PlayerPage() {
         setResult(null);
       }
     };
-    const onAnswerResult = (next: AnswerResult) => setResult(next);
+    const onAnswerResult = (next: AnswerResult) => {
+      setResult(next);
+      buzz(next.correct ? BUZZ.correct : BUZZ.wrong);
+    };
     const onError = (message: string) => {
       if (BENIGN_ANSWER_ERROR_SET.has(message)) {
         return;

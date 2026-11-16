@@ -23,6 +23,7 @@ import { TunePlayer } from '../components/TunePlayer.js';
 import { useGameState } from '../hooks/useGameState.js';
 import { useHostSounds } from '../hooks/useHostSounds.js';
 import { useToasts } from '../hooks/useToasts.js';
+import { useWakeLock } from '../hooks/useWakeLock.js';
 import { getSettingsErrors, hasSettingsErrors } from '../settingsValidation.js';
 
 const HOST_CODE_KEY = 'quiz.hostCode';
@@ -314,6 +315,7 @@ export function HostPage() {
   const { toasts, push: pushToast, dismiss: dismissToast } = useToasts();
   const connectedRef = useRef<Map<string, boolean> | null>(null);
   useHostSounds(state);
+  useWakeLock(state !== null && state.phase !== 'ended');
 
   useEffect(() => {
     if (!state) {
