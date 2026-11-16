@@ -65,7 +65,7 @@ origin, so it fits comfortably on a free hosting tier.
 
 ## Prerequisites
 
-- Node.js >= 22.19 (24 LTS recommended) — required by the test toolchain (jsdom 30 / undici)
+- Node.js 26 (the current LTS); `.nvmrc` pins it for nvm and fnm users
 - npm (comes with Node)
 
 ## Getting started
