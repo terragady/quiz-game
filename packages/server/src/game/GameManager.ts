@@ -94,11 +94,18 @@ export class GameManager {
         `Nickname must be at most ${MAX_NICKNAME_LENGTH} characters.`,
       );
     }
-    const taken = [...this.players.values()].some(
+    const sameName = [...this.players.values()].find(
       (p) => p.nickname.toLowerCase() === trimmed.toLowerCase(),
     );
-    if (taken) {
+    if (sameName?.connected) {
       throw new Error('That nickname is already taken.');
+    }
+    // A disconnected player with this name is most likely the same person
+    // joining again (e.g. their phone reloaded after the game ended and the
+    // host pressed Play again). We're in the lobby, so there's no score to
+    // lose: hand the name over instead of leaving a ghost seat behind.
+    if (sameName) {
+      this.players.delete(sameName.id);
     }
 
     const id = randomUUID();
@@ -109,14 +116,7 @@ export class GameManager {
       connected: true,
       lastPoints: 0,
       currentAnswer: null,
-      stats: {
-        correct: 0,
-        incorrect: 0,
-        unanswered: 0,
-        answeredCount: 0,
-        totalResponseMs: 0,
-        fastestCorrectMs: null,
-      },
+      stats: emptyStats(),
     });
     return id;
   }
@@ -246,6 +246,28 @@ export class GameManager {
   end(): void {
     this.endsAt = null;
     this.phaseValue = 'ended';
+  }
+
+  // Sends a finished game back to the lobby so the same players can play
+  // another round with the same code. Everyone keeps their seat, but scores
+  // and stats start from zero. Already in the lobby (e.g. the button was
+  // pressed twice) is a no-op.
+  resetToLobby(): void {
+    if (this.phaseValue === 'lobby') return;
+    if (this.phaseValue !== 'ended') {
+      throw new Error('The game has not ended yet.');
+    }
+    for (const player of this.players.values()) {
+      player.score = 0;
+      player.lastPoints = 0;
+      player.currentAnswer = null;
+      player.stats = emptyStats();
+    }
+    this.settingsValue = null;
+    this.questions = [];
+    this.questionIndex = -1;
+    this.endsAt = null;
+    this.phaseValue = 'lobby';
   }
 
 
@@ -407,6 +429,17 @@ export class GameManager {
       this.leaderboard().find((row) => row.playerId === playerId)?.rank ?? 0
     );
   }
+}
+
+function emptyStats(): RunningStats {
+  return {
+    correct: 0,
+    incorrect: 0,
+    unanswered: 0,
+    answeredCount: 0,
+    totalResponseMs: 0,
+    fastestCorrectMs: null,
+  };
 }
 
 function projectStats(stats: RunningStats): PlayerStats {

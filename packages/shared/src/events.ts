@@ -31,6 +31,7 @@ export interface ClientToServerEvents {
   hostStart: (settings: GameSettings) => void;
   hostNext: () => void;
   hostEnd: () => void;
+  hostPlayAgain: () => void;
   submitAnswer: (payload: { optionIndex: number }) => void;
   playerLeave: () => void;
 }

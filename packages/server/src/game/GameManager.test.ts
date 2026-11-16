@@ -92,6 +92,14 @@ describe('GameManager lobby', () => {
     expect(() => game.addPlayer('alice')).toThrow(/taken/);
   });
 
+  it('hands the nickname of a disconnected player to a new join', () => {
+    const oldId = game.addPlayer('Alice');
+    game.setConnected(oldId, false);
+    const newId = game.addPlayer('alice');
+    expect(game.hasPlayer(oldId)).toBe(false);
+    expect(game.getPublicState().players.map((p) => p.id)).toEqual([newId]);
+  });
+
   it('rejects joining after the game has started', () => {
     game.addPlayer('Alice');
     game.start(baseSettings);
@@ -460,5 +468,73 @@ describe('GameManager end-of-game stats', () => {
       averageResponseMs: null,
       fastestCorrectMs: null,
     });
+  });
+});
+
+describe('GameManager play again', () => {
+  let clock: number;
+  let game: GameManager;
+
+  beforeEach(() => {
+    clock = 1000;
+    game = new GameManager({
+      code: 'ABCD',
+      questionPool: makePool(),
+      now: () => clock,
+    });
+  });
+
+  it('sends a finished game back to the lobby with the same players and zero scores', () => {
+    const alice = game.addPlayer('Alice');
+    const bob = game.addPlayer('Bob');
+    game.setConnected(bob, false);
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    game.end();
+
+    game.resetToLobby();
+
+    const state = game.getPublicState();
+    expect(state.code).toBe('ABCD');
+    expect(state.phase).toBe('lobby');
+    expect(state.currentQuestion).toBeNull();
+    expect(state.endsAt).toBeNull();
+    expect(state.players.map((p) => [p.nickname, p.score, p.connected])).toEqual([
+      ['Alice', 0, true],
+      ['Bob', 0, false],
+    ]);
+    expect(state.leaderboard.every((row) => row.lastPoints === 0)).toBe(true);
+    expect(game.hasPlayer(alice)).toBe(true);
+    expect(game.hasPlayer(bob)).toBe(true);
+  });
+
+  it('starts the next round with fresh stats and lets new players join', () => {
+    const alice = game.addPlayer('Alice');
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.submitAnswer(alice, correctOptionIndex(game));
+    game.reveal();
+    game.end();
+    game.resetToLobby();
+
+    game.addPlayer('Carol');
+    startGame(game, { ...baseSettings, questionCount: 1 });
+    game.reveal();
+    game.end();
+
+    const aliceRow = game
+      .getPublicState()
+      .leaderboard.find((row) => row.nickname === 'Alice');
+    expect(aliceRow?.score).toBe(0);
+    expect(aliceRow?.stats).toMatchObject({ correct: 0, unanswered: 1 });
+  });
+
+  it('ignores a repeat press in the lobby and refuses mid-game', () => {
+    game.addPlayer('Alice');
+    game.resetToLobby();
+    expect(game.phase).toBe('lobby');
+    startGame(game, baseSettings);
+    expect(() => game.resetToLobby()).toThrow('The game has not ended yet.');
+    expect(game.phase).toBe('question');
   });
 });

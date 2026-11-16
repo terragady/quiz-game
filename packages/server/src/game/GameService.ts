@@ -130,6 +130,19 @@ export class GameService {
       this.broadcastState(game.code);
     });
 
+    socket.on('hostPlayAgain', () => {
+      const game = this.requireControllerGame(socket);
+      if (!game) return;
+      try {
+        game.resetToLobby();
+      } catch (error) {
+        socket.emit('errorMessage', toMessage(error));
+        return;
+      }
+      this.clearTimer(game.code);
+      this.broadcastState(game.code);
+    });
+
     socket.on('submitAnswer', ({ optionIndex }) => {
       const game = this.socketGame(socket);
       const playerId = socket.data.playerId;

@@ -322,6 +322,68 @@ describe('PlayerPage answering', () => {
     expect(screen.getByText('4.2s')).toBeInTheDocument();
     expect(screen.getByText('1.5s')).toBeInTheDocument();
   });
+
+  it('returns to the lobby and saves the seat again when the host plays again', async () => {
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(await screen.findByText(/Game over/i)).toBeInTheDocument();
+    expect(localStorage.getItem('quiz.playerSession')).toBeNull();
+
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'lobby',
+          players: [
+            {
+              id: 'p1',
+              nickname: 'Alice',
+              score: 0,
+              connected: true,
+              hasAnswered: false,
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText(/You're in/i)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+      nickname: 'Alice',
+    });
+  });
+
+  it('saves the seat again when it first hears of the next round mid-countdown', async () => {
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(await screen.findByText(/Game over/i)).toBeInTheDocument();
+
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'countdown',
+          endsAt: Date.now() + 5_000,
+          players: [
+            {
+              id: 'p1',
+              nickname: 'Alice',
+              score: 0,
+              connected: true,
+              hasAnswered: false,
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(await screen.findByText(/Get ready/i)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('quiz.playerSession') ?? 'null')).toEqual({
+      code: 'WXYZ',
+      playerId: 'p1',
+      nickname: 'Alice',
+    });
+  });
 });
 
 describe('PlayerPage reconnection', () => {

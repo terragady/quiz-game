@@ -340,6 +340,41 @@ describe('HostPage', () => {
     }
   });
 
+  it('offers Play again and New game on the final screen', async () => {
+    const user = userEvent.setup();
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'ended',
+          leaderboard: [
+            { playerId: 'p1', nickname: 'Alice', score: 900, rank: 1, lastPoints: 0 },
+          ],
+        }),
+      ),
+    );
+
+    expect(screen.getByText('🏆 Alice')).toBeInTheDocument();
+    expect(localStorage.getItem('quiz.hostCode')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Play again' }));
+    expect(fake.emittedArgs('hostPlayAgain')).toHaveLength(1);
+    expect(fake.emittedArgs('hostJoin')).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'New game' }));
+    expect(fake.emittedArgs('hostJoin')).toHaveLength(2);
+  });
+
+  it('remembers the room code again when the game goes back to the lobby', () => {
+    renderHost(fake);
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'ended' })));
+    expect(localStorage.getItem('quiz.hostCode')).toBeNull();
+
+    act(() => fake.serverEmit('gameState', baseState({ phase: 'lobby' })));
+    expect(localStorage.getItem('quiz.hostCode')).toBe('WXYZ');
+  });
+
   it('splits a long final leaderboard into two columns', () => {
     renderHost(fake);
     act(() =>

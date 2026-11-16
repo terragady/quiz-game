@@ -81,14 +81,19 @@ export function HostPage() {
   }, [join]);
 
   useEffect(() => {
-    if (state?.phase === 'ended') {
+    if (!state) return;
+    if (state.phase === 'ended') {
       try {
         localStorage.removeItem(HOST_CODE_KEY);
       } catch {
         void 0;
       }
+    } else if (state.phase === 'lobby') {
+      // Back in the lobby after "Play again": remember the room again so
+      // refreshing the TV keeps it.
+      storeCode(state.code);
     }
-  }, [state?.phase]);
+  }, [state?.phase, state?.code]);
 
   const startNewGame = useCallback(() => {
     try {
@@ -98,6 +103,10 @@ export function HostPage() {
     }
     join(undefined);
   }, [join]);
+
+  const playAgain = useCallback(() => {
+    socket.emit('hostPlayAgain');
+  }, [socket]);
 
   const startGame = useCallback(() => {
     socket.emit('hostStart', settings);
@@ -136,6 +145,7 @@ export function HostPage() {
         onNext={nextStep}
         onEnd={endGame}
         onNewGame={startNewGame}
+        onPlayAgain={playAgain}
       />
     </main>
   );
@@ -154,6 +164,7 @@ function HostBody({
   onNext,
   onEnd,
   onNewGame,
+  onPlayAgain,
 }: {
   state: PublicGameState;
   settings: GameSettings;
@@ -162,6 +173,7 @@ function HostBody({
   onNext: () => void;
   onEnd: () => void;
   onNewGame: () => void;
+  onPlayAgain: () => void;
 }) {
   switch (state.phase) {
     case 'lobby':
@@ -261,9 +273,18 @@ function HostBody({
             rows={state.leaderboard}
             twoColumns={state.leaderboard.length > 6}
           />
-          <button type="button" className="btn btn--primary" onClick={onNewGame}>
-            New game
-          </button>
+          <div className="host-controls">
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={onPlayAgain}
+            >
+              Play again
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={onNewGame}>
+              New game
+            </button>
+          </div>
         </div>
       );
 

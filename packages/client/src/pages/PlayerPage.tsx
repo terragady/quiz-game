@@ -80,7 +80,24 @@ export function PlayerPage() {
         if (prev && prev.phase !== next.phase) setError(null);
         return next;
       });
-      if (next.phase === 'ended') clearSession();
+      if (next.phase === 'ended') {
+        clearSession();
+      } else {
+        // The host can send a finished game back to the lobby ("Play again").
+        // Save the seat again (it was cleared when the game ended) so a
+        // refresh keeps this player in the room. This runs on every state,
+        // not only the lobby, because a phone that was asleep may first
+        // hear about the new round during its countdown or a question.
+        const session = sessionRef.current;
+        const me = next.players.find((p) => p.id === session?.playerId);
+        if (session && me) writeSession({ ...session, nickname: me.nickname });
+      }
+      if (next.phase === 'ended' || next.phase === 'lobby') {
+        // Forget the last answer so a repeated question in the next round
+        // doesn't show as already answered.
+        setAnswer(null);
+        setResult(null);
+      }
     };
     const onAnswerResult = (next: AnswerResult) => setResult(next);
     const onError = (message: string) => {
