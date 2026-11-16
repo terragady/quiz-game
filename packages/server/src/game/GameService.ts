@@ -7,7 +7,11 @@ import type {
   ServerToClientEvents,
   SocketData,
 } from '@quiz/shared';
-import { START_COUNTDOWN_SECONDS } from '@quiz/shared';
+import {
+  REACTION_COOLDOWN_MS,
+  REACTIONS,
+  START_COUNTDOWN_SECONDS,
+} from '@quiz/shared';
 import { GameManager } from './GameManager.js';
 import { generateGameCode } from './code.js';
 import { listCategories } from '../questions/loader.js';
@@ -29,6 +33,7 @@ const ROOM_CLEANUP_GRACE_MS = 5 * 60 * 1000;
 
 export interface GameServiceOptions {
   startCountdownMs?: number;
+  introMs?: number;
 }
 
 export class GameService {
@@ -36,7 +41,9 @@ export class GameService {
   private readonly phaseTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly cleanupTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly playerSockets = new Map<string, string>();
+  private readonly lastReactionAt = new Map<string, number>();
   private readonly startCountdownMs: number;
+  private readonly introMs: number | undefined;
 
   constructor(
     private readonly io: QuizServer,
@@ -45,6 +52,7 @@ export class GameService {
   ) {
     this.startCountdownMs =
       options.startCountdownMs ?? START_COUNTDOWN_SECONDS * 1000;
+    this.introMs = options.introMs;
   }
 
   register(socket: QuizSocket): void {
@@ -166,12 +174,28 @@ export class GameService {
       }
     });
 
+    socket.on('sendReaction', (emoji) => {
+      const game = this.socketGame(socket);
+      const playerId = socket.data.playerId;
+      if (!game || !playerId) return;
+      if (!(REACTIONS as readonly string[]).includes(emoji)) return;
+      const nickname = game.nicknameOf(playerId);
+      if (!nickname) return;
+      const now = Date.now();
+      if (now - (this.lastReactionAt.get(playerId) ?? 0) < REACTION_COOLDOWN_MS) {
+        return;
+      }
+      this.lastReactionAt.set(playerId, now);
+      this.io.to(game.code).emit('reaction', { nickname, emoji });
+    });
+
     socket.on('playerLeave', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;
       if (!playerId || !game) return;
       game.removePlayer(playerId);
       this.playerSockets.delete(playerId);
+      this.lastReactionAt.delete(playerId);
       socket.data.playerId = undefined;
       void socket.leave(game.code);
       this.broadcastState(game.code);
@@ -191,6 +215,7 @@ export class GameService {
       ) {
         game.setConnected(playerId, false);
         this.playerSockets.delete(playerId);
+        this.lastReactionAt.delete(playerId);
         this.broadcastState(game.code);
         if (game.phase === 'question' && game.allConnectedAnswered()) {
           this.revealNow(game.code);
@@ -216,6 +241,7 @@ export class GameService {
       code,
       questionPool: this.questionPool,
       startCountdownMs: this.startCountdownMs,
+      introMs: this.introMs,
     });
     this.games.set(code, game);
     return game;
@@ -286,6 +312,39 @@ export class GameService {
     if (game?.phase !== 'countdown') return;
     this.clearTimer(code);
     game.beginQuestions();
+    this.onNextQuestion(code);
+  }
+
+  // A new question begins either with the category intro or straight away.
+  private onNextQuestion(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    if (game.phase === 'intro') {
+      this.onIntroBegan(code);
+    } else {
+      this.onQuestionBegan(code);
+    }
+  }
+
+  private onIntroBegan(code: string): void {
+    const game = this.games.get(code);
+    if (!game) return;
+    const state = game.getPublicState();
+    this.broadcastState(code, state);
+    if (state.endsAt === null) return;
+    const delay = Math.max(0, state.endsAt - Date.now());
+    this.clearTimer(code);
+    this.phaseTimers.set(
+      code,
+      setTimeout(() => this.startQuestionNow(code), delay),
+    );
+  }
+
+  private startQuestionNow(code: string): void {
+    const game = this.games.get(code);
+    if (game?.phase !== 'intro') return;
+    this.clearTimer(code);
+    game.startQuestion();
     this.onQuestionBegan(code);
   }
 
@@ -330,8 +389,8 @@ export class GameService {
     const after = game.phase;
     if (before === 'question' && after === 'reveal') {
       this.onReveal(code);
-    } else if (after === 'question') {
-      this.onQuestionBegan(code);
+    } else if (after === 'question' || after === 'intro') {
+      this.onNextQuestion(code);
     } else {
       this.broadcastState(code);
     }

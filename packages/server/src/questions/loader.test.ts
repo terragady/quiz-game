@@ -323,7 +323,7 @@ describe('buildQuestionPool', () => {
   it('contains no duplicate question text (image questions aside)', () => {
     const pool = buildQuestionPool();
     const keys = pool
-      .filter((q) => !q.imageUrl)
+      .filter((q) => !q.imageUrl && !q.melody)
       .map((q) => normalizeQuestionText(q.text));
     expect(new Set(keys).size).toBe(keys.length);
   });
@@ -335,7 +335,7 @@ describe('buildQuestionPool', () => {
       '/no/such/trivia.json',
     );
     expect(pool.length).toBeGreaterThan(0);
-    expect(pool.some((q) => q.category === 'Europe')).toBe(true);
+    expect(pool.some((q) => q.category === 'Poland')).toBe(true);
   });
 
   it('serves curated flag images from local paths, not external URLs', () => {

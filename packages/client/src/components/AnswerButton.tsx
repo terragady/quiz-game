@@ -9,6 +9,7 @@ export function AnswerButton({
   selected = false,
   correct,
   voters,
+  voteCount,
   hideLetter = false,
 }: {
   index: number;
@@ -18,6 +19,8 @@ export function AnswerButton({
   selected?: boolean;
   correct?: boolean;
   voters?: string[];
+  /** Shown instead of names when votes are anonymous. */
+  voteCount?: number;
   hideLetter?: boolean;
 }) {
   const classes = ['answer', `answer--${index}`];
@@ -55,6 +58,13 @@ export function AnswerButton({
               +{overflow} more
             </span>
           )}
+        </span>
+      )}
+      {voters === undefined && voteCount !== undefined && (
+        <span className="answer__voters">
+          <span className="answer__voter">
+            {voteCount} {voteCount === 1 ? 'vote' : 'votes'}
+          </span>
         </span>
       )}
     </button>

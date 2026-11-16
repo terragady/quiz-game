@@ -28,6 +28,7 @@ export interface GameServerHandles {
 export interface GameServerOptions {
   clientDir?: string;
   startCountdownMs?: number;
+  introMs?: number;
   corsOrigin?: string | string[] | boolean;
 }
 
@@ -70,6 +71,7 @@ export function createGameServer(
 
   const service = new GameService(io, questionPool, {
     startCountdownMs: options.startCountdownMs,
+    introMs: options.introMs,
   });
   io.on('connection', (socket) => service.register(socket));
 

@@ -15,6 +15,7 @@ function row(overrides: Partial<LeaderboardRow>): LeaderboardRow {
     score: 0,
     rank: 1,
     lastPoints: 0,
+    streak: 0,
     ...overrides,
   };
 }

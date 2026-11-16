@@ -1,3 +1,5 @@
+import type { Melody } from './melody.js';
+
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export type Role = 'host' | 'player';
@@ -5,6 +7,7 @@ export type Role = 'host' | 'player';
 export type GamePhase =
   | 'lobby'
   | 'countdown'
+  | 'intro'
   | 'question'
   | 'reveal'
   | 'leaderboard'
@@ -18,6 +21,8 @@ export interface Question {
   options: string[];
   correctIndex: number;
   imageUrl?: string;
+  /** A tune the host screen plays for "name that tune" questions. */
+  melody?: Melody;
 }
 
 export interface PublicQuestion {
@@ -29,6 +34,7 @@ export interface PublicQuestion {
   text: string;
   options: string[];
   imageUrl?: string;
+  melody?: Melody;
 }
 
 export interface GameSettings {
@@ -39,6 +45,20 @@ export interface GameSettings {
   autoAdvance: boolean;
   revealSeconds: number;
   leaderboardSeconds: number;
+  /** Show the next question's category for a moment before the question. */
+  categoryIntro: boolean;
+  /** Show players' names on the answers they picked; off shows counts only. */
+  showVoters: boolean;
+  /** Wrong answers cost points. Not answering costs nothing. */
+  wrongAnswerPenalty: boolean;
+  /** Mix "name that tune" questions into the game. */
+  musicQuestions: boolean;
+}
+
+export interface UpcomingQuestion {
+  category: string;
+  number: number;
+  total: number;
 }
 
 export interface PublicPlayer {
@@ -55,6 +75,7 @@ export interface PlayerStats {
   unanswered: number;
   averageResponseMs: number | null;
   fastestCorrectMs: number | null;
+  bestStreak: number;
 }
 
 export interface LeaderboardRow {
@@ -63,6 +84,8 @@ export interface LeaderboardRow {
   score: number;
   rank: number;
   lastPoints: number;
+  /** Correct answers in a row, counting back from the latest question. */
+  streak: number;
   stats?: PlayerStats;
 }
 
@@ -74,6 +97,7 @@ export interface AnswerResult {
   pointsAwarded: number;
   totalScore: number;
   rank: number;
+  streak: number;
 }
 
 export interface PublicGameState {
@@ -86,6 +110,11 @@ export interface PublicGameState {
   endsAt: number | null;
   answeredCount: number;
   playerCount: number;
+  /** Upcoming question during the category intro. */
+  upcoming: UpcomingQuestion | null;
+  /** How many players picked each option, during the reveal. */
+  optionCounts: number[] | null;
+  /** Who picked each option, during the reveal. Null when votes are anonymous. */
   optionVoters: string[][] | null;
   leaderboard: LeaderboardRow[];
 }

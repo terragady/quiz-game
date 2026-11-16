@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   DEFAULT_SETTINGS,
+  categoryIcon,
   type GamePhase,
   type GameSettings,
   type ObserverJoinAck,
@@ -10,12 +11,18 @@ import { useGameState } from '../hooks/useGameState.js';
 import { useToasts } from '../hooks/useToasts.js';
 import { AnswerButton } from '../components/AnswerButton.js';
 import { Countdown } from '../components/Countdown.js';
+import { CategoryReel } from '../components/CategoryReel.js';
 import { Confetti } from '../components/Confetti.js';
-import { Leaderboard } from '../components/Leaderboard.js';
+import { FinalResults } from '../components/FinalResults.js';
 import { AnimatedLeaderboard } from '../components/AnimatedLeaderboard.js';
 import { QRCode } from '../components/QRCode.js';
 import { SettingsForm } from '../components/SettingsForm.js';
 import { ToastStack } from '../components/ToastStack.js';
+import { FloatingReactions } from '../components/FloatingReactions.js';
+import { SoundToggle } from '../components/SoundToggle.js';
+import { useHostSounds } from '../hooks/useHostSounds.js';
+import { unlockAudio } from '../audio.js';
+import { TunePlayer } from '../components/TunePlayer.js';
 import {
   getSettingsErrors,
   hasSettingsErrors,
@@ -44,6 +51,7 @@ export function HostPage() {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
   const { toasts, push: pushToast, dismiss: dismissToast } = useToasts();
   const connectedRef = useRef<Map<string, boolean> | null>(null);
+  useHostSounds(state);
 
   useEffect(() => {
     if (!state) {
@@ -105,14 +113,17 @@ export function HostPage() {
   }, [join]);
 
   const playAgain = useCallback(() => {
+    void unlockAudio();
     socket.emit('hostPlayAgain');
   }, [socket]);
 
   const startGame = useCallback(() => {
+    void unlockAudio();
     socket.emit('hostStart', settings);
   }, [socket, settings]);
 
   const nextStep = useCallback(() => {
+    void unlockAudio();
     socket.emit('hostNext');
   }, [socket]);
 
@@ -136,6 +147,8 @@ export function HostPage() {
       className={`screen screen--host${showingQuestion ? ' screen--fit' : ''}`}
     >
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
+      <FloatingReactions />
+      <SoundToggle />
       {error && <div className="error-banner">{error}</div>}
       <HostBody
         state={state}
@@ -195,12 +208,26 @@ function HostBody({
         </div>
       );
 
+    case 'intro': {
+      const upcoming = state.upcoming;
+      if (!upcoming) return null;
+      return (
+        <div className="stack screen--center intro">
+          <p className="intro__number">
+            Question {upcoming.number} of {upcoming.total}
+          </p>
+          <CategoryReel key={upcoming.number} category={upcoming.category} />
+        </div>
+      );
+    }
+
     case 'question':
     case 'reveal': {
       const question = state.currentQuestion;
       if (!question) return null;
       const revealing = state.phase === 'reveal';
       const voters = state.optionVoters;
+      const counts = state.optionCounts;
       return (
         <div
           className={`stack question-stack${
@@ -208,7 +235,9 @@ function HostBody({
           }`}
         >
           <div className="question-meta question-meta--wide">
-            <span className="chip chip--category">{question.category}</span>
+            <span className="chip chip--category">
+              {categoryIcon(question.category)} {question.category}
+            </span>
             <span className="muted">
               Question {question.number} of {question.total}
             </span>
@@ -218,6 +247,9 @@ function HostBody({
           </div>
           {!revealing && <Countdown endsAt={state.endsAt} />}
           <h1 className="question-text">{question.text}</h1>
+          {question.melody && !revealing && (
+            <TunePlayer melody={question.melody} />
+          )}
           {question.imageUrl && (
             <div className="question-image-frame">
               <img
@@ -244,6 +276,7 @@ function HostBody({
                   revealing ? index === state.revealedCorrectIndex : undefined
                 }
                 voters={revealing && voters ? voters[index] : undefined}
+                voteCount={revealing && counts ? counts[index] : undefined}
               />
             ))}
           </div>
@@ -265,14 +298,7 @@ function HostBody({
       return (
         <div className="stack">
           <Confetti />
-          <h1>Final results</h1>
-          {state.leaderboard[0] && (
-            <p className="winner-banner">🏆 {state.leaderboard[0].nickname}</p>
-          )}
-          <Leaderboard
-            rows={state.leaderboard}
-            twoColumns={state.leaderboard.length > 6}
-          />
+          <FinalResults rows={state.leaderboard} />
           <div className="host-controls">
             <button
               type="button"

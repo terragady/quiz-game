@@ -1,10 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import type {
-  CategorySummary,
-  Difficulty,
-  Question,
+import {
+  parseMelody,
+  type CategorySummary,
+  type Difficulty,
+  type Question,
 } from '@quiz/shared';
+import { withTidyCategories } from './categories.js';
 
 const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
 
@@ -73,6 +75,26 @@ function validateQuestion(item: unknown, index: number): Question {
     throw new Error(`${where} "imageUrl" must be a non-empty string when present.`);
   }
 
+  if (q.melody !== undefined) {
+    const melody = q.melody as Record<string, unknown> | null;
+    if (
+      typeof melody !== 'object' ||
+      melody === null ||
+      typeof melody.bpm !== 'number' ||
+      melody.bpm <= 0 ||
+      typeof melody.notes !== 'string'
+    ) {
+      throw new Error(`${where} "melody" must have a positive "bpm" and "notes".`);
+    }
+    try {
+      parseMelody(melody.notes);
+    } catch (error) {
+      throw new Error(`${where} "melody": ${(error as Error).message}`, {
+        cause: error,
+      });
+    }
+  }
+
   return {
     id: q.id as string,
     category: q.category as string,
@@ -81,6 +103,7 @@ function validateQuestion(item: unknown, index: number): Question {
     options: q.options as string[],
     correctIndex: q.correctIndex,
     ...(q.imageUrl !== undefined ? { imageUrl: q.imageUrl as string } : {}),
+    ...(q.melody !== undefined ? { melody: q.melody as Question['melody'] } : {}),
   };
 }
 
@@ -151,7 +174,7 @@ export function dedupeByText(questions: Question[]): Question[] {
   const seen = new Set<string>();
   const result: Question[] = [];
   for (const question of questions) {
-    const key = `${normalizeQuestionText(question.text)}\u0000${question.imageUrl ?? ''}`;
+    const key = `${normalizeQuestionText(question.text)}\u0000${question.imageUrl ?? ''}\u0000${question.melody?.notes ?? ''}`;
     if (seen.has(key)) continue;
     seen.add(key);
     result.push(question);
@@ -188,12 +211,14 @@ function asksTheSame(a: Set<string>, b: Set<string>): boolean {
 
 // Different sources often ask the same thing in different words. Drop a
 // question when an earlier one has the same correct answer and asks the
-// same thing. Picture and true/false questions are left alone: their text
-// alone doesn't say what is being asked.
+// same thing. Picture, tune and true/false questions are left alone: their
+// text alone doesn't say what is being asked.
 export function dropRewordedDuplicates(questions: Question[]): Question[] {
   const seenByAnswer = new Map<string, Set<string>[]>();
   return questions.filter((question) => {
-    if (question.imageUrl || question.options.length < 3) return true;
+    if (question.imageUrl || question.melody || question.options.length < 3) {
+      return true;
+    }
     const answer = normalizeQuestionText(question.options[question.correctIndex]);
     const words = contentWords(question.text);
     const seen = seenByAnswer.get(answer) ?? [];
@@ -212,8 +237,10 @@ export function buildQuestionPool(
   const curated = existsSync(curatedPath) ? loadQuestions(curatedPath) : [];
   const openTdb = existsSync(openTdbPath) ? loadQuestions(openTdbPath) : [];
   const triviaApi = existsSync(triviaApiPath) ? loadQuestions(triviaApiPath) : [];
-  return dropRewordedDuplicates(
-    dedupeByText(mergeQuestions(curated, openTdb, triviaApi)),
+  return withTidyCategories(
+    dropRewordedDuplicates(
+      dedupeByText(mergeQuestions(curated, openTdb, triviaApi)),
+    ),
   );
 }
 
@@ -275,7 +302,7 @@ export function listCategories(questions: Question[]): CategorySummary[] {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function shuffle<T>(items: T[]): T[] {
+export function shuffle<T>(items: T[]): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));

@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
   questionStarted: (question: PublicQuestion, endsAt: number) => void;
   answerResult: (result: AnswerResult) => void;
   errorMessage: (message: string) => void;
+  reaction: (payload: { nickname: string; emoji: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -34,6 +35,7 @@ export interface ClientToServerEvents {
   hostPlayAgain: () => void;
   submitAnswer: (payload: { optionIndex: number }) => void;
   playerLeave: () => void;
+  sendReaction: (emoji: string) => void;
 }
 
 export type InterServerEvents = Record<string, never>;

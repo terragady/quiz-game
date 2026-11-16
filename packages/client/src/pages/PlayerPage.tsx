@@ -9,7 +9,9 @@ import { useSearchParams } from 'react-router-dom';
 import {
   BENIGN_ANSWER_ERRORS,
   MAX_NICKNAME_LENGTH,
+  categoryIcon,
   type AnswerResult,
+  type GamePhase,
   type JoinAck,
   type PlayerStats,
   type PublicGameState,
@@ -19,6 +21,8 @@ import { AnswerButton } from '../components/AnswerButton.js';
 import { Countdown } from '../components/Countdown.js';
 import { OverflowMenu } from '../components/OverflowMenu.js';
 import { ConfirmDialog } from '../components/ConfirmDialog.js';
+import { ReactionBar } from '../components/ReactionBar.js';
+import { SHOW_STREAK_FROM } from '../components/StreakBadge.js';
 import {
   clearSession,
   readSession,
@@ -27,6 +31,8 @@ import {
 import { readNickname, writeNickname } from '../nicknameCookie.js';
 
 const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
+// Reactions are offered between questions, never while answering.
+const REACTION_PHASES = new Set<GamePhase>(['lobby', 'reveal', 'leaderboard', 'ended']);
 
 export function PlayerPage() {
   const socket = useSocket();
@@ -308,6 +314,7 @@ export function PlayerPage() {
         result={shownResult}
         onAnswer={handleAnswer}
       />
+      {state && REACTION_PHASES.has(state.phase) && <ReactionBar />}
       <ConfirmDialog
         open={confirmLeaveOpen}
         title="Leave this game?"
@@ -357,6 +364,24 @@ function PlayerBody({
         </div>
       );
 
+    case 'intro': {
+      const upcoming = state.upcoming;
+      if (!upcoming) return <p className="center-text">Get ready…</p>;
+      return (
+        <div className="stack feedback">
+          <p className="muted">
+            Question {upcoming.number} of {upcoming.total}
+          </p>
+          <p className="intro-card" key={upcoming.number}>
+            <span className="intro-card__icon" aria-hidden="true">
+              {categoryIcon(upcoming.category)}
+            </span>
+            {upcoming.category}
+          </p>
+        </div>
+      );
+    }
+
     case 'question': {
       const question = state.currentQuestion;
       if (!question) return <p className="center-text">Get ready…</p>;
@@ -364,7 +389,9 @@ function PlayerBody({
       return (
         <div className="stack">
           <div className="question-meta">
-            <span className="chip chip--category">{question.category}</span>
+            <span className="chip chip--category">
+              {categoryIcon(question.category)} {question.category}
+            </span>
             <span className="muted">
               Question {question.number} of {question.total}
             </span>
@@ -374,7 +401,11 @@ function PlayerBody({
               Answer locked in — sit tight!
             </p>
           ) : (
-            <p className="center-text">Tap your answer</p>
+            <p className="center-text">
+              {question.melody
+                ? 'Listen to the main screen and name the tune'
+                : 'Tap your answer'}
+            </p>
           )}
           <div
             className={
@@ -461,6 +492,7 @@ function StatsPanel({ stats }: { stats: PlayerStats }) {
         label="Fastest correct"
         value={formatSeconds(stats.fastestCorrectMs)}
       />
+      <Stat label="Best streak" value={String(stats.bestStreak)} />
     </dl>
   );
 }
@@ -515,6 +547,10 @@ function placeEmoji(rank: number): string {
   }
 }
 
+function formatPoints(points: number): string {
+  return points < 0 ? `−${-points}` : `+${points}`;
+}
+
 function RevealFeedback({ result }: { result: AnswerResult | null }) {
   if (!result) {
     return <p className="center-text">Checking answers…</p>;
@@ -526,9 +562,10 @@ function RevealFeedback({ result }: { result: AnswerResult | null }) {
       }`}
     >
       <h1>{result.correct ? 'Correct!' : 'Not quite'}</h1>
-      <p className="feedback__points">
-        {result.pointsAwarded > 0 ? `+${result.pointsAwarded}` : '+0'}
-      </p>
+      <p className="feedback__points">{formatPoints(result.pointsAwarded)}</p>
+      {result.streak >= SHOW_STREAK_FROM && (
+        <p className="feedback__streak">🔥 {result.streak} in a row!</p>
+      )}
       <p className="muted">
         Total {result.totalScore} · Rank {result.rank}
       </p>

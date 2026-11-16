@@ -56,4 +56,24 @@ describe('SettingsForm', () => {
     expect(screen.queryByLabelText('Seconds on answer reveal')).toBeNull();
     expect(screen.queryByLabelText('Seconds on leaderboard')).toBeNull();
   });
+
+  it('has the game switches on their defaults and lets the host flip them', async () => {
+    const onChange = vi.fn();
+    render(<SettingsForm settings={DEFAULT_SETTINGS} onChange={onChange} />);
+
+    expect(screen.getByLabelText('Show the category before each question')).toBeChecked();
+    expect(screen.getByLabelText('Show who picked which answer')).toBeChecked();
+    expect(screen.getByLabelText('Include name-that-tune questions')).toBeChecked();
+    const penalty = screen.getByLabelText('Wrong answers cost 250 points');
+    expect(penalty).not.toBeChecked();
+
+    await userEvent.click(penalty);
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ wrongAnswerPenalty: true }),
+    );
+    await userEvent.click(screen.getByLabelText('Show who picked which answer'));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ showVoters: false }),
+    );
+  });
 });

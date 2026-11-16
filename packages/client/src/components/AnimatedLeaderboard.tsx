@@ -7,6 +7,8 @@ import {
   previousScoreOf,
   standingsSignature,
 } from './leaderboardAnimation.js';
+import { StreakBadge } from './StreakBadge.js';
+import { PointsDelta } from './Leaderboard.js';
 
 const ROW_STEP = 72;
 const PRE_COUNT_MS = 600;
@@ -112,9 +114,8 @@ export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
           >
             <span className="leaderboard__rank">{position + 1}</span>
             <span className="leaderboard__name">{row.nickname}</span>
-            {stage !== 'previous' && row.lastPoints > 0 && (
-              <span className="leaderboard__delta">+{row.lastPoints}</span>
-            )}
+            {stage !== 'previous' && <StreakBadge streak={row.streak} />}
+            {stage !== 'previous' && <PointsDelta points={row.lastPoints} />}
             <span className="leaderboard__score">
               {displayScores.get(row.playerId) ?? row.score}
             </span>

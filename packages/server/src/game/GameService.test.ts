@@ -42,6 +42,10 @@ const settings: GameSettings = {
   autoAdvance: false,
   revealSeconds: 5,
   leaderboardSeconds: 8,
+  categoryIntro: false,
+  showVoters: true,
+  wrongAnswerPenalty: false,
+  musicQuestions: false,
 };
 
 let handles: GameServerHandles;
@@ -430,6 +434,65 @@ describe('GameService integration', () => {
     const response = await fetch(`http://localhost:${port}/healthz`);
     const body = (await response.json()) as { status: string };
     expect(body.status).toBe('ok');
+  });
+});
+
+describe('GameService category intro', () => {
+  it('shows the category, then starts the question by itself', async () => {
+    const server = createGameServer(pool, { startCountdownMs: 0, introMs: 50 });
+    await new Promise<void>((resolve) => server.httpServer.listen(0, resolve));
+    const introPort = (server.httpServer.address() as AddressInfo).port;
+    const local: ClientSocket[] = [];
+    const localConnect = (): ClientSocket => {
+      const socket: ClientSocket = createClient(`http://localhost:${introPort}`, {
+        forceNew: true,
+        transports: ['websocket'],
+      });
+      local.push(socket);
+      return socket;
+    };
+    try {
+      const host = localConnect();
+      const hostAck = await new Promise<ObserverJoinAck>((resolve) =>
+        host.emit('hostJoin', {}, resolve),
+      );
+      if (!hostAck.ok) throw new Error('host join failed');
+      const player = localConnect();
+      await new Promise<JoinAck>((resolve) =>
+        player.emit('playerJoin', { code: hostAck.state.code, nickname: 'Alice' }, resolve),
+      );
+
+      const introShown = waitForState(host, (s) => s.phase === 'intro');
+      const questionArrives = nextQuestion(player);
+      host.emit('hostStart', { ...settings, categoryIntro: true });
+      const intro = await introShown;
+      expect(intro.upcoming).toEqual({ category: 'Science', number: 1, total: 2 });
+      const [question] = await questionArrives;
+      expect(question.number).toBe(1);
+    } finally {
+      for (const socket of local) socket.disconnect();
+      server.service.dispose();
+      await new Promise<void>((resolve) => server.io.close(() => resolve()));
+    }
+  });
+});
+
+describe('GameService reactions', () => {
+  it('passes allowed emojis to the room, at most one per cooldown', async () => {
+    const host = connect();
+    const hostAck = await hostJoin(host);
+    if (!hostAck.ok) throw new Error('host join failed');
+    const player = connect();
+    await playerJoin(player, hostAck.state.code, 'Alice');
+
+    const received: { nickname: string; emoji: string }[] = [];
+    host.on('reaction', (payload) => received.push(payload));
+    player.emit('sendReaction', 'not an emoji');
+    player.emit('sendReaction', '👏');
+    player.emit('sendReaction', '🔥');
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(received).toEqual([{ nickname: 'Alice', emoji: '👏' }]);
   });
 });
 
