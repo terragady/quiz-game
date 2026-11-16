@@ -36,7 +36,21 @@ hosting tier: the first load after an idle period takes a few seconds to wake.)
 Each host screen is its own **room** with a unique code; refreshing the TV
 rejoins the same game, and a "New game" button starts a fresh one. Some
 questions are **picture questions** — guess the flag, the landmark, or the
-famous person — with the image shown on the host screen.
+famous person — with the image shown on the host screen — and some are
+**name-that-tune questions**, where the host screen plays a short melody.
+
+The host can switch these on or off before each game:
+
+- Show the category before each question (a short spinning reveal).
+- Include name-that-tune questions (about one question in five).
+- Show who picked which answer. When it's off, the TV only shows how many
+  people picked each answer.
+- Wrong answers cost 250 points (never below zero; not answering costs nothing).
+
+Players can send emoji reactions from their phones between questions, and they
+float up on the TV. The final screen has a podium and a few awards (fastest
+answer, most correct, longest streak). Within a room, questions don't repeat
+from one game to the next until the pool runs out.
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single
 origin, so it fits comfortably on a free hosting tier.
@@ -91,7 +105,19 @@ service. That file is built from three source files:
 All of them live in `packages/server/data`. Building the pool drops duplicates:
 questions with the same text, and questions that ask the same thing in other
 words with the same answer (e.g. "capital of Finland" and "capital city of
-Finland"). Curated questions win over imported ones.
+Finland"). Curated questions win over imported ones. Imported categories are
+grouped into a short list (Geography, History, Science & Nature, and so on).
+
+Name-that-tune questions are written out as notes in `curated-questions.json`,
+so there are no audio files. Only out-of-copyright tunes (classical pieces,
+folk songs, anthems) belong there:
+
+```json
+"melody": { "bpm": 132, "notes": "E4:1 E4:1 F4:1 G4:1 R:1 C4:2" }
+```
+
+Each note is a pitch and octave (`C4`, `F#5`, `Bb3`) or `R` for a rest,
+followed by its length in beats.
 
 ```bash
 npm run questions:import                                 # Open Trivia DB
@@ -142,6 +168,11 @@ The repo includes a [`render.yaml`](./render.yaml) Blueprint.
 Render provides `PORT` automatically. WebSockets work on the free tier; note the
 free instance sleeps after inactivity, so the first request after idle takes a
 few seconds to wake.
+
+## Future ideas
+
+- Custom questions: let people write their own question sets and play them.
+- Questions with more than one right answer, where players pick several.
 
 ## Project structure
 
