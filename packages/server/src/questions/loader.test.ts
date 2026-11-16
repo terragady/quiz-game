@@ -5,6 +5,7 @@ import {
   POOL_QUESTIONS_PATH,
   buildQuestionPool,
   dedupeByText,
+  dropRewordedDuplicates,
   filterQuestions,
   listCategories,
   loadQuestionPool,
@@ -268,6 +269,45 @@ describe('dedupeByText', () => {
       'flag-1',
       'flag-2',
     ]);
+  });
+});
+
+describe('dropRewordedDuplicates', () => {
+  const question = (id: string, text: string, answer: string): Question => ({
+    id,
+    category: 'Test',
+    difficulty: 'easy',
+    text,
+    options: [answer, 'Wrong 1', 'Wrong 2', 'Wrong 3'],
+    correctIndex: 0,
+  });
+
+  it('drops a later question that asks the same thing in other words', () => {
+    const result = dropRewordedDuplicates([
+      question('a', 'What is the capital of Finland?', 'Helsinki'),
+      question('b', 'What is the capital city of Finland?', 'Helsinki'),
+      question('c', 'Who wrote "A Tale of Two Cities"?', 'Charles Dickens'),
+      question('d', "Which author wrote 'A Tale of Two Cities'?", 'Charles Dickens'),
+    ]);
+    expect(result.map((q) => q.id)).toEqual(['a', 'c']);
+  });
+
+  it('keeps look-alike questions that ask about different things', () => {
+    const result = dropRewordedDuplicates([
+      question('a', "Which singer released the song 'Alejandro'?", 'Lady Gaga'),
+      question('b', "Which singer released the song 'Paparazzi'?", 'Lady Gaga'),
+      question('c', "Which author wrote 'It'?", 'Stephen King'),
+      question('d', "Which author wrote 'The Stand'?", 'Stephen King'),
+    ]);
+    expect(result.map((q) => q.id)).toEqual(['a', 'b', 'c', 'd']);
+  });
+
+  it('keeps the same wording when the answers differ', () => {
+    const result = dropRewordedDuplicates([
+      question('a', 'What is the capital of Australia?', 'Canberra'),
+      question('b', 'What is the capital of Western Australia?', 'Perth'),
+    ]);
+    expect(result).toHaveLength(2);
   });
 });
 

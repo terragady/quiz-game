@@ -74,29 +74,34 @@ of `localhost` (the QR code on the host screen uses the browser's origin).
 
 ## Questions
 
-At runtime the game pool is the merge of two committed files, so the app has no
-runtime dependency on any external service:
+The game plays from one committed file, `packages/server/data/questions.json`
+(about 7,300 questions), so it has no runtime dependency on any external
+service. That file is built from three source files:
 
-- `packages/server/data/curated-questions.json` — a hand-maintained set of
-  English questions focused on Europe, Norway, and Poland, plus picture
-  questions (flags, landmarks, and famous people) whose images are served
-  locally from `packages/client/public/images`. Edit this by hand; the importer
-  never touches it.
-- `packages/server/data/questions.json` — the [Open Trivia DB](https://opentdb.com)
-  dump, produced (and overwritten) by the import script.
+- `curated-questions.json` — a hand-maintained set of English questions focused
+  on Europe, Norway, and Poland, plus picture questions (flags, landmarks, and
+  famous people) whose images are served locally from
+  `packages/client/public/images`. Edit this by hand; the importers never touch
+  it.
+- `opentdb-questions.json` — imported from [Open Trivia DB](https://opentdb.com).
+  The importer overwrites this file.
+- `trivia-api-questions.json` — imported from
+  [The Trivia API](https://the-trivia-api.com). The importer adds to this file.
 
-Options are shuffled when the pool loads, so the correct answer never sits in a
-fixed slot. To refresh the imported pool:
+All of them live in `packages/server/data`. Building the pool drops duplicates:
+questions with the same text, and questions that ask the same thing in other
+words with the same answer (e.g. "capital of Finland" and "capital city of
+Finland"). Curated questions win over imported ones.
 
 ```bash
-npm run questions:import                        # ~150 multiple-choice + ~50 true/false
-npm run questions:import -- --multiple 50 --boolean 20
+npm run questions:import                                 # Open Trivia DB
+npm run questions:import -- --multiple 3000 --boolean 500
+npm run questions:import:trivia-api -w @quiz/server -- --count 500
+npm run questions:build -w @quiz/server                  # rebuild the pool only
 ```
 
-The import script fetches questions, decodes them, shuffles the options (tracking
-the correct answer), de-duplicates, validates, and overwrites `questions.json`
-only. Open Trivia DB is rate-limited, so requests are spaced out and each is
-capped at 50 questions.
+Both importers rebuild the pool when they finish. The APIs are rate-limited, so
+requests are spaced out and capped at 50 questions each.
 
 ## Scripts
 
@@ -108,7 +113,7 @@ capped at 50 questions.
 | `npm test` | Run all workspace test suites |
 | `npm run typecheck` | Type-check all workspaces |
 | `npm run lint` | Lint the whole repo |
-| `npm run questions:import` | Refresh questions from Open Trivia DB |
+| `npm run questions:import` | Refresh the Open Trivia DB questions |
 
 ## Production build
 
@@ -145,6 +150,8 @@ packages/
   shared/   Types + socket event contract (consumed as TS source)
   server/   Express + Socket.IO game server, question loader, import script
     data/curated-questions.json   Hand-maintained EU/NO/PL + picture questions
-    data/questions.json           Imported Open Trivia DB dump
+    data/opentdb-questions.json   Imported from Open Trivia DB
+    data/trivia-api-questions.json  Imported from The Trivia API
+    data/questions.json           The merged pool the game plays from
   client/   React app (home, host, player views)
 ```
