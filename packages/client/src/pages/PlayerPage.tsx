@@ -2,19 +2,16 @@ import {
   BENIGN_ANSWER_ERRORS,
   MAX_NICKNAME_LENGTH,
   categoryIcon,
-  type AnswerResult,
-  type GamePhase,
-  type JoinAck,
-  type PlayerStats,
-  type PublicGameState,
 } from '@quiz/shared';
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-} from 'react';
+import type {
+  AnswerResult,
+  GamePhase,
+  JoinAck,
+  PlayerStats,
+  PublicGameState,
+} from '@quiz/shared';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { SubmitEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { AnswerButton } from '../components/AnswerButton.js';
@@ -28,6 +25,7 @@ import { clearSession, readSession, writeSession } from '../playerSession.js';
 import { useSocket } from '../SocketContext.js';
 
 const BENIGN_ANSWER_ERROR_SET = new Set<string>(BENIGN_ANSWER_ERRORS);
+
 // Reactions are offered between questions, never while answering.
 const REACTION_PHASES = new Set<GamePhase>([
   'lobby',
@@ -36,25 +34,270 @@ const REACTION_PHASES = new Set<GamePhase>([
   'ended',
 ]);
 
+function Stat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: 'good' | 'bad';
+}) {
+  return (
+    <div className={`stat ${tone ? `stat--${tone}` : ''}`}>
+      <dt className="stat__value">{value}</dt>
+      <dd className="stat__label">{label}</dd>
+    </div>
+  );
+}
+
+function formatSeconds(ms: number | null): string {
+  if (ms === null) {
+    return '—';
+  }
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
+function StatsPanel({ stats }: { stats: PlayerStats }) {
+  return (
+    <dl className="stats-grid">
+      <Stat label="Correct" value={String(stats.correct)} tone="good" />
+      <Stat label="Incorrect" value={String(stats.incorrect)} tone="bad" />
+      <Stat label="No answer" value={String(stats.unanswered)} />
+      <Stat label="Avg. reply" value={formatSeconds(stats.averageResponseMs)} />
+      <Stat
+        label="Fastest correct"
+        value={formatSeconds(stats.fastestCorrectMs)}
+      />
+      <Stat label="Best streak" value={String(stats.bestStreak)} />
+    </dl>
+  );
+}
+
+function ordinal(rank: number): string {
+  const rem100 = rank % 100;
+  if (rem100 >= 11 && rem100 <= 13) {
+    return `${rank}th`;
+  }
+  switch (rank % 10) {
+    case 1:
+      return `${rank}st`;
+    case 2:
+      return `${rank}nd`;
+    case 3:
+      return `${rank}rd`;
+    default:
+      return `${rank}th`;
+  }
+}
+
+function placeEmoji(rank: number): string {
+  switch (rank) {
+    case 1:
+      return '🥇';
+    case 2:
+      return '🥈';
+    case 3:
+      return '🥉';
+    default:
+      return '🎉';
+  }
+}
+
+function formatPoints(points: number): string {
+  return points < 0 ? `−${-points}` : `+${points}`;
+}
+
+function RevealFeedback({ result }: { result: AnswerResult | null }) {
+  if (!result) {
+    return <p className="center-text">Checking answers…</p>;
+  }
+  return (
+    <div
+      className={`stack feedback ${
+        result.correct ? 'feedback--correct' : 'feedback--wrong'
+      }`}
+    >
+      <h1>{result.correct ? 'Correct!' : 'Not quite'}</h1>
+      <p className="feedback__points">{formatPoints(result.pointsAwarded)}</p>
+      {result.streak >= SHOW_STREAK_FROM && (
+        <p className="feedback__streak">🔥 {result.streak} in a row!</p>
+      )}
+      <p className="muted">
+        Total {result.totalScore} · Rank {result.rank}
+      </p>
+    </div>
+  );
+}
+
+function PlayerBody({
+  state,
+  playerId,
+  selectedIndex,
+  result,
+  onAnswer,
+}: {
+  state: PublicGameState | null;
+  playerId: string;
+  selectedIndex: number | null;
+  result: AnswerResult | null;
+  onAnswer: (index: number) => void;
+}) {
+  if (!state) {
+    return <p className="center-text">Joining…</p>;
+  }
+
+  switch (state.phase) {
+    case 'lobby':
+      return (
+        <div className="stack">
+          <h1>You&apos;re in!</h1>
+          <p className="muted">Waiting for the host to start the quiz…</p>
+          <p className="chip">{state.playerCount} players joined</p>
+        </div>
+      );
+
+    case 'countdown':
+      return (
+        <div className="stack feedback">
+          <h1>Get ready!</h1>
+          <Countdown endsAt={state.endsAt} />
+          <p className="muted">The first question is coming up…</p>
+        </div>
+      );
+
+    case 'intro': {
+      const upcoming = state.upcoming;
+      if (!upcoming) {
+        return <p className="center-text">Get ready…</p>;
+      }
+      return (
+        <div className="stack feedback">
+          <p className="muted">
+            Question {upcoming.number} of {upcoming.total}
+          </p>
+          <p className="intro-card" key={upcoming.number}>
+            <span className="intro-card__icon" aria-hidden="true">
+              {categoryIcon(upcoming.category)}
+            </span>
+            {upcoming.category}
+          </p>
+        </div>
+      );
+    }
+
+    case 'question': {
+      const question = state.currentQuestion;
+      if (!question) {
+        return <p className="center-text">Get ready…</p>;
+      }
+      const locked = selectedIndex !== null;
+      return (
+        <div className="stack">
+          <div className="question-meta">
+            <span className="chip chip--category">
+              {categoryIcon(question.category)} {question.category}
+            </span>
+            <span className="muted">
+              Question {question.number} of {question.total}
+            </span>
+          </div>
+          {locked ? (
+            <p className="center-text">Answer locked in — sit tight!</p>
+          ) : (
+            <p className="center-text">
+              {question.melody
+                ? 'Listen to the main screen and name the tune'
+                : 'Tap your answer'}
+            </p>
+          )}
+          <div
+            className={
+              question.options.length <= 2
+                ? 'answer-grid answer-grid--single'
+                : 'answer-grid'
+            }
+          >
+            {question.options.map((option, index) => (
+              <AnswerButton
+                key={index}
+                index={index}
+                label={option}
+                disabled={locked}
+                selected={selectedIndex === index}
+                onSelect={() => onAnswer(index)}
+                hideLetter
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    case 'reveal':
+      return <RevealFeedback result={result} />;
+
+    case 'leaderboard': {
+      const me = state.leaderboard.find((row) => row.playerId === playerId);
+      return (
+        <div className="stack feedback">
+          <h1>Standings</h1>
+          {me ? (
+            <>
+              <p className="feedback__points">{me.score}</p>
+              <p className="muted">
+                Rank {me.rank} of {state.leaderboard.length}
+              </p>
+            </>
+          ) : (
+            <p className="muted">Waiting for scores…</p>
+          )}
+        </div>
+      );
+    }
+
+    case 'ended': {
+      const me = state.leaderboard.find((row) => row.playerId === playerId);
+      if (!me) {
+        return (
+          <div className="stack feedback">
+            <h1>Game over</h1>
+            <p className="muted">Thanks for playing!</p>
+          </div>
+        );
+      }
+      return (
+        <div className="stack feedback">
+          <h1>Game over</h1>
+          <p className="place-badge">
+            {placeEmoji(me.rank)} {ordinal(me.rank)} place
+          </p>
+          <p className="muted">out of {state.leaderboard.length} players</p>
+          <p className="feedback__points">{me.score}</p>
+          <p className="muted">points</p>
+          {me.stats && <StatsPanel stats={me.stats} />}
+        </div>
+      );
+    }
+
+    default:
+      return null;
+  }
+}
+
 export function PlayerPage() {
   const socket = useSocket();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const storedRef = useRef(readSession());
-  const stored = storedRef.current;
-  // Always try to rejoin a stored session first so refreshing the page keeps
-  // you in your game. A code in the URL (e.g. from scanning a new game's QR
-  // code) only decides what the join form is prefilled with; it takes over
-  // when there is no stored session, or if the rejoin attempt fails.
+  const [stored] = useState(readSession);
+  // A stored session wins so a refresh keeps you in your game. The URL code
+  // only prefills the join form.
   const urlCode = (searchParams.get('code') ?? '').toUpperCase();
   const rejoinSession = stored
     ? { code: stored.code, playerId: stored.playerId }
     : null;
 
-  // Only prefill the join form's code from a real URL code (e.g. a fresh QR
-  // scan). We deliberately do not fall back to the stored session's code: that
-  // is handled by auto-rejoin, and showing it here would just leave a stale
-  // code in the field once its game is gone.
+  // Not the stored code: it would linger in the field after its game is gone.
   const [code, setCode] = useState(urlCode);
   const [nickname, setNickname] = useState(
     stored?.nickname ?? readNickname() ?? '',
@@ -81,24 +324,27 @@ export function PlayerPage() {
   );
 
   useEffect(() => {
-    if (!playerId) return undefined;
+    if (!playerId) {
+      return undefined;
+    }
 
     const onState = (next: PublicGameState) => {
       setState((prev) => {
-        if (prev && prev.phase !== next.phase) setError(null);
+        if (prev && prev.phase !== next.phase) {
+          setError(null);
+        }
         return next;
       });
       if (next.phase === 'ended') {
         clearSession();
       } else {
-        // The host can send a finished game back to the lobby ("Play again").
-        // Save the seat again (it was cleared when the game ended) so a
-        // refresh keeps this player in the room. This runs on every state,
-        // not only the lobby, because a phone that was asleep may first
-        // hear about the new round during its countdown or a question.
+        // Save the seat again after "Play again". Not only in the lobby: a
+        // phone that was asleep may first see the new round mid-question.
         const session = sessionRef.current;
         const me = next.players.find((p) => p.id === session?.playerId);
-        if (session && me) writeSession({ ...session, nickname: me.nickname });
+        if (session && me) {
+          writeSession({ ...session, nickname: me.nickname });
+        }
       }
       if (next.phase === 'ended' || next.phase === 'lobby') {
         // Forget the last answer so a repeated question in the next round
@@ -109,7 +355,9 @@ export function PlayerPage() {
     };
     const onAnswerResult = (next: AnswerResult) => setResult(next);
     const onError = (message: string) => {
-      if (BENIGN_ANSWER_ERROR_SET.has(message)) return;
+      if (BENIGN_ANSWER_ERROR_SET.has(message)) {
+        return;
+      }
       setError(message);
     };
 
@@ -130,7 +378,9 @@ export function PlayerPage() {
     (nextCode: string) => {
       setSearchParams(
         (params) => {
-          if (params.get('code') === nextCode) return params;
+          if (params.get('code') === nextCode) {
+            return params;
+          }
           params.set('code', nextCode);
           return params;
         },
@@ -164,13 +414,17 @@ export function PlayerPage() {
 
   useEffect(() => {
     const session = sessionRef.current;
-    if (session) attemptRejoin(session.code, session.playerId);
+    if (session) {
+      attemptRejoin(session.code, session.playerId);
+    }
   }, [attemptRejoin]);
 
   useEffect(() => {
     const onConnect = () => {
       const session = sessionRef.current;
-      if (session) attemptRejoin(session.code, session.playerId);
+      if (session) {
+        attemptRejoin(session.code, session.playerId);
+      }
     };
     socket.on('connect', onConnect);
     return () => {
@@ -190,7 +444,7 @@ export function PlayerPage() {
     };
   }, [socket]);
 
-  const handleJoin = (event: FormEvent) => {
+  const handleJoin = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     const trimmedCode = code.trim().toUpperCase();
@@ -327,248 +581,5 @@ export function PlayerPage() {
         onCancel={() => setConfirmLeaveOpen(false)}
       />
     </main>
-  );
-}
-
-function PlayerBody({
-  state,
-  playerId,
-  selectedIndex,
-  result,
-  onAnswer,
-}: {
-  state: PublicGameState | null;
-  playerId: string;
-  selectedIndex: number | null;
-  result: AnswerResult | null;
-  onAnswer: (index: number) => void;
-}) {
-  if (!state) {
-    return <p className="center-text">Joining…</p>;
-  }
-
-  switch (state.phase) {
-    case 'lobby':
-      return (
-        <div className="stack">
-          <h1>You&apos;re in!</h1>
-          <p className="muted">Waiting for the host to start the quiz…</p>
-          <p className="chip">{state.playerCount} players joined</p>
-        </div>
-      );
-
-    case 'countdown':
-      return (
-        <div className="stack feedback">
-          <h1>Get ready!</h1>
-          <Countdown endsAt={state.endsAt} />
-          <p className="muted">The first question is coming up…</p>
-        </div>
-      );
-
-    case 'intro': {
-      const upcoming = state.upcoming;
-      if (!upcoming) return <p className="center-text">Get ready…</p>;
-      return (
-        <div className="stack feedback">
-          <p className="muted">
-            Question {upcoming.number} of {upcoming.total}
-          </p>
-          <p className="intro-card" key={upcoming.number}>
-            <span className="intro-card__icon" aria-hidden="true">
-              {categoryIcon(upcoming.category)}
-            </span>
-            {upcoming.category}
-          </p>
-        </div>
-      );
-    }
-
-    case 'question': {
-      const question = state.currentQuestion;
-      if (!question) return <p className="center-text">Get ready…</p>;
-      const locked = selectedIndex !== null;
-      return (
-        <div className="stack">
-          <div className="question-meta">
-            <span className="chip chip--category">
-              {categoryIcon(question.category)} {question.category}
-            </span>
-            <span className="muted">
-              Question {question.number} of {question.total}
-            </span>
-          </div>
-          {locked ? (
-            <p className="center-text">Answer locked in — sit tight!</p>
-          ) : (
-            <p className="center-text">
-              {question.melody
-                ? 'Listen to the main screen and name the tune'
-                : 'Tap your answer'}
-            </p>
-          )}
-          <div
-            className={
-              question.options.length <= 2
-                ? 'answer-grid answer-grid--single'
-                : 'answer-grid'
-            }
-          >
-            {question.options.map((option, index) => (
-              <AnswerButton
-                key={index}
-                index={index}
-                label={option}
-                disabled={locked}
-                selected={selectedIndex === index}
-                onSelect={() => onAnswer(index)}
-                hideLetter
-              />
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    case 'reveal':
-      return <RevealFeedback result={result} />;
-
-    case 'leaderboard': {
-      const me = state.leaderboard.find((row) => row.playerId === playerId);
-      return (
-        <div className="stack feedback">
-          <h1>Standings</h1>
-          {me ? (
-            <>
-              <p className="feedback__points">{me.score}</p>
-              <p className="muted">
-                Rank {me.rank} of {state.leaderboard.length}
-              </p>
-            </>
-          ) : (
-            <p className="muted">Waiting for scores…</p>
-          )}
-        </div>
-      );
-    }
-
-    case 'ended': {
-      const me = state.leaderboard.find((row) => row.playerId === playerId);
-      if (!me) {
-        return (
-          <div className="stack feedback">
-            <h1>Game over</h1>
-            <p className="muted">Thanks for playing!</p>
-          </div>
-        );
-      }
-      return (
-        <div className="stack feedback">
-          <h1>Game over</h1>
-          <p className="place-badge">
-            {placeEmoji(me.rank)} {ordinal(me.rank)} place
-          </p>
-          <p className="muted">out of {state.leaderboard.length} players</p>
-          <p className="feedback__points">{me.score}</p>
-          <p className="muted">points</p>
-          {me.stats && <StatsPanel stats={me.stats} />}
-        </div>
-      );
-    }
-
-    default:
-      return null;
-  }
-}
-
-function StatsPanel({ stats }: { stats: PlayerStats }) {
-  return (
-    <dl className="stats-grid">
-      <Stat label="Correct" value={String(stats.correct)} tone="good" />
-      <Stat label="Incorrect" value={String(stats.incorrect)} tone="bad" />
-      <Stat label="No answer" value={String(stats.unanswered)} />
-      <Stat label="Avg. reply" value={formatSeconds(stats.averageResponseMs)} />
-      <Stat
-        label="Fastest correct"
-        value={formatSeconds(stats.fastestCorrectMs)}
-      />
-      <Stat label="Best streak" value={String(stats.bestStreak)} />
-    </dl>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone?: 'good' | 'bad';
-}) {
-  return (
-    <div className={`stat ${tone ? `stat--${tone}` : ''}`}>
-      <dt className="stat__value">{value}</dt>
-      <dd className="stat__label">{label}</dd>
-    </div>
-  );
-}
-
-function formatSeconds(ms: number | null): string {
-  if (ms === null) return '—';
-  return `${(ms / 1000).toFixed(1)}s`;
-}
-
-function ordinal(rank: number): string {
-  const rem100 = rank % 100;
-  if (rem100 >= 11 && rem100 <= 13) return `${rank}th`;
-  switch (rank % 10) {
-    case 1:
-      return `${rank}st`;
-    case 2:
-      return `${rank}nd`;
-    case 3:
-      return `${rank}rd`;
-    default:
-      return `${rank}th`;
-  }
-}
-
-function placeEmoji(rank: number): string {
-  switch (rank) {
-    case 1:
-      return '🥇';
-    case 2:
-      return '🥈';
-    case 3:
-      return '🥉';
-    default:
-      return '🎉';
-  }
-}
-
-function formatPoints(points: number): string {
-  return points < 0 ? `−${-points}` : `+${points}`;
-}
-
-function RevealFeedback({ result }: { result: AnswerResult | null }) {
-  if (!result) {
-    return <p className="center-text">Checking answers…</p>;
-  }
-  return (
-    <div
-      className={`stack feedback ${
-        result.correct ? 'feedback--correct' : 'feedback--wrong'
-      }`}
-    >
-      <h1>{result.correct ? 'Correct!' : 'Not quite'}</h1>
-      <p className="feedback__points">{formatPoints(result.pointsAwarded)}</p>
-      {result.streak >= SHOW_STREAK_FROM && (
-        <p className="feedback__streak">🔥 {result.streak} in a row!</p>
-      )}
-      <p className="muted">
-        Total {result.totalScore} · Rank {result.rank}
-      </p>
-    </div>
   );
 }

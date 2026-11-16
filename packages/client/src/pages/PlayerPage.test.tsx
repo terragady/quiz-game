@@ -106,7 +106,7 @@ describe('PlayerPage join flow', () => {
     }));
     renderPlayer(fake, '/play?code=wxyz');
 
-    const codeInput = screen.getByLabelText('Game code') as HTMLInputElement;
+    const codeInput = screen.getByLabelText<HTMLInputElement>('Game code');
     expect(codeInput.value).toBe('WXYZ');
 
     await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
@@ -128,7 +128,7 @@ describe('PlayerPage join flow', () => {
     // Arrive with a stale code left over from an earlier scan.
     renderPlayer(fake, '/play?code=OLDD');
 
-    const codeInput = screen.getByLabelText('Game code') as HTMLInputElement;
+    const codeInput = screen.getByLabelText<HTMLInputElement>('Game code');
     await userEvent.clear(codeInput);
     await userEvent.type(codeInput, 'newg');
     await userEvent.type(screen.getByLabelText('Nickname'), 'Alice');
@@ -557,9 +557,8 @@ describe('PlayerPage reconnection', () => {
 
     renderPlayer(fake, '/play?code=NEWW');
 
-    const codeInput = (await screen.findByLabelText(
-      'Game code',
-    )) as HTMLInputElement;
+    const codeInput =
+      await screen.findByLabelText<HTMLInputElement>('Game code');
     expect(codeInput.value).toBe('NEWW');
   });
 
@@ -578,9 +577,7 @@ describe('PlayerPage reconnection', () => {
     expect(await screen.findByRole('button', { name: 'Join' })).toBeVisible();
     expect(localStorage.getItem('quiz.playerSession')).toBeNull();
     // The dead game's code must not linger in the join form.
-    expect((screen.getByLabelText('Game code') as HTMLInputElement).value).toBe(
-      '',
-    );
+    expect(screen.getByLabelText<HTMLInputElement>('Game code').value).toBe('');
   });
 
   it('re-attaches by emitting playerRejoin when the socket reconnects', async () => {
@@ -626,7 +623,9 @@ describe('PlayerPage reconnection', () => {
     await screen.findByText(/You're in/i);
 
     fake.connected = false;
-    act(() => document.dispatchEvent(new Event('visibilitychange')));
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
 
     expect(fake.connected).toBe(true);
     expect(fake.emittedArgs('playerRejoin')[0]?.[0]).toEqual({
@@ -648,7 +647,9 @@ describe('PlayerPage reconnection', () => {
     await screen.findByText(/You're in/i);
 
     fake.connected = true;
-    act(() => document.dispatchEvent(new Event('visibilitychange')));
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
 
     expect(fake.emittedArgs('playerRejoin')).toHaveLength(0);
   });
@@ -667,7 +668,7 @@ describe('PlayerPage nickname cookie', () => {
     document.cookie = 'quiz.nickname=Charlie; path=/';
     renderPlayer(fake, '/play?code=WXYZ');
 
-    const nicknameInput = screen.getByLabelText('Nickname') as HTMLInputElement;
+    const nicknameInput = screen.getByLabelText<HTMLInputElement>('Nickname');
     expect(nicknameInput.value).toBe('Charlie');
   });
 

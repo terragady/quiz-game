@@ -8,8 +8,8 @@ export function orderIds(
   rows: LeaderboardRow[],
   scoreOf: (row: LeaderboardRow) => number,
 ): string[] {
-  return [...rows]
-    .sort(
+  return rows
+    .toSorted(
       (a, b) => scoreOf(b) - scoreOf(a) || a.nickname.localeCompare(b.nickname),
     )
     .map((row) => row.playerId);

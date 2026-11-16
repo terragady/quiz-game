@@ -1,15 +1,16 @@
 import { CATEGORY_ICONS, categoryIcon } from '@quiz/shared';
-import { useMemo, type CSSProperties } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 
 const ALL_CATEGORIES = Object.keys(CATEGORY_ICONS);
 const SPIN_ITEMS = 14;
 // Keep in sync with the reel-spin animation in index.css.
 export const REEL_SPIN_SECONDS = 1.1;
 
-// A short slot-machine spin that lands on the next question's category.
-// The category is already decided by the server; this is just for show.
+// Just for show: the server has already picked the category. The spin is
+// chosen once per mount; the host page keys it by question.
 export function CategoryReel({ category }: { category: string }) {
-  const items = useMemo(() => {
+  const [items] = useState(() => {
     const others = ALL_CATEGORIES.filter((name) => name !== category);
     const spin = Array.from(
       { length: SPIN_ITEMS },
@@ -17,7 +18,7 @@ export function CategoryReel({ category }: { category: string }) {
         others[(index * 5 + Math.floor(Math.random() * 3)) % others.length],
     );
     return [...spin, category];
-  }, [category]);
+  });
 
   return (
     <div className="reel" aria-live="polite">

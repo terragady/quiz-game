@@ -9,7 +9,9 @@ const SESSION_KEY = 'quiz.playerSession';
 export function readSession(): PlayerSession | null {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
+    if (!raw) {
+      return null;
+    }
     const parsed = JSON.parse(raw) as Partial<PlayerSession>;
     if (
       typeof parsed.code === 'string' &&

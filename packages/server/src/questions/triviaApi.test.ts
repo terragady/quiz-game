@@ -4,8 +4,8 @@ import {
   formatCategory,
   normalizeTriviaApiResult,
   normalizeTriviaApiResults,
-  type TriviaApiResult,
 } from './triviaApi.js';
+import type { TriviaApiResult } from './triviaApi.js';
 
 const identityShuffle = <T>(items: T[]): T[] => [...items];
 
@@ -29,7 +29,7 @@ describe('normalizeTriviaApiResult', () => {
   });
 
   it('tracks the correct answer through shuffling', () => {
-    const reverse = <T>(items: T[]): T[] => [...items].reverse();
+    const reverse = <T>(items: T[]): T[] => items.toReversed();
     const q = normalizeTriviaApiResult(result(), reverse);
     expect(q.options[q.correctIndex]).toBe('Right');
     expect(q.correctIndex).toBe(3);

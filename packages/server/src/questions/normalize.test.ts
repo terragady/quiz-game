@@ -51,7 +51,7 @@ describe('normalizeResult', () => {
   });
 
   it('tracks the correct answer through shuffling', () => {
-    const reverse = <T>(items: T[]): T[] => [...items].reverse();
+    const reverse = <T>(items: T[]): T[] => items.toReversed();
     const question = normalizeResult(multipleResult(), reverse);
 
     expect(question.correctIndex).toBe(3);

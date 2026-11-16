@@ -7,6 +7,10 @@ export interface ScoreInput {
   basePoints?: number;
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 export function calculateScore({
   correct,
   timeRemainingMs,
@@ -23,8 +27,4 @@ export function calculateScore({
       : 0;
 
   return Math.round(basePoints * (0.5 + 0.5 * fraction));
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
 }

@@ -14,7 +14,6 @@ interface FloatingReaction {
 
 let nextId = 0;
 
-// Emojis sent from players' phones, drifting up the big screen.
 export function FloatingReactions() {
   const socket = useSocket();
   const [reactions, setReactions] = useState<FloatingReaction[]>([]);
@@ -42,7 +41,9 @@ export function FloatingReactions() {
     socket.on('reaction', onReaction);
     return () => {
       socket.off('reaction', onReaction);
-      for (const timer of timers) clearTimeout(timer);
+      for (const timer of timers) {
+        clearTimeout(timer);
+      }
     };
   }, [socket]);
 

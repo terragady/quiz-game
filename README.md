@@ -138,7 +138,9 @@ requests are spaced out and capped at 50 questions each.
 | `npm start`                | Run the production server (serves the built client + WebSockets) |
 | `npm test`                 | Run all workspace test suites                                    |
 | `npm run typecheck`        | Type-check all workspaces                                        |
-| `npm run lint`             | Lint the whole repo                                              |
+| `npm run lint`             | Lint the whole repo and check formatting                         |
+| `npm run lint:fix`         | Fix lint and formatting issues where possible                    |
+| `npm run format`           | Format the code with oxfmt                                       |
 | `npm run questions:import` | Refresh the Open Trivia DB questions                             |
 
 ## Production build

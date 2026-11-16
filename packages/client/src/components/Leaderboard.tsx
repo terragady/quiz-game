@@ -2,6 +2,21 @@ import type { LeaderboardRow } from '@quiz/shared';
 
 import { StreakBadge } from './StreakBadge.js';
 
+// Points from the last question: green when gained, red when lost to the
+// wrong-answer penalty, nothing when unchanged.
+export function PointsDelta({ points }: { points: number }) {
+  if (points === 0) {
+    return null;
+  }
+  return points > 0 ? (
+    <span className="leaderboard__delta">+{points}</span>
+  ) : (
+    <span className="leaderboard__delta leaderboard__delta--lost">
+      −{-points}
+    </span>
+  );
+}
+
 export function Leaderboard({
   rows,
   twoColumns = false,
@@ -31,18 +46,5 @@ export function Leaderboard({
         </li>
       ))}
     </ol>
-  );
-}
-
-// Points from the last question: green when gained, red when lost to the
-// wrong-answer penalty, nothing when unchanged.
-export function PointsDelta({ points }: { points: number }) {
-  if (points === 0) return null;
-  return points > 0 ? (
-    <span className="leaderboard__delta">+{points}</span>
-  ) : (
-    <span className="leaderboard__delta leaderboard__delta--lost">
-      −{-points}
-    </span>
   );
 }

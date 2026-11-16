@@ -12,13 +12,16 @@ export function QRCode({
 
   useEffect(() => {
     let active = true;
-    QRCodeLib.toDataURL(value, { width: size, margin: 1 })
-      .then((url) => {
-        if (active) setDataUrl(url);
-      })
-      .catch(() => {
-        if (active) setDataUrl(null);
-      });
+    const render = async () => {
+      const url = await QRCodeLib.toDataURL(value, {
+        width: size,
+        margin: 1,
+      }).catch(() => null);
+      if (active) {
+        setDataUrl(url);
+      }
+    };
+    void render();
     return () => {
       active = false;
     };

@@ -1,4 +1,5 @@
-import { SETTINGS_LIMITS, type GameSettings } from '@quiz/shared';
+import { SETTINGS_LIMITS } from '@quiz/shared';
+import type { GameSettings } from '@quiz/shared';
 
 export interface SettingsErrors {
   questionCount?: string;
@@ -29,7 +30,9 @@ export function getSettingsErrors(settings: GameSettings): SettingsErrors {
     limits.maxQuestionCount,
     'Number of questions',
   );
-  if (questionCount) errors.questionCount = questionCount;
+  if (questionCount) {
+    errors.questionCount = questionCount;
+  }
 
   const secondsPerQuestion = rangeError(
     settings.secondsPerQuestion,
@@ -37,7 +40,9 @@ export function getSettingsErrors(settings: GameSettings): SettingsErrors {
     limits.maxSecondsPerQuestion,
     'Seconds per question',
   );
-  if (secondsPerQuestion) errors.secondsPerQuestion = secondsPerQuestion;
+  if (secondsPerQuestion) {
+    errors.secondsPerQuestion = secondsPerQuestion;
+  }
 
   if (settings.autoAdvance) {
     const revealSeconds = rangeError(
@@ -46,7 +51,9 @@ export function getSettingsErrors(settings: GameSettings): SettingsErrors {
       limits.maxRevealSeconds,
       'Seconds on answer reveal',
     );
-    if (revealSeconds) errors.revealSeconds = revealSeconds;
+    if (revealSeconds) {
+      errors.revealSeconds = revealSeconds;
+    }
 
     const leaderboardSeconds = rangeError(
       settings.leaderboardSeconds,
@@ -54,7 +61,9 @@ export function getSettingsErrors(settings: GameSettings): SettingsErrors {
       limits.maxLeaderboardSeconds,
       'Seconds on leaderboard',
     );
-    if (leaderboardSeconds) errors.leaderboardSeconds = leaderboardSeconds;
+    if (leaderboardSeconds) {
+      errors.leaderboardSeconds = leaderboardSeconds;
+    }
   }
 
   return errors;

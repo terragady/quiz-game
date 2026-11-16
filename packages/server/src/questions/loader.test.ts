@@ -101,7 +101,7 @@ describe('withShuffledOptions', () => {
       const shuffled = withShuffledOptions(source);
       expect(shuffled.options).toHaveLength(4);
       expect(shuffled.options[shuffled.correctIndex]).toBe('Right');
-      expect([...shuffled.options].sort()).toEqual([...source.options].sort());
+      expect(shuffled.options.toSorted()).toEqual(source.options.toSorted());
     }
   });
 
@@ -188,7 +188,7 @@ describe('selectQuestions', () => {
     for (let i = 0; i < 50; i += 1) {
       const [picked] = selectQuestions(source, { count: 1 });
       expect(picked.options[picked.correctIndex]).toBe('Right');
-      expect([...picked.options].sort()).toEqual([...source[0].options].sort());
+      expect(picked.options.toSorted()).toEqual(source[0].options.toSorted());
     }
   });
 });

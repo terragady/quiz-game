@@ -1,4 +1,5 @@
-import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
+import { BASE_POINTS } from '@quiz/shared';
+import type { GameSettings, Question } from '@quiz/shared';
 import { beforeEach, describe, it, expect } from 'vitest';
 
 import { GameManager } from './GameManager.js';
@@ -224,10 +225,9 @@ describe('GameManager answering', () => {
 
   it('rejects an answer after the deadline', () => {
     clock = 1000 + 20 * 1000 + 1;
-    expect(game.submitAnswer(alice, 0)).toMatchObject({
-      accepted: false,
-      reason: expect.stringMatching(/Time is up/),
-    });
+    const result = game.submitAnswer(alice, 0);
+    expect(result.accepted).toBe(false);
+    expect(result.reason).toMatch(/Time is up/);
   });
 
   it('rejects an out-of-range option index', () => {
@@ -621,9 +621,13 @@ describe('GameManager question memory', () => {
     const ids: string[] = [];
     for (;;) {
       const question = game.getPublicState().currentQuestion;
-      if (question && game.phase === 'question') ids.push(question.id);
+      if (question && game.phase === 'question') {
+        ids.push(question.id);
+      }
       game.advance();
-      if (game.phase === 'ended') break;
+      if (game.phase === 'ended') {
+        break;
+      }
     }
     game.resetToLobby();
     return ids;
@@ -666,11 +670,8 @@ describe('GameManager category intro', () => {
     const intro = game.getPublicState();
     expect(intro.phase).toBe('intro');
     expect(intro.currentQuestion).toBeNull();
-    expect(intro.upcoming).toEqual({
-      category: expect.any(String),
-      number: 1,
-      total: 3,
-    });
+    expect(intro.upcoming).toMatchObject({ number: 1, total: 3 });
+    expect(typeof intro.upcoming?.category).toBe('string');
     expect(intro.endsAt).toBe(3000);
     expect(game.submitAnswer(alice, 0).accepted).toBe(false);
 
@@ -830,7 +831,9 @@ describe('GameManager music questions', () => {
     const ids: string[] = [];
     for (let i = 0; i < count; i += 1) {
       const question = game.getPublicState().currentQuestion;
-      if (question) ids.push(question.id);
+      if (question) {
+        ids.push(question.id);
+      }
       game.advance();
       game.advance();
       game.advance();

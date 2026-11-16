@@ -7,7 +7,9 @@ export function ToastStack({
   toasts: Toast[];
   onDismiss: (id: number) => void;
 }) {
-  if (toasts.length === 0) return null;
+  if (toasts.length === 0) {
+    return null;
+  }
   return (
     <div className="toast-stack" role="status" aria-live="polite">
       {toasts.map((toast) => (

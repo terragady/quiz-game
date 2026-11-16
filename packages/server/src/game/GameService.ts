@@ -23,6 +23,7 @@ type QuizServer = Server<
   InterServerEvents,
   SocketData
 >;
+
 type QuizSocket = Socket<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -35,6 +36,14 @@ const ROOM_CLEANUP_GRACE_MS = 5 * 60 * 1000;
 export interface GameServiceOptions {
   startCountdownMs?: number;
   introMs?: number;
+}
+
+function normalizeCode(code: string): string {
+  return code.trim().toUpperCase();
+}
+
+function toMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Something went wrong.';
 }
 
 export class GameService {
@@ -121,7 +130,9 @@ export class GameService {
 
     socket.on('hostStart', (settings: GameSettings) => {
       const game = this.requireControllerGame(socket);
-      if (!game) return;
+      if (!game) {
+        return;
+      }
       try {
         game.start(settings);
       } catch (error) {
@@ -133,13 +144,17 @@ export class GameService {
 
     socket.on('hostNext', () => {
       const game = this.requireControllerGame(socket);
-      if (!game) return;
+      if (!game) {
+        return;
+      }
       this.applyAdvance(game.code);
     });
 
     socket.on('hostEnd', () => {
       const game = this.requireControllerGame(socket);
-      if (!game) return;
+      if (!game) {
+        return;
+      }
       this.clearTimer(game.code);
       game.end();
       this.broadcastState(game.code);
@@ -147,7 +162,9 @@ export class GameService {
 
     socket.on('hostPlayAgain', () => {
       const game = this.requireControllerGame(socket);
-      if (!game) return;
+      if (!game) {
+        return;
+      }
       try {
         game.resetToLobby();
       } catch (error) {
@@ -184,10 +201,16 @@ export class GameService {
     socket.on('sendReaction', (emoji) => {
       const game = this.socketGame(socket);
       const playerId = socket.data.playerId;
-      if (!game || !playerId) return;
-      if (!(REACTIONS as readonly string[]).includes(emoji)) return;
+      if (!game || !playerId) {
+        return;
+      }
+      if (!(REACTIONS as readonly string[]).includes(emoji)) {
+        return;
+      }
       const nickname = game.nicknameOf(playerId);
-      if (!nickname) return;
+      if (!nickname) {
+        return;
+      }
       const now = Date.now();
       if (
         now - (this.lastReactionAt.get(playerId) ?? 0) <
@@ -202,7 +225,9 @@ export class GameService {
     socket.on('playerLeave', () => {
       const { playerId, code } = socket.data;
       const game = code ? this.games.get(code) : undefined;
-      if (!playerId || !game) return;
+      if (!playerId || !game) {
+        return;
+      }
       game.removePlayer(playerId);
       this.playerSockets.delete(playerId);
       this.lastReactionAt.delete(playerId);
@@ -227,13 +252,19 @@ export class GameService {
           this.revealNow(game.code);
         }
       }
-      if (code) this.scheduleCleanupIfEmpty(code);
+      if (code) {
+        this.scheduleCleanupIfEmpty(code);
+      }
     });
   }
 
   dispose(): void {
-    for (const code of [...this.phaseTimers.keys()]) this.clearTimer(code);
-    for (const timer of this.cleanupTimers.values()) clearTimeout(timer);
+    for (const code of this.phaseTimers.keys()) {
+      this.clearTimer(code);
+    }
+    for (const timer of this.cleanupTimers.values()) {
+      clearTimeout(timer);
+    }
     this.cleanupTimers.clear();
   }
 
@@ -271,8 +302,12 @@ export class GameService {
   }
 
   private scheduleCleanupIfEmpty(code: string): void {
-    if (!this.games.has(code)) return;
-    if ((this.io.sockets.adapter.rooms.get(code)?.size ?? 0) > 0) return;
+    if (!this.games.has(code)) {
+      return;
+    }
+    if ((this.io.sockets.adapter.rooms.get(code)?.size ?? 0) > 0) {
+      return;
+    }
     this.cancelCleanup(code);
     this.cleanupTimers.set(
       code,
@@ -303,7 +338,9 @@ export class GameService {
 
   private onCountdownBegan(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     const state = game.getPublicState();
     this.broadcastState(code, state);
     if (state.endsAt !== null) {
@@ -313,16 +350,19 @@ export class GameService {
 
   private beginFirstQuestion(code: string): void {
     const game = this.games.get(code);
-    if (game?.phase !== 'countdown') return;
+    if (game?.phase !== 'countdown') {
+      return;
+    }
     this.clearTimer(code);
     game.beginQuestions();
     this.onNextQuestion(code);
   }
 
-  // A new question begins either with the category intro or straight away.
   private onNextQuestion(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     if (game.phase === 'intro') {
       this.onIntroBegan(code);
     } else {
@@ -332,10 +372,14 @@ export class GameService {
 
   private onIntroBegan(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     const state = game.getPublicState();
     this.broadcastState(code, state);
-    if (state.endsAt === null) return;
+    if (state.endsAt === null) {
+      return;
+    }
     const delay = Math.max(0, state.endsAt - Date.now());
     this.clearTimer(code);
     this.phaseTimers.set(
@@ -346,7 +390,9 @@ export class GameService {
 
   private startQuestionNow(code: string): void {
     const game = this.games.get(code);
-    if (game?.phase !== 'intro') return;
+    if (game?.phase !== 'intro') {
+      return;
+    }
     this.clearTimer(code);
     game.startQuestion();
     this.onQuestionBegan(code);
@@ -363,7 +409,9 @@ export class GameService {
 
   private onQuestionBegan(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     const state = game.getPublicState();
     this.broadcastState(code, state);
     if (state.currentQuestion && state.endsAt !== null) {
@@ -376,7 +424,9 @@ export class GameService {
 
   private revealNow(code: string): void {
     const game = this.games.get(code);
-    if (game?.phase !== 'question') return;
+    if (game?.phase !== 'question') {
+      return;
+    }
     this.clearTimer(code);
     game.reveal();
     this.onReveal(code);
@@ -385,8 +435,12 @@ export class GameService {
 
   private applyAdvance(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
-    if (game.phase === 'countdown') return;
+    if (!game) {
+      return;
+    }
+    if (game.phase === 'countdown') {
+      return;
+    }
     this.clearTimer(code);
     const before = game.phase;
     game.advance();
@@ -403,9 +457,13 @@ export class GameService {
 
   private scheduleAutoAdvance(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     const { settings } = game.getPublicState();
-    if (!settings.autoAdvance) return;
+    if (!settings.autoAdvance) {
+      return;
+    }
     let delaySeconds: number;
     if (game.phase === 'reveal') {
       delaySeconds = settings.revealSeconds;
@@ -423,7 +481,9 @@ export class GameService {
 
   private onReveal(code: string): void {
     const game = this.games.get(code);
-    if (!game) return;
+    if (!game) {
+      return;
+    }
     for (const [playerId, socketId] of this.playerSockets) {
       if (game.hasPlayer(playerId)) {
         this.io
@@ -459,12 +519,4 @@ export class GameService {
       this.io.to(code).emit('gameState', state);
     }
   }
-}
-
-function normalizeCode(code: string): string {
-  return code.trim().toUpperCase();
-}
-
-function toMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'Something went wrong.';
 }

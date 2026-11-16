@@ -9,6 +9,27 @@ export interface Award {
   detail: string;
 }
 
+function best(
+  rows: LeaderboardRow[],
+  read: (stats: NonNullable<LeaderboardRow['stats']>) => number | null,
+  direction: 'lowest' | 'highest',
+): { row: LeaderboardRow; value: number } | null {
+  let winner: { row: LeaderboardRow; value: number } | null = null;
+  for (const row of rows) {
+    const value = row.stats ? read(row.stats) : null;
+    if (value === null) {
+      continue;
+    }
+    const better =
+      !winner ||
+      (direction === 'lowest' ? value < winner.value : value > winner.value);
+    if (better) {
+      winner = { row, value };
+    }
+  }
+  return winner;
+}
+
 // Picks the end-of-game awards from the final leaderboard. Rows come in rank
 // order, so on a tie the better-placed player wins the award.
 export function pickAwards(rows: LeaderboardRow[]): Award[] {
@@ -49,21 +70,4 @@ export function pickAwards(rows: LeaderboardRow[]): Award[] {
   }
 
   return awards;
-}
-
-function best(
-  rows: LeaderboardRow[],
-  read: (stats: NonNullable<LeaderboardRow['stats']>) => number | null,
-  direction: 'lowest' | 'highest',
-): { row: LeaderboardRow; value: number } | null {
-  let winner: { row: LeaderboardRow; value: number } | null = null;
-  for (const row of rows) {
-    const value = row.stats ? read(row.stats) : null;
-    if (value === null) continue;
-    const better =
-      !winner ||
-      (direction === 'lowest' ? value < winner.value : value > winner.value);
-    if (better) winner = { row, value };
-  }
-  return winner;
 }

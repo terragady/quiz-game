@@ -6,7 +6,8 @@ import { join } from 'node:path';
 import type { Question } from '@quiz/shared';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-import { createGameServer, type GameServerHandles } from './app.js';
+import { createGameServer } from './app.js';
+import type { GameServerHandles } from './app.js';
 
 const pool: Question[] = [
   {
@@ -42,7 +43,7 @@ describe('createGameServer static client serving', () => {
 
   afterAll(async () => {
     handles.service.dispose();
-    handles.io.close();
+    void handles.io.close();
     await new Promise<void>((resolve) =>
       handles.httpServer.close(() => resolve()),
     );
@@ -102,7 +103,7 @@ describe('createGameServer CORS configuration', () => {
       await run(handles);
     } finally {
       handles.service.dispose();
-      handles.io.close();
+      void handles.io.close();
       await new Promise<void>((resolve) =>
         handles.httpServer.close(() => resolve()),
       );

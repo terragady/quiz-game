@@ -11,7 +11,11 @@ export interface OpenTdbResult {
   incorrect_answers: string[];
 }
 
-const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
+const DIFFICULTIES: ReadonlySet<string> = new Set<Difficulty>([
+  'easy',
+  'medium',
+  'hard',
+]);
 
 export type Shuffle = <T>(items: T[]) => T[];
 
@@ -41,7 +45,7 @@ function questionId(decodedText: string): string {
 }
 
 function isDifficulty(value: string): value is Difficulty {
-  return DIFFICULTIES.includes(value as Difficulty);
+  return DIFFICULTIES.has(value);
 }
 
 export function normalizeResult(

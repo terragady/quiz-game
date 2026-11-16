@@ -6,10 +6,8 @@ import {
   OPENTDB_QUESTIONS_PATH,
   validateQuestionsData,
 } from '../questions/loader.js';
-import {
-  normalizeResults,
-  type OpenTdbResult,
-} from '../questions/normalize.js';
+import { normalizeResults } from '../questions/normalize.js';
+import type { OpenTdbResult } from '../questions/normalize.js';
 
 const API_URL = 'https://opentdb.com/api.php';
 const MAX_PER_REQUEST = 50;
@@ -76,7 +74,9 @@ async function fetchType(
   let rateLimitRetries = 0;
 
   while (added < target && emptyStreak < MAX_EMPTY_STREAK) {
-    if (!spacing.first) await sleep(REQUEST_SPACING_MS);
+    if (!spacing.first) {
+      await sleep(REQUEST_SPACING_MS);
+    }
     spacing.first = false;
 
     console.log(`  Requesting ${MAX_PER_REQUEST} ${type} questions…`);
@@ -105,7 +105,9 @@ async function fetchType(
         collected.push(result);
         newThisBatch += 1;
         added += 1;
-        if (added >= target) break;
+        if (added >= target) {
+          break;
+        }
       }
     }
     emptyStreak = newThisBatch === 0 ? emptyStreak + 1 : 0;

@@ -10,10 +10,12 @@ import type {
   Question,
   ServerToClientEvents,
 } from '@quiz/shared';
-import { io as createClient, type Socket } from 'socket.io-client';
+import { io as createClient } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createGameServer, type GameServerHandles } from '../app.js';
+import { createGameServer } from '../app.js';
+import type { GameServerHandles } from '../app.js';
 
 type ClientSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -69,7 +71,7 @@ afterEach(async () => {
   clients.length = 0;
   handles.service.dispose();
   await new Promise<void>((resolve) => {
-    handles.io.close(() => resolve());
+    void handles.io.close(() => resolve());
   });
 });
 
@@ -137,7 +139,9 @@ describe('GameService integration', () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
     const code = hostAck.state.code;
     expect(code).toHaveLength(4);
     expect(hostAck.categories.length).toBeGreaterThan(0);
@@ -195,7 +199,9 @@ describe('GameService integration', () => {
         host.emit('hostJoin', {}, resolve),
       );
       expect(hostAck.ok).toBe(true);
-      if (!hostAck.ok) return;
+      if (!hostAck.ok) {
+        return;
+      }
       const code = hostAck.state.code;
 
       const player = localConnect();
@@ -213,7 +219,9 @@ describe('GameService integration', () => {
       const questionState = await questionSeen;
       expect(questionState.currentQuestion?.number).toBe(1);
     } finally {
-      for (const socket of local) socket.disconnect();
+      for (const socket of local) {
+        socket.disconnect();
+      }
       server.service.dispose();
       await new Promise<void>((resolve) => server.io.close(() => resolve()));
     }
@@ -241,7 +249,9 @@ describe('GameService integration', () => {
         host.emit('hostJoin', {}, resolve),
       );
       expect(hostAck.ok).toBe(true);
-      if (!hostAck.ok) return;
+      if (!hostAck.ok) {
+        return;
+      }
       const code = hostAck.state.code;
 
       const player = localConnect();
@@ -255,7 +265,9 @@ describe('GameService integration', () => {
       const questionState = await questionSeen;
       expect(questionState.currentQuestion?.number).toBe(1);
     } finally {
-      for (const socket of local) socket.disconnect();
+      for (const socket of local) {
+        socket.disconnect();
+      }
       server.service.dispose();
       await new Promise<void>((resolve) => server.io.close(() => resolve()));
     }
@@ -265,7 +277,9 @@ describe('GameService integration', () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
     const code = hostAck.state.code;
 
     const player = connect();
@@ -293,7 +307,9 @@ describe('GameService integration', () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
     const code = hostAck.state.code;
 
     const alice = connect();
@@ -321,7 +337,9 @@ describe('GameService integration', () => {
     const host2 = connect();
     const ack2 = await hostJoin(host2);
     expect(ack1.ok && ack2.ok).toBe(true);
-    if (!ack1.ok || !ack2.ok) return;
+    if (!ack1.ok || !ack2.ok) {
+      return;
+    }
 
     expect(ack1.state.code).not.toBe(ack2.state.code);
 
@@ -330,7 +348,9 @@ describe('GameService integration', () => {
     const rejoin = connect();
     const rejoinAck = await hostJoin(rejoin, ack1.state.code);
     expect(rejoinAck.ok).toBe(true);
-    if (!rejoinAck.ok) return;
+    if (!rejoinAck.ok) {
+      return;
+    }
     expect(rejoinAck.state.code).toBe(ack1.state.code);
     expect(rejoinAck.state.players.map((p) => p.nickname)).toEqual(['Alice']);
   });
@@ -339,7 +359,9 @@ describe('GameService integration', () => {
     const host = connect();
     const ack = await hostJoin(host, 'ZZZZ');
     expect(ack.ok).toBe(true);
-    if (!ack.ok) return;
+    if (!ack.ok) {
+      return;
+    }
     expect(ack.state.code).not.toBe('ZZZZ');
     expect(ack.state.phase).toBe('lobby');
   });
@@ -350,22 +372,27 @@ describe('GameService integration', () => {
     const player = connect();
     const ack = await playerJoin(player, 'ZZZZ', 'Bob');
     expect(ack.ok).toBe(false);
-    if (!ack.ok) {
-      expect(ack.error).toMatch(/not found/i);
+    if (ack.ok) {
+      return;
     }
+    expect(ack.error).toMatch(/not found/i);
   });
 
   it('lets a dropped player rejoin on a new socket and keep answering', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
     const code = hostAck.state.code;
 
     const player = connect();
     const joinAck = await playerJoin(player, code, 'Alice');
     expect(joinAck.ok).toBe(true);
-    if (!joinAck.ok) return;
+    if (!joinAck.ok) {
+      return;
+    }
     const { playerId } = joinAck;
 
     const questionArrives = nextQuestion(host);
@@ -373,9 +400,8 @@ describe('GameService integration', () => {
     const [question] = await questionArrives;
     const correctOption = question.options.indexOf('A');
 
-    const seenOffline = waitForState(
-      host,
-      (s) => s.players[0]?.connected === false,
+    const seenOffline = waitForState(host, (s) =>
+      s.players.some((p) => !p.connected),
     );
     player.disconnect();
     await seenOffline;
@@ -383,7 +409,9 @@ describe('GameService integration', () => {
     const revived = connect();
     const rejoinAck = await playerRejoin(revived, code, playerId);
     expect(rejoinAck.ok).toBe(true);
-    if (!rejoinAck.ok) return;
+    if (!rejoinAck.ok) {
+      return;
+    }
     expect(rejoinAck.playerId).toBe(playerId);
     expect(rejoinAck.state.players[0]?.connected).toBe(true);
 
@@ -399,7 +427,9 @@ describe('GameService integration', () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
     const code = hostAck.state.code;
 
     const alice = connect();
@@ -426,14 +456,17 @@ describe('GameService integration', () => {
     const host = connect();
     const hostAck = await hostJoin(host);
     expect(hostAck.ok).toBe(true);
-    if (!hostAck.ok) return;
+    if (!hostAck.ok) {
+      return;
+    }
 
     const player = connect();
     const ack = await playerRejoin(player, hostAck.state.code, 'not-a-real-id');
     expect(ack.ok).toBe(false);
-    if (!ack.ok) {
-      expect(ack.error).toMatch(/session/i);
+    if (ack.ok) {
+      return;
     }
+    expect(ack.error).toMatch(/session/i);
   });
 
   it('reports the game code on the health endpoint server', async () => {
@@ -465,7 +498,9 @@ describe('GameService category intro', () => {
       const hostAck = await new Promise<ObserverJoinAck>((resolve) =>
         host.emit('hostJoin', {}, resolve),
       );
-      if (!hostAck.ok) throw new Error('host join failed');
+      if (!hostAck.ok) {
+        throw new Error('host join failed');
+      }
       const player = localConnect();
       await new Promise<JoinAck>((resolve) =>
         player.emit(
@@ -487,7 +522,9 @@ describe('GameService category intro', () => {
       const [question] = await questionArrives;
       expect(question.number).toBe(1);
     } finally {
-      for (const socket of local) socket.disconnect();
+      for (const socket of local) {
+        socket.disconnect();
+      }
       server.service.dispose();
       await new Promise<void>((resolve) => server.io.close(() => resolve()));
     }
@@ -498,7 +535,9 @@ describe('GameService reactions', () => {
   it('passes allowed emojis to the room, at most one per cooldown', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
-    if (!hostAck.ok) throw new Error('host join failed');
+    if (!hostAck.ok) {
+      throw new Error('host join failed');
+    }
     const player = connect();
     await playerJoin(player, hostAck.state.code, 'Alice');
 
@@ -517,11 +556,15 @@ describe('GameService play again', () => {
   it('sends everyone back to the lobby of the same room and plays another round', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
-    if (!hostAck.ok) throw new Error('host join failed');
+    if (!hostAck.ok) {
+      throw new Error('host join failed');
+    }
     const code = hostAck.state.code;
     const player = connect();
     const playerAck = await playerJoin(player, code, 'Alice');
-    if (!playerAck.ok) throw new Error('player join failed');
+    if (!playerAck.ok) {
+      throw new Error('player join failed');
+    }
 
     const firstQuestion = nextQuestion(player);
     host.emit('hostStart', settings);
@@ -558,7 +601,9 @@ describe('GameService play again', () => {
   it('only lets the host play again, and only once the game has ended', async () => {
     const host = connect();
     const hostAck = await hostJoin(host);
-    if (!hostAck.ok) throw new Error('host join failed');
+    if (!hostAck.ok) {
+      throw new Error('host join failed');
+    }
     const player = connect();
     await playerJoin(player, hostAck.state.code, 'Alice');
 

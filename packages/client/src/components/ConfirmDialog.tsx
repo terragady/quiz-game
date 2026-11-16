@@ -18,24 +18,39 @@ export function ConfirmDialog({
   onCancel: () => void;
 }) {
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open) {
+      return undefined;
+    }
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onCancel();
+      if (event.key === 'Escape') {
+        onCancel();
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onCancel]);
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
-    <div className="modal-overlay" onClick={onCancel}>
+    // Clicking the backdrop is a mouse shortcut for Cancel; keyboard users
+    // have Escape (handled above).
+    <div
+      className="modal-overlay"
+      role="presentation"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onCancel();
+        }
+      }}
+    >
       <div
         className="modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <h2 id="confirm-dialog-title" className="modal__title">
           {title}

@@ -1,16 +1,16 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import {
-  parseMelody,
-  type CategorySummary,
-  type Difficulty,
-  type Question,
-} from '@quiz/shared';
+import { parseMelody } from '@quiz/shared';
+import type { CategorySummary, Difficulty, Question } from '@quiz/shared';
 
 import { withTidyCategories } from './categories.js';
 
-const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
+const DIFFICULTIES: ReadonlySet<string> = new Set<Difficulty>([
+  'easy',
+  'medium',
+  'hard',
+]);
 
 export const POOL_QUESTIONS_PATH = fileURLToPath(
   new URL('../../data/questions.json', import.meta.url),
@@ -28,11 +28,14 @@ export const TRIVIA_API_QUESTIONS_PATH = fileURLToPath(
   new URL('../../data/trivia-api-questions.json', import.meta.url),
 );
 
-export function validateQuestionsData(data: unknown): Question[] {
-  if (!Array.isArray(data)) {
-    throw new Error('Questions data must be an array.');
+function requireNonEmptyString(value: unknown, label: string): void {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    throw new Error(`${label} must be a non-empty string.`);
   }
-  return data.map((item, index) => validateQuestion(item, index));
+}
+
+function isDifficulty(value: unknown): value is Difficulty {
+  return typeof value === 'string' && DIFFICULTIES.has(value);
 }
 
 function validateQuestion(item: unknown, index: number): Question {
@@ -106,23 +109,18 @@ function validateQuestion(item: unknown, index: number): Question {
     text: q.text as string,
     options: q.options as string[],
     correctIndex: q.correctIndex,
-    ...(q.imageUrl !== undefined ? { imageUrl: q.imageUrl as string } : {}),
+    ...(q.imageUrl !== undefined ? { imageUrl: q.imageUrl } : {}),
     ...(q.melody !== undefined
       ? { melody: q.melody as Question['melody'] }
       : {}),
   };
 }
 
-function requireNonEmptyString(value: unknown, label: string): void {
-  if (typeof value !== 'string' || value.trim().length === 0) {
-    throw new Error(`${label} must be a non-empty string.`);
+export function validateQuestionsData(data: unknown): Question[] {
+  if (!Array.isArray(data)) {
+    throw new Error('Questions data must be an array.');
   }
-}
-
-function isDifficulty(value: unknown): value is Difficulty {
-  return (
-    typeof value === 'string' && DIFFICULTIES.includes(value as Difficulty)
-  );
+  return data.map((item, index) => validateQuestion(item, index));
 }
 
 export function loadQuestions(
@@ -143,16 +141,6 @@ export function loadQuestions(
   }
 
   return validateQuestionsData(parsed);
-}
-
-export function withShuffledOptions(question: Question): Question {
-  const order = shuffle(question.options.map((_, index) => index));
-  const options = order.map((index) => question.options[index]);
-  return {
-    ...question,
-    options,
-    correctIndex: order.indexOf(question.correctIndex),
-  };
 }
 
 export function mergeQuestions(...lists: Question[][]): Question[] {
@@ -180,7 +168,9 @@ export function dedupeByText(questions: Question[]): Question[] {
   const result: Question[] = [];
   for (const question of questions) {
     const key = `${normalizeQuestionText(question.text)}\u0000${question.imageUrl ?? ''}\u0000${question.melody?.notes ?? ''}`;
-    if (seen.has(key)) continue;
+    if (seen.has(key)) {
+      continue;
+    }
     seen.add(key);
     result.push(question);
   }
@@ -230,9 +220,13 @@ function asksTheSame(a: Set<string>, b: Set<string>): boolean {
   const [small, big] = a.size <= b.size ? [a, b] : [b, a];
   // A short question only counts when the wording matches exactly; a longer
   // one also counts when the other question just adds detail to it.
-  if (small.size < 3 && small.size !== big.size) return false;
+  if (small.size < 3 && small.size !== big.size) {
+    return false;
+  }
   for (const word of small) {
-    if (!big.has(word)) return false;
+    if (!big.has(word)) {
+      return false;
+    }
   }
   return true;
 }
@@ -252,7 +246,9 @@ export function dropRewordedDuplicates(questions: Question[]): Question[] {
     );
     const words = contentWords(question.text);
     const seen = seenByAnswer.get(answer) ?? [];
-    if (seen.some((earlier) => asksTheSame(earlier, words))) return false;
+    if (seen.some((earlier) => asksTheSame(earlier, words))) {
+      return false;
+    }
     seen.push(words);
     seenByAnswer.set(answer, seen);
     return true;
@@ -314,16 +310,6 @@ export function filterQuestions(
   });
 }
 
-export function selectQuestions(
-  questions: Question[],
-  criteria: SelectionCriteria,
-): Question[] {
-  const pool = filterQuestions(questions, criteria);
-  return shuffle(pool)
-    .slice(0, Math.max(0, criteria.count))
-    .map(withShuffledOptions);
-}
-
 export function listCategories(questions: Question[]): CategorySummary[] {
   const counts = new Map<string, number>();
   for (const q of questions) {
@@ -331,7 +317,7 @@ export function listCategories(questions: Question[]): CategorySummary[] {
   }
   return [...counts.entries()]
     .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
 export function shuffle<T>(items: T[]): T[] {
@@ -341,4 +327,24 @@ export function shuffle<T>(items: T[]): T[] {
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
+}
+
+export function withShuffledOptions(question: Question): Question {
+  const order = shuffle(question.options.map((_, index) => index));
+  const options = order.map((index) => question.options[index]);
+  return {
+    ...question,
+    options,
+    correctIndex: order.indexOf(question.correctIndex),
+  };
+}
+
+export function selectQuestions(
+  questions: Question[],
+  criteria: SelectionCriteria,
+): Question[] {
+  const pool = filterQuestions(questions, criteria);
+  return shuffle(pool)
+    .slice(0, Math.max(0, criteria.count))
+    .map(withShuffledOptions);
 }

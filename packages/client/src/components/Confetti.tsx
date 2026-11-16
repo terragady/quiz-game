@@ -32,9 +32,13 @@ export function Confetti({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return undefined;
+    if (!canvas) {
+      return undefined;
+    }
     const context = canvas.getContext('2d');
-    if (!context) return undefined;
+    if (!context) {
+      return undefined;
+    }
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);

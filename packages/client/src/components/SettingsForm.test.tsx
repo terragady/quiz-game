@@ -34,7 +34,7 @@ describe('SettingsForm', () => {
     render(
       <SettingsForm
         settings={{ ...DEFAULT_SETTINGS, autoAdvance: true }}
-        onChange={() => {}}
+        onChange={vi.fn()}
       />,
     );
 
@@ -48,7 +48,7 @@ describe('SettingsForm', () => {
     render(
       <SettingsForm
         settings={{ ...DEFAULT_SETTINGS, autoAdvance: false }}
-        onChange={() => {}}
+        onChange={vi.fn()}
       />,
     );
 

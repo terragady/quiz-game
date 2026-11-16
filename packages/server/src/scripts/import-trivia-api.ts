@@ -12,10 +12,8 @@ import {
   normalizeQuestionText,
   validateQuestionsData,
 } from '../questions/loader.js';
-import {
-  normalizeTriviaApiResults,
-  type TriviaApiResult,
-} from '../questions/triviaApi.js';
+import { normalizeTriviaApiResults } from '../questions/triviaApi.js';
+import type { TriviaApiResult } from '../questions/triviaApi.js';
 
 const API_URL = 'https://the-trivia-api.com/v2/questions';
 const MAX_PER_REQUEST = 50;
@@ -83,7 +81,9 @@ async function main(): Promise<void> {
   let first = true;
 
   while (added < count && emptyStreak < MAX_EMPTY_STREAK) {
-    if (!first) await sleep(REQUEST_SPACING_MS);
+    if (!first) {
+      await sleep(REQUEST_SPACING_MS);
+    }
     first = false;
 
     console.log(`  Requesting ${MAX_PER_REQUEST} questions…`);
@@ -109,13 +109,17 @@ async function main(): Promise<void> {
     let newThisBatch = 0;
     for (const question of normalized) {
       const textKey = normalizeQuestionText(question.text);
-      if (seenId.has(question.id) || seenText.has(textKey)) continue;
+      if (seenId.has(question.id) || seenText.has(textKey)) {
+        continue;
+      }
       seenId.add(question.id);
       seenText.add(textKey);
       collected.push(question);
       newThisBatch += 1;
       added += 1;
-      if (added >= count) break;
+      if (added >= count) {
+        break;
+      }
     }
     emptyStreak = newThisBatch === 0 ? emptyStreak + 1 : 0;
     console.log(`    +${newThisBatch} new (${added}/${count})`);
