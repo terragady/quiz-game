@@ -1,11 +1,17 @@
 import type { LeaderboardRow } from '@quiz/shared';
 
-export function Leaderboard({ rows }: { rows: LeaderboardRow[] }) {
+export function Leaderboard({
+  rows,
+  twoColumns = false,
+}: {
+  rows: LeaderboardRow[];
+  twoColumns?: boolean;
+}) {
   if (rows.length === 0) {
     return <p className="muted">No scores yet.</p>;
   }
   return (
-    <ol className="leaderboard">
+    <ol className={`leaderboard${twoColumns ? ' leaderboard--two-columns' : ''}`}>
       {rows.map((row) => (
         <li key={row.playerId} className="leaderboard__row">
           <span className="leaderboard__rank">{row.rank}</span>

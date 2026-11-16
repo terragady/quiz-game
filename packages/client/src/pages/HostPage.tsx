@@ -119,8 +119,13 @@ export function HostPage() {
     );
   }
 
+  const showingQuestion =
+    state.phase === 'question' || state.phase === 'reveal';
+
   return (
-    <main className="screen screen--host">
+    <main
+      className={`screen screen--host${showingQuestion ? ' screen--fit' : ''}`}
+    >
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
       {error && <div className="error-banner">{error}</div>}
       <HostBody
@@ -185,7 +190,11 @@ function HostBody({
       const revealing = state.phase === 'reveal';
       const voters = state.optionVoters;
       return (
-        <div className="stack question-stack">
+        <div
+          className={`stack question-stack${
+            question.imageUrl ? ' question-stack--with-image' : ''
+          }`}
+        >
           <div className="question-meta question-meta--wide">
             <span className="chip chip--category">{question.category}</span>
             <span className="muted">
@@ -198,11 +207,13 @@ function HostBody({
           {!revealing && <Countdown endsAt={state.endsAt} />}
           <h1 className="question-text">{question.text}</h1>
           {question.imageUrl && (
-            <img
-              className="question-image"
-              src={question.imageUrl}
-              alt="Question image"
-            />
+            <div className="question-image-frame">
+              <img
+                className="question-image"
+                src={question.imageUrl}
+                alt="Question image"
+              />
+            </div>
           )}
           <div
             className={
@@ -244,9 +255,12 @@ function HostBody({
           <Confetti />
           <h1>Final results</h1>
           {state.leaderboard[0] && (
-            <p className="code-badge">🏆 {state.leaderboard[0].nickname}</p>
+            <p className="winner-banner">🏆 {state.leaderboard[0].nickname}</p>
           )}
-          <Leaderboard rows={state.leaderboard} />
+          <Leaderboard
+            rows={state.leaderboard}
+            twoColumns={state.leaderboard.length > 6}
+          />
           <button type="button" className="btn btn--primary" onClick={onNewGame}>
             New game
           </button>

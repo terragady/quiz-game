@@ -339,4 +339,27 @@ describe('HostPage', () => {
       vi.useRealTimers();
     }
   });
+
+  it('splits a long final leaderboard into two columns', () => {
+    renderHost(fake);
+    act(() =>
+      fake.serverEmit(
+        'gameState',
+        baseState({
+          phase: 'ended',
+          leaderboard: [
+            { playerId: 'p1', nickname: 'Player 1', score: 990, rank: 1, lastPoints: 0 },
+            { playerId: 'p2', nickname: 'Player 2', score: 980, rank: 2, lastPoints: 0 },
+            { playerId: 'p3', nickname: 'Player 3', score: 970, rank: 3, lastPoints: 0 },
+            { playerId: 'p4', nickname: 'Player 4', score: 960, rank: 4, lastPoints: 0 },
+            { playerId: 'p5', nickname: 'Player 5', score: 950, rank: 5, lastPoints: 0 },
+            { playerId: 'p6', nickname: 'Player 6', score: 940, rank: 6, lastPoints: 0 },
+            { playerId: 'p7', nickname: 'Player 7', score: 930, rank: 7, lastPoints: 0 },
+          ],
+        }),
+      ),
+    );
+
+    expect(screen.getByRole('list')).toHaveClass('leaderboard--two-columns');
+  });
 });

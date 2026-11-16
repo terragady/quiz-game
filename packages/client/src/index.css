@@ -723,6 +723,28 @@ h1 {
   font-weight: 700;
 }
 
+.leaderboard--two-columns {
+  display: block;
+  columns: 2;
+  column-gap: 16px;
+  max-width: min(1100px, 94vw);
+}
+
+.leaderboard--two-columns .leaderboard__row {
+  break-inside: avoid;
+  margin-bottom: 10px;
+}
+
+.winner-banner {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  background: linear-gradient(120deg, var(--primary-strong), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .leaderboard--animated {
   position: relative;
   display: block;
@@ -951,4 +973,53 @@ h1 {
 
 .screen--host .countdown {
   font-size: clamp(2rem, 5vw, 3.6rem);
+}
+
+/*
+ * While a question is on screen the host view is exactly one viewport tall,
+ * because a TV cannot scroll. A picture takes whatever height is left after
+ * the question, answers and controls, so a tall image shrinks instead of
+ * pushing the answers off the bottom of the screen.
+ */
+.screen--fit {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+}
+
+.screen--fit .question-stack {
+  min-height: 0;
+}
+
+.question-image-frame {
+  flex: 1 1 0;
+  min-height: 120px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.question-image-frame .question-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.screen--host .question-stack--with-image .answer-grid {
+  flex: 0 0 auto;
+}
+
+/* Picture questions: smaller text and tiles so the picture gets the room. */
+.screen--host .question-stack--with-image .question-text {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 3.6rem);
+}
+
+.screen--host .question-stack--with-image .answer {
+  min-height: 0;
+  padding: clamp(10px, 1.2vw, 20px) clamp(14px, 1.6vw, 26px);
+  font-size: clamp(1.1rem, 1.9vw, 2.2rem);
+}
+
+.screen--host .question-stack--with-image .answer__letter {
+  font-size: clamp(1.1rem, 2vw, 2.3rem);
 }
