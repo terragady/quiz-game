@@ -1,12 +1,12 @@
 // Small synthesized sound effects for the host screen. Everything is generated
 // with WebAudio, so there are no sound files to ship.
 
-import { parseMelody, type Melody } from '@quiz/shared';
+import { parseMelody } from '@quiz/shared';
+import type { Melody } from '@quiz/shared';
 
 const MUTED_KEY = 'quiz.muted';
 
 let context: AudioContext | null = null;
-let muted = readMuted();
 
 function readMuted(): boolean {
   try {
@@ -16,8 +16,22 @@ function readMuted(): boolean {
   }
 }
 
+let muted = readMuted();
+
 export function isMuted(): boolean {
   return muted;
+}
+
+// Browsers only allow sound after the user has clicked something, so this is
+// called from the host's button clicks.
+export async function unlockAudio(): Promise<void> {
+  if (typeof window === 'undefined' || !('AudioContext' in window)) {
+    return;
+  }
+  context ??= new AudioContext();
+  if (context.state === 'suspended' && !muted) {
+    await context.resume().catch(() => undefined);
+  }
 }
 
 export function setMuted(value: boolean): void {
@@ -27,17 +41,10 @@ export function setMuted(value: boolean): void {
   } catch {
     void 0;
   }
-  if (value) context?.suspend().catch(() => undefined);
-  else void unlockAudio();
-}
-
-// Browsers only allow sound after the user has clicked something, so this is
-// called from the host's button clicks.
-export async function unlockAudio(): Promise<void> {
-  if (typeof window === 'undefined' || !('AudioContext' in window)) return;
-  context ??= new AudioContext();
-  if (context.state === 'suspended' && !muted) {
-    await context.resume().catch(() => undefined);
+  if (value) {
+    context?.suspend().catch(() => undefined);
+  } else {
+    void unlockAudio();
   }
 }
 
@@ -53,14 +60,19 @@ function tone(
   duration: number,
   { type = 'triangle', volume = 0.18, slideTo }: ToneOptions = {},
 ): OscillatorNode | null {
-  if (!context || muted || context.state !== 'running') return null;
+  if (!context || muted || context.state !== 'running') {
+    return null;
+  }
   const start = context.currentTime + startIn;
   const oscillator = context.createOscillator();
   const gain = context.createGain();
   oscillator.type = type;
   oscillator.frequency.setValueAtTime(frequency, start);
   if (slideTo) {
-    oscillator.frequency.exponentialRampToValueAtTime(slideTo, start + duration);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      slideTo,
+      start + duration,
+    );
   }
   gain.gain.setValueAtTime(0.0001, start);
   gain.gain.exponentialRampToValueAtTime(volume, start + 0.01);
@@ -82,7 +94,9 @@ export function playMelody(melody: Melody, startIn = 0): () => void {
       const oscillator = tone(note.frequency, at, length * 0.9, {
         volume: 0.22,
       });
-      if (oscillator) oscillators.push(oscillator);
+      if (oscillator) {
+        oscillators.push(oscillator);
+      }
     }
     at += length;
   }

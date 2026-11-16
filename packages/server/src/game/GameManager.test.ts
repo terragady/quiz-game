@@ -1,5 +1,7 @@
+import { BASE_POINTS } from '@quiz/shared';
+import type { GameSettings, Question } from '@quiz/shared';
 import { beforeEach, describe, it, expect } from 'vitest';
-import { BASE_POINTS, type GameSettings, type Question } from '@quiz/shared';
+
 import { GameManager } from './GameManager.js';
 
 const CORRECT_ANSWER = 'Correct';
@@ -223,10 +225,9 @@ describe('GameManager answering', () => {
 
   it('rejects an answer after the deadline', () => {
     clock = 1000 + 20 * 1000 + 1;
-    expect(game.submitAnswer(alice, 0)).toMatchObject({
-      accepted: false,
-      reason: expect.stringMatching(/Time is up/),
-    });
+    const result = game.submitAnswer(alice, 0);
+    expect(result.accepted).toBe(false);
+    expect(result.reason).toMatch(/Time is up/);
   });
 
   it('rejects an out-of-range option index', () => {
@@ -436,7 +437,11 @@ describe('GameManager end-of-game stats', () => {
     const right = game.addPlayer('Right');
     const wrongPlayer = game.addPlayer('Wrong');
     game.addPlayer('Quiet');
-    startGame(game, { ...baseSettings, questionCount: 1, secondsPerQuestion: 20 });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 1,
+      secondsPerQuestion: 20,
+    });
 
     game.submitAnswer(right, correctOptionIndex(game));
     clock = 1000 + 5000;
@@ -504,7 +509,9 @@ describe('GameManager play again', () => {
     expect(state.phase).toBe('lobby');
     expect(state.currentQuestion).toBeNull();
     expect(state.endsAt).toBeNull();
-    expect(state.players.map((p) => [p.nickname, p.score, p.connected])).toEqual([
+    expect(
+      state.players.map((p) => [p.nickname, p.score, p.connected]),
+    ).toEqual([
       ['Alice', 0, true],
       ['Bob', 0, false],
     ]);
@@ -614,9 +621,13 @@ describe('GameManager question memory', () => {
     const ids: string[] = [];
     for (;;) {
       const question = game.getPublicState().currentQuestion;
-      if (question && game.phase === 'question') ids.push(question.id);
+      if (question && game.phase === 'question') {
+        ids.push(question.id);
+      }
       game.advance();
-      if (game.phase === 'ended') break;
+      if (game.phase === 'ended') {
+        break;
+      }
     }
     game.resetToLobby();
     return ids;
@@ -659,11 +670,8 @@ describe('GameManager category intro', () => {
     const intro = game.getPublicState();
     expect(intro.phase).toBe('intro');
     expect(intro.currentQuestion).toBeNull();
-    expect(intro.upcoming).toEqual({
-      category: expect.any(String),
-      number: 1,
-      total: 3,
-    });
+    expect(intro.upcoming).toMatchObject({ number: 1, total: 3 });
+    expect(typeof intro.upcoming?.category).toBe('string');
     expect(intro.endsAt).toBe(3000);
     expect(game.submitAnswer(alice, 0).accepted).toBe(false);
 
@@ -785,8 +793,13 @@ describe('GameManager settings from older clients', () => {
   it('uses the defaults for switches that are missing', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: makePool() });
     game.addPlayer('Alice');
-    const { categoryIntro, showVoters, wrongAnswerPenalty, musicQuestions, ...older } =
-      baseSettings;
+    const {
+      categoryIntro,
+      showVoters,
+      wrongAnswerPenalty,
+      musicQuestions,
+      ...older
+    } = baseSettings;
     void categoryIntro;
     void showVoters;
     void wrongAnswerPenalty;
@@ -818,7 +831,9 @@ describe('GameManager music questions', () => {
     const ids: string[] = [];
     for (let i = 0; i < count; i += 1) {
       const question = game.getPublicState().currentQuestion;
-      if (question) ids.push(question.id);
+      if (question) {
+        ids.push(question.id);
+      }
       game.advance();
       game.advance();
       game.advance();
@@ -827,7 +842,10 @@ describe('GameManager music questions', () => {
   }
 
   const pool = (): Question[] => [
-    ...Array.from({ length: 10 }, (_, i) => ({ ...makePool()[0], id: `n${i}` })),
+    ...Array.from({ length: 10 }, (_, i) => ({
+      ...makePool()[0],
+      id: `n${i}`,
+    })),
     tune('t1'),
     tune('t2'),
     tune('t3'),
@@ -836,7 +854,11 @@ describe('GameManager music questions', () => {
   it('mixes in about one tune for every five questions and sends the melody', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: pool() });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: true });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 10,
+      musicQuestions: true,
+    });
 
     const ids = playedQuestions(game, 10);
     expect(ids.filter((id) => id.startsWith('t'))).toHaveLength(2);
@@ -845,15 +867,25 @@ describe('GameManager music questions', () => {
   it('leaves tunes out when the setting is off', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: pool() });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 10, musicQuestions: false });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 10,
+      musicQuestions: false,
+    });
 
-    expect(playedQuestions(game, 10).some((id) => id.startsWith('t'))).toBe(false);
+    expect(playedQuestions(game, 10).some((id) => id.startsWith('t'))).toBe(
+      false,
+    );
   });
 
   it('passes the melody to the screens', () => {
     const game = new GameManager({ code: 'ABCD', questionPool: [tune('t1')] });
     game.addPlayer('Alice');
-    startGame(game, { ...baseSettings, questionCount: 5, musicQuestions: true });
+    startGame(game, {
+      ...baseSettings,
+      questionCount: 5,
+      musicQuestions: true,
+    });
     expect(game.getPublicState().currentQuestion?.melody).toEqual({
       bpm: 120,
       notes: 'C4:1 D4:1',

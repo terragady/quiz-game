@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { isMuted, setMuted } from '../audio.js';
+
+import { isMuted, setMuted as saveMuted } from '../audio.js';
 
 export function SoundToggle() {
-  const [muted, setMutedState] = useState(isMuted);
+  const [muted, setMuted] = useState(isMuted);
   return (
     <button
       type="button"
@@ -10,8 +11,8 @@ export function SoundToggle() {
       aria-pressed={!muted}
       aria-label={muted ? 'Turn sound on' : 'Turn sound off'}
       onClick={() => {
+        saveMuted(!muted);
         setMuted(!muted);
-        setMutedState(!muted);
       }}
     >
       {muted ? '🔇' : '🔊'}

@@ -1,10 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { AddressInfo } from 'node:net';
+
 import type { Question } from '@quiz/shared';
-import { createGameServer, type GameServerHandles } from './app.js';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+
+import { createGameServer } from './app.js';
+import type { GameServerHandles } from './app.js';
 
 const pool: Question[] = [
   {
@@ -40,8 +43,10 @@ describe('createGameServer static client serving', () => {
 
   afterAll(async () => {
     handles.service.dispose();
-    handles.io.close();
-    await new Promise<void>((resolve) => handles.httpServer.close(() => resolve()));
+    void handles.io.close();
+    await new Promise<void>((resolve) =>
+      handles.httpServer.close(() => resolve()),
+    );
     rmSync(clientDir, { recursive: true, force: true });
   });
 
@@ -98,7 +103,7 @@ describe('createGameServer CORS configuration', () => {
       await run(handles);
     } finally {
       handles.service.dispose();
-      handles.io.close();
+      void handles.io.close();
       await new Promise<void>((resolve) =>
         handles.httpServer.close(() => resolve()),
       );
@@ -107,9 +112,9 @@ describe('createGameServer CORS configuration', () => {
 
   it('reflects any origin by default', async () => {
     await withServer({}, async (handles) => {
-      expect(await handshakeAllowOrigin(handles, 'https://anywhere.example')).toBe(
-        'https://anywhere.example',
-      );
+      expect(
+        await handshakeAllowOrigin(handles, 'https://anywhere.example'),
+      ).toBe('https://anywhere.example');
     });
   });
 

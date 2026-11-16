@@ -48,8 +48,10 @@ The host can switch these on or off before each game:
 - Wrong answers cost 250 points (never below zero; not answering costs nothing).
 
 Players can send emoji reactions from their phones between questions, and they
-float up on the TV. The final screen has a podium and a few awards (fastest
-answer, most correct, longest streak). Within a room, questions don't repeat
+float up on the TV. Phones buzz when a question opens and when the answer is
+revealed (on Android; iPhones don't allow it), and both the TV and the phones
+stay awake during a game. The final screen has a podium and a few awards
+(fastest answer, most correct, longest streak). Within a room, questions don't repeat
 from one game to the next until the pool runs out.
 
 Real-time updates run over WebSockets (Socket.IO). Everything runs from a single
@@ -65,7 +67,7 @@ origin, so it fits comfortably on a free hosting tier.
 
 ## Prerequisites
 
-- Node.js >= 22.19 (24 LTS recommended) — required by the test toolchain (jsdom 30 / undici)
+- Node.js 26 (the current LTS); `.nvmrc` pins it for nvm and fnm users
 - npm (comes with Node)
 
 ## Getting started
@@ -131,15 +133,17 @@ requests are spaced out and capped at 50 questions each.
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Run server + client with hot reload |
-| `npm run build` | Build the client bundle into `packages/client/dist` |
-| `npm start` | Run the production server (serves the built client + WebSockets) |
-| `npm test` | Run all workspace test suites |
-| `npm run typecheck` | Type-check all workspaces |
-| `npm run lint` | Lint the whole repo |
-| `npm run questions:import` | Refresh the Open Trivia DB questions |
+| Command                    | Description                                                      |
+| -------------------------- | ---------------------------------------------------------------- |
+| `npm run dev`              | Run server + client with hot reload                              |
+| `npm run build`            | Build the client bundle into `packages/client/dist`              |
+| `npm start`                | Run the production server (serves the built client + WebSockets) |
+| `npm test`                 | Run all workspace test suites                                    |
+| `npm run typecheck`        | Type-check all workspaces                                        |
+| `npm run lint`             | Lint the whole repo and check formatting                         |
+| `npm run lint:fix`         | Fix lint and formatting issues where possible                    |
+| `npm run format`           | Format the code with oxfmt                                       |
+| `npm run questions:import` | Refresh the Open Trivia DB questions                             |
 
 ## Production build
 

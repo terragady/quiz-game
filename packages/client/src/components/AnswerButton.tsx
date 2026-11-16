@@ -24,10 +24,18 @@ export function AnswerButton({
   hideLetter?: boolean;
 }) {
   const classes = ['answer', `answer--${index}`];
-  if (selected) classes.push('answer--selected');
-  if (correct === true) classes.push('answer--correct');
-  if (correct === false && !selected) classes.push('answer--dim');
-  if (hideLetter) classes.push('answer--no-letter');
+  if (selected) {
+    classes.push('answer--selected');
+  }
+  if (correct === true) {
+    classes.push('answer--correct');
+  }
+  if (correct === false && !selected) {
+    classes.push('answer--dim');
+  }
+  if (hideLetter) {
+    classes.push('answer--no-letter');
+  }
 
   const visibleVoters = voters?.slice(0, MAX_VISIBLE_VOTERS) ?? [];
   const overflow = (voters?.length ?? 0) - visibleVoters.length;

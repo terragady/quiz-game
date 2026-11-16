@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+
 import type { Difficulty, Question } from '@quiz/shared';
 
 export interface TriviaApiResult {
@@ -14,7 +15,11 @@ export interface TriviaApiResult {
   isNiche?: boolean;
 }
 
-const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
+const DIFFICULTIES: ReadonlySet<string> = new Set<Difficulty>([
+  'easy',
+  'medium',
+  'hard',
+]);
 
 export type Shuffle = <T>(items: T[]) => T[];
 
@@ -33,7 +38,7 @@ function questionId(text: string): string {
 }
 
 function isDifficulty(value: string): value is Difficulty {
-  return DIFFICULTIES.includes(value as Difficulty);
+  return DIFFICULTIES.has(value);
 }
 
 export function formatCategory(raw: string): string {
@@ -51,7 +56,9 @@ export function normalizeTriviaApiResult(
 ): Question {
   const difficulty = raw.difficulty?.trim();
   if (!isDifficulty(difficulty)) {
-    throw new Error(`Unexpected difficulty "${raw.difficulty}" from The Trivia API.`);
+    throw new Error(
+      `Unexpected difficulty "${raw.difficulty}" from The Trivia API.`,
+    );
   }
 
   const text = raw.question?.text?.trim();

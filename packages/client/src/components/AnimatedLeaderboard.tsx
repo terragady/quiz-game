@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import type { LeaderboardRow } from '@quiz/shared';
+import { useEffect, useState } from 'react';
+
+import { PointsDelta } from './Leaderboard.js';
 import {
   easeOutCubic,
   lerpScore,
@@ -8,90 +10,60 @@ import {
   standingsSignature,
 } from './leaderboardAnimation.js';
 import { StreakBadge } from './StreakBadge.js';
-import { PointsDelta } from './Leaderboard.js';
 
 const ROW_STEP = 72;
+
 const PRE_COUNT_MS = 600;
+
 const COUNT_MS = 1400;
 
 type Stage = 'previous' | 'counting' | 'final';
 
 const medalClass = ['arow--gold', 'arow--silver', 'arow--bronze'];
 
-export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
-  const signature = standingsSignature(rows);
+function now(): number {
+  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
 
-  const finalScores = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const row of rows) map.set(row.playerId, row.score);
-    return map;
-  }, [rows, signature]);
-
-  const previousScores = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const row of rows) map.set(row.playerId, previousScoreOf(row));
-    return map;
-  }, [rows, signature]);
-
-  const previousOrder = useMemo(
-    () => orderIds(rows, previousScoreOf),
-    [rows, signature],
-  );
-  const finalOrder = useMemo(
-    () => orderIds(rows, (row) => row.score),
-    [rows, signature],
-  );
-
+function CountingLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
   const [stage, setStage] = useState<Stage>('previous');
-  const [displayScores, setDisplayScores] =
-    useState<Map<string, number>>(previousScores);
-
-  const frameRef = useRef<number | null>(null);
+  // How far the scores have counted up, from 0 (previous) to 1 (final).
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setStage('previous');
-    setDisplayScores(previousScores);
+    let frame: number | null = null;
 
     const startCounting = () => {
       setStage('counting');
-      const startedAt =
-        typeof performance !== 'undefined' ? performance.now() : Date.now();
+      const startedAt = now();
 
       const tick = () => {
-        const now =
-          typeof performance !== 'undefined' ? performance.now() : Date.now();
-        const progress = Math.min(1, (now - startedAt) / COUNT_MS);
-        const eased = easeOutCubic(progress);
+        const elapsed = Math.min(1, (now() - startedAt) / COUNT_MS);
+        setProgress(easeOutCubic(elapsed));
 
-        const next = new Map<string, number>();
-        for (const [id, target] of finalScores) {
-          next.set(id, lerpScore(previousScores.get(id) ?? 0, target, eased));
-        }
-        setDisplayScores(next);
-
-        if (progress < 1) {
-          frameRef.current = requestAnimationFrame(tick);
+        if (elapsed < 1) {
+          frame = requestAnimationFrame(tick);
         } else {
-          setDisplayScores(finalScores);
           setStage('final');
         }
       };
 
-      frameRef.current = requestAnimationFrame(tick);
+      frame = requestAnimationFrame(tick);
     };
 
     const timer = setTimeout(startCounting, PRE_COUNT_MS);
     return () => {
       clearTimeout(timer);
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
     };
-  }, [signature]);
+  }, []);
 
-  if (rows.length === 0) {
-    return <p className="muted">No scores yet.</p>;
-  }
-
-  const order = stage === 'final' ? finalOrder : previousOrder;
+  const order =
+    stage === 'final'
+      ? orderIds(rows, (row) => row.score)
+      : orderIds(rows, previousScoreOf);
   const positionOf = new Map(order.map((id, index) => [id, index]));
 
   return (
@@ -108,8 +80,7 @@ export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
             className={`arow ${isTopThree ? medalClass[position] : ''}`}
             style={{
               transform: `translateY(${position * ROW_STEP}px)`,
-              transition:
-                stage === 'previous' ? 'none' : 'transform 0.7s ease',
+              transition: stage === 'previous' ? 'none' : 'transform 0.7s ease',
             }}
           >
             <span className="leaderboard__rank">{position + 1}</span>
@@ -117,11 +88,20 @@ export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
             {stage !== 'previous' && <StreakBadge streak={row.streak} />}
             {stage !== 'previous' && <PointsDelta points={row.lastPoints} />}
             <span className="leaderboard__score">
-              {displayScores.get(row.playerId) ?? row.score}
+              {lerpScore(previousScoreOf(row), row.score, progress)}
             </span>
           </div>
         );
       })}
     </div>
   );
+}
+
+export function AnimatedLeaderboard({ rows }: { rows: LeaderboardRow[] }) {
+  if (rows.length === 0) {
+    return <p className="muted">No scores yet.</p>;
+  }
+  // New standings remount the board, so the count-up starts over. Other
+  // rebroadcasts (a reconnect, a reaction) keep the running animation.
+  return <CountingLeaderboard key={standingsSignature(rows)} rows={rows} />;
 }

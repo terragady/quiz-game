@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import type { LeaderboardRow } from '@quiz/shared';
+import { describe, it, expect } from 'vitest';
+
 import {
   previousScoreOf,
   orderIds,

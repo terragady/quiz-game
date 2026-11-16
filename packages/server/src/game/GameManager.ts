@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import {
   ANSWER_REJECTION,
   BASE_POINTS,
@@ -9,21 +10,21 @@ import {
   SETTINGS_LIMITS,
   START_COUNTDOWN_SECONDS,
   WRONG_ANSWER_PENALTY,
-  type AnswerResult,
-  type GamePhase,
-  type GameSettings,
-  type LeaderboardRow,
-  type PlayerStats,
-  type PublicGameState,
-  type PublicPlayer,
-  type PublicQuestion,
-  type Question,
 } from '@quiz/shared';
-import {
-  selectQuestions,
-  shuffle,
-  type SelectionCriteria,
-} from '../questions/loader.js';
+import type {
+  AnswerResult,
+  GamePhase,
+  GameSettings,
+  LeaderboardRow,
+  PlayerStats,
+  PublicGameState,
+  PublicPlayer,
+  PublicQuestion,
+  Question,
+} from '@quiz/shared';
+
+import { selectQuestions, shuffle } from '../questions/loader.js';
+import type { SelectionCriteria } from '../questions/loader.js';
 
 // With music questions on, about one question in this many is a tune.
 const ONE_TUNE_IN = 5;
@@ -67,6 +68,152 @@ export interface GameManagerOptions {
   introMs?: number;
 }
 
+function emptyStats(): RunningStats {
+  return {
+    correct: 0,
+    incorrect: 0,
+    unanswered: 0,
+    answeredCount: 0,
+    totalResponseMs: 0,
+    fastestCorrectMs: null,
+    bestStreak: 0,
+  };
+}
+
+function projectStats(stats: RunningStats): PlayerStats {
+  return {
+    correct: stats.correct,
+    incorrect: stats.incorrect,
+    unanswered: stats.unanswered,
+    averageResponseMs:
+      stats.answeredCount > 0
+        ? Math.round(stats.totalResponseMs / stats.answeredCount)
+        : null,
+    fastestCorrectMs: stats.fastestCorrectMs,
+    bestStreak: stats.bestStreak,
+  };
+}
+
+// Settings from an older client may not have the newer switches yet.
+function booleanOr(value: unknown, fallback: boolean): boolean {
+  return typeof value === 'boolean' ? value : fallback;
+}
+
+function normalizeCategories(categories: unknown): string[] {
+  if (!Array.isArray(categories)) {
+    return [];
+  }
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of categories) {
+    if (typeof value !== 'string') {
+      continue;
+    }
+    const trimmed = value.trim();
+    if (trimmed.length === 0 || seen.has(trimmed)) {
+      continue;
+    }
+    seen.add(trimmed);
+    result.push(trimmed);
+  }
+  return result;
+}
+
+function validateSettings(settings: GameSettings): GameSettings {
+  const {
+    minQuestionCount,
+    maxQuestionCount,
+    minSecondsPerQuestion,
+    maxSecondsPerQuestion,
+    minRevealSeconds,
+    maxRevealSeconds,
+    minLeaderboardSeconds,
+    maxLeaderboardSeconds,
+  } = SETTINGS_LIMITS;
+
+  if (
+    !Number.isInteger(settings.questionCount) ||
+    settings.questionCount < minQuestionCount ||
+    settings.questionCount > maxQuestionCount
+  ) {
+    throw new Error(
+      `Question count must be between ${minQuestionCount} and ${maxQuestionCount}.`,
+    );
+  }
+  if (
+    !Number.isInteger(settings.secondsPerQuestion) ||
+    settings.secondsPerQuestion < minSecondsPerQuestion ||
+    settings.secondsPerQuestion > maxSecondsPerQuestion
+  ) {
+    throw new Error(
+      `Seconds per question must be between ${minSecondsPerQuestion} and ${maxSecondsPerQuestion}.`,
+    );
+  }
+  if (
+    settings.difficulty !== null &&
+    !['easy', 'medium', 'hard'].includes(settings.difficulty)
+  ) {
+    throw new Error('Invalid difficulty.');
+  }
+  if (
+    !Number.isInteger(settings.revealSeconds) ||
+    settings.revealSeconds < minRevealSeconds ||
+    settings.revealSeconds > maxRevealSeconds
+  ) {
+    throw new Error(
+      `Reveal seconds must be between ${minRevealSeconds} and ${maxRevealSeconds}.`,
+    );
+  }
+  if (
+    !Number.isInteger(settings.leaderboardSeconds) ||
+    settings.leaderboardSeconds < minLeaderboardSeconds ||
+    settings.leaderboardSeconds > maxLeaderboardSeconds
+  ) {
+    throw new Error(
+      `Leaderboard seconds must be between ${minLeaderboardSeconds} and ${maxLeaderboardSeconds}.`,
+    );
+  }
+
+  return {
+    questionCount: settings.questionCount,
+    secondsPerQuestion: settings.secondsPerQuestion,
+    categories: normalizeCategories(settings.categories),
+    difficulty: settings.difficulty,
+    autoAdvance: settings.autoAdvance,
+    revealSeconds: settings.revealSeconds,
+    leaderboardSeconds: settings.leaderboardSeconds,
+    categoryIntro: booleanOr(
+      settings.categoryIntro,
+      DEFAULT_SETTINGS.categoryIntro,
+    ),
+    showVoters: booleanOr(settings.showVoters, DEFAULT_SETTINGS.showVoters),
+    wrongAnswerPenalty: booleanOr(
+      settings.wrongAnswerPenalty,
+      DEFAULT_SETTINGS.wrongAnswerPenalty,
+    ),
+    musicQuestions: booleanOr(
+      settings.musicQuestions,
+      DEFAULT_SETTINGS.musicQuestions,
+    ),
+  };
+}
+
+function defaultSettingsSnapshot(): GameSettings {
+  return {
+    questionCount: 0,
+    secondsPerQuestion: 0,
+    categories: [],
+    difficulty: null,
+    autoAdvance: false,
+    revealSeconds: 0,
+    leaderboardSeconds: 0,
+    categoryIntro: false,
+    showVoters: false,
+    wrongAnswerPenalty: false,
+    musicQuestions: false,
+  };
+}
+
 export class GameManager {
   readonly code: string;
 
@@ -97,7 +244,6 @@ export class GameManager {
     return this.phaseValue;
   }
 
-
   addPlayer(nickname: string): string {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -117,10 +263,8 @@ export class GameManager {
     if (sameName?.connected) {
       throw new Error('That nickname is already taken.');
     }
-    // A disconnected player with this name is most likely the same person
-    // joining again (e.g. their phone reloaded after the game ended and the
-    // host pressed Play again). We're in the lobby, so there's no score to
-    // lose: hand the name over instead of leaving a ghost seat behind.
+    // Most likely the same person coming back. There's no score to lose in
+    // the lobby, so hand the name over instead of leaving a ghost seat.
     if (sameName) {
       this.players.delete(sameName.id);
     }
@@ -158,7 +302,6 @@ export class GameManager {
     }
   }
 
-
   start(settings: GameSettings): void {
     if (this.phaseValue !== 'lobby') {
       throw new Error('The game has already started.');
@@ -182,7 +325,6 @@ export class GameManager {
     this.beginNextQuestion();
   }
 
-  // Ends the category intro and opens the question for answers.
   startQuestion(): void {
     if (this.phaseValue !== 'intro') {
       throw new Error('There is no question waiting to start.');
@@ -213,7 +355,8 @@ export class GameManager {
     if (this.endsAt !== null && now > this.endsAt) {
       return { accepted: false, reason: ANSWER_REJECTION.timeUp };
     }
-    const timeRemainingMs = this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
+    const timeRemainingMs =
+      this.endsAt !== null ? Math.max(0, this.endsAt - now) : 0;
     player.currentAnswer = { optionIndex, timeRemainingMs };
     return { accepted: true };
   }
@@ -231,7 +374,7 @@ export class GameManager {
       return;
     }
     const question = this.currentQuestion();
-    const durationMs = (this.settings().secondsPerQuestion) * 1000;
+    const durationMs = this.settings().secondsPerQuestion * 1000;
     for (const player of this.players.values()) {
       const answer = player.currentAnswer;
       const correct = answer?.optionIndex === question.correctIndex;
@@ -247,7 +390,10 @@ export class GameManager {
       player.lastPoints = points;
       player.score += points;
       player.streak = correct ? player.streak + 1 : 0;
-      player.stats.bestStreak = Math.max(player.stats.bestStreak, player.streak);
+      player.stats.bestStreak = Math.max(
+        player.stats.bestStreak,
+        player.streak,
+      );
       this.recordStats(player, answer, correct, durationMs);
     }
     this.endsAt = null;
@@ -282,12 +428,11 @@ export class GameManager {
     this.phaseValue = 'ended';
   }
 
-  // Sends a finished game back to the lobby so the same players can play
-  // another round with the same code. Everyone keeps their seat, but scores
-  // and stats start from zero. Already in the lobby (e.g. the button was
-  // pressed twice) is a no-op.
+  // "Play again": same room and seats, scores and stats back to zero.
   resetToLobby(): void {
-    if (this.phaseValue === 'lobby') return;
+    if (this.phaseValue === 'lobby') {
+      return;
+    }
     if (this.phaseValue !== 'ended') {
       throw new Error('The game has not ended yet.');
     }
@@ -304,7 +449,6 @@ export class GameManager {
     this.endsAt = null;
     this.phaseValue = 'lobby';
   }
-
 
   getAnswerResult(playerId: string): AnswerResult {
     const player = this.players.get(playerId);
@@ -332,7 +476,9 @@ export class GameManager {
       players: this.publicPlayers(),
       currentQuestion: this.publicQuestion(),
       revealedCorrectIndex:
-        this.phaseValue === 'reveal' ? this.currentQuestion().correctIndex : null,
+        this.phaseValue === 'reveal'
+          ? this.currentQuestion().correctIndex
+          : null,
       endsAt: this.endsAt,
       answeredCount: this.answeredCount(),
       playerCount: this.players.size,
@@ -345,7 +491,6 @@ export class GameManager {
       leaderboard: this.leaderboard(),
     };
   }
-
 
   private pickQuestions(settings: GameSettings): Question[] {
     const filters = {
@@ -369,14 +514,20 @@ export class GameManager {
   // Prefers questions this room hasn't played yet. When too few are left,
   // that group of questions starts over.
   private pickFresh(pool: Question[], criteria: SelectionCriteria): Question[] {
-    if (criteria.count <= 0) return [];
+    if (criteria.count <= 0) {
+      return [];
+    }
     const unused = pool.filter((q) => !this.usedQuestionIds.has(q.id));
     let selected = selectQuestions(unused, criteria);
     if (selected.length < criteria.count) {
       selected = selectQuestions(pool, criteria);
-      for (const question of pool) this.usedQuestionIds.delete(question.id);
+      for (const question of pool) {
+        this.usedQuestionIds.delete(question.id);
+      }
     }
-    for (const question of selected) this.usedQuestionIds.add(question.id);
+    for (const question of selected) {
+      this.usedQuestionIds.add(question.id);
+    }
     return selected;
   }
 
@@ -400,7 +551,9 @@ export class GameManager {
   }
 
   private upcoming(): PublicGameState['upcoming'] {
-    if (this.phaseValue !== 'intro') return null;
+    if (this.phaseValue !== 'intro') {
+      return null;
+    }
     return {
       category: this.currentQuestion().category,
       number: this.questionIndex + 1,
@@ -424,7 +577,10 @@ export class GameManager {
     stats.totalResponseMs += responseMs;
     if (correct) {
       stats.correct += 1;
-      if (stats.fastestCorrectMs === null || responseMs < stats.fastestCorrectMs) {
+      if (
+        stats.fastestCorrectMs === null ||
+        responseMs < stats.fastestCorrectMs
+      ) {
         stats.fastestCorrectMs = responseMs;
       }
     } else {
@@ -499,7 +655,7 @@ export class GameManager {
   }
 
   private leaderboard(): LeaderboardRow[] {
-    const sorted = [...this.players.values()].sort(
+    const sorted = [...this.players.values()].toSorted(
       (a, b) => b.score - a.score,
     );
     const includeStats = this.phaseValue === 'ended';
@@ -510,15 +666,18 @@ export class GameManager {
         rank = position + 1;
         previousScore = player.score;
       }
-      return {
+      const row: LeaderboardRow = {
         playerId: player.id,
         nickname: player.nickname,
         score: player.score,
         rank,
         lastPoints: player.lastPoints,
         streak: player.streak,
-        ...(includeStats ? { stats: projectStats(player.stats) } : {}),
       };
+      if (includeStats) {
+        row.stats = projectStats(player.stats);
+      }
+      return row;
     });
   }
 
@@ -527,138 +686,4 @@ export class GameManager {
       this.leaderboard().find((row) => row.playerId === playerId)?.rank ?? 0
     );
   }
-}
-
-function emptyStats(): RunningStats {
-  return {
-    correct: 0,
-    incorrect: 0,
-    unanswered: 0,
-    answeredCount: 0,
-    totalResponseMs: 0,
-    fastestCorrectMs: null,
-    bestStreak: 0,
-  };
-}
-
-function projectStats(stats: RunningStats): PlayerStats {
-  return {
-    correct: stats.correct,
-    incorrect: stats.incorrect,
-    unanswered: stats.unanswered,
-    averageResponseMs:
-      stats.answeredCount > 0
-        ? Math.round(stats.totalResponseMs / stats.answeredCount)
-        : null,
-    fastestCorrectMs: stats.fastestCorrectMs,
-    bestStreak: stats.bestStreak,
-  };
-}
-
-function validateSettings(settings: GameSettings): GameSettings {
-  const {
-    minQuestionCount,
-    maxQuestionCount,
-    minSecondsPerQuestion,
-    maxSecondsPerQuestion,
-    minRevealSeconds,
-    maxRevealSeconds,
-    minLeaderboardSeconds,
-    maxLeaderboardSeconds,
-  } = SETTINGS_LIMITS;
-
-  if (
-    !Number.isInteger(settings.questionCount) ||
-    settings.questionCount < minQuestionCount ||
-    settings.questionCount > maxQuestionCount
-  ) {
-    throw new Error(
-      `Question count must be between ${minQuestionCount} and ${maxQuestionCount}.`,
-    );
-  }
-  if (
-    !Number.isInteger(settings.secondsPerQuestion) ||
-    settings.secondsPerQuestion < minSecondsPerQuestion ||
-    settings.secondsPerQuestion > maxSecondsPerQuestion
-  ) {
-    throw new Error(
-      `Seconds per question must be between ${minSecondsPerQuestion} and ${maxSecondsPerQuestion}.`,
-    );
-  }
-  if (
-    settings.difficulty !== null &&
-    !['easy', 'medium', 'hard'].includes(settings.difficulty)
-  ) {
-    throw new Error('Invalid difficulty.');
-  }
-  if (
-    !Number.isInteger(settings.revealSeconds) ||
-    settings.revealSeconds < minRevealSeconds ||
-    settings.revealSeconds > maxRevealSeconds
-  ) {
-    throw new Error(
-      `Reveal seconds must be between ${minRevealSeconds} and ${maxRevealSeconds}.`,
-    );
-  }
-  if (
-    !Number.isInteger(settings.leaderboardSeconds) ||
-    settings.leaderboardSeconds < minLeaderboardSeconds ||
-    settings.leaderboardSeconds > maxLeaderboardSeconds
-  ) {
-    throw new Error(
-      `Leaderboard seconds must be between ${minLeaderboardSeconds} and ${maxLeaderboardSeconds}.`,
-    );
-  }
-
-  return {
-    questionCount: settings.questionCount,
-    secondsPerQuestion: settings.secondsPerQuestion,
-    categories: normalizeCategories(settings.categories),
-    difficulty: settings.difficulty,
-    autoAdvance: Boolean(settings.autoAdvance),
-    revealSeconds: settings.revealSeconds,
-    leaderboardSeconds: settings.leaderboardSeconds,
-    categoryIntro: booleanOr(settings.categoryIntro, DEFAULT_SETTINGS.categoryIntro),
-    showVoters: booleanOr(settings.showVoters, DEFAULT_SETTINGS.showVoters),
-    wrongAnswerPenalty: booleanOr(
-      settings.wrongAnswerPenalty,
-      DEFAULT_SETTINGS.wrongAnswerPenalty,
-    ),
-    musicQuestions: booleanOr(settings.musicQuestions, DEFAULT_SETTINGS.musicQuestions),
-  };
-}
-
-// Settings from an older client may not have the newer switches yet.
-function booleanOr(value: unknown, fallback: boolean): boolean {
-  return typeof value === 'boolean' ? value : fallback;
-}
-
-function normalizeCategories(categories: unknown): string[] {
-  if (!Array.isArray(categories)) return [];
-  const seen = new Set<string>();
-  const result: string[] = [];
-  for (const value of categories) {
-    if (typeof value !== 'string') continue;
-    const trimmed = value.trim();
-    if (trimmed.length === 0 || seen.has(trimmed)) continue;
-    seen.add(trimmed);
-    result.push(trimmed);
-  }
-  return result;
-}
-
-function defaultSettingsSnapshot(): GameSettings {
-  return {
-    questionCount: 0,
-    secondsPerQuestion: 0,
-    categories: [],
-    difficulty: null,
-    autoAdvance: false,
-    revealSeconds: 0,
-    leaderboardSeconds: 0,
-    categoryIntro: false,
-    showVoters: false,
-    wrongAnswerPenalty: false,
-    musicQuestions: false,
-  };
 }

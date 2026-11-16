@@ -1,4 +1,5 @@
 import type { LeaderboardRow } from '@quiz/shared';
+
 import { SHOW_STREAK_FROM } from './StreakBadge.js';
 
 export interface Award {
@@ -6,6 +7,27 @@ export interface Award {
   title: string;
   nickname: string;
   detail: string;
+}
+
+function best(
+  rows: LeaderboardRow[],
+  read: (stats: NonNullable<LeaderboardRow['stats']>) => number | null,
+  direction: 'lowest' | 'highest',
+): { row: LeaderboardRow; value: number } | null {
+  let winner: { row: LeaderboardRow; value: number } | null = null;
+  for (const row of rows) {
+    const value = row.stats ? read(row.stats) : null;
+    if (value === null) {
+      continue;
+    }
+    const better =
+      !winner ||
+      (direction === 'lowest' ? value < winner.value : value > winner.value);
+    if (better) {
+      winner = { row, value };
+    }
+  }
+  return winner;
 }
 
 // Picks the end-of-game awards from the final leaderboard. Rows come in rank
@@ -48,21 +70,4 @@ export function pickAwards(rows: LeaderboardRow[]): Award[] {
   }
 
   return awards;
-}
-
-function best(
-  rows: LeaderboardRow[],
-  read: (stats: NonNullable<LeaderboardRow['stats']>) => number | null,
-  direction: 'lowest' | 'highest',
-): { row: LeaderboardRow; value: number } | null {
-  let winner: { row: LeaderboardRow; value: number } | null = null;
-  for (const row of rows) {
-    const value = row.stats ? read(row.stats) : null;
-    if (value === null) continue;
-    const better =
-      !winner ||
-      (direction === 'lowest' ? value < winner.value : value > winner.value);
-    if (better) winner = { row, value };
-  }
-  return winner;
 }

@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import type { Question } from '@quiz/shared';
+import { describe, it, expect } from 'vitest';
+
 import {
   CURATED_QUESTIONS_PATH,
   POOL_QUESTIONS_PATH,
@@ -100,9 +101,7 @@ describe('withShuffledOptions', () => {
       const shuffled = withShuffledOptions(source);
       expect(shuffled.options).toHaveLength(4);
       expect(shuffled.options[shuffled.correctIndex]).toBe('Right');
-      expect([...shuffled.options].sort()).toEqual(
-        [...source.options].sort(),
-      );
+      expect(shuffled.options.toSorted()).toEqual(source.options.toSorted());
     }
   });
 
@@ -175,7 +174,7 @@ describe('selectQuestions', () => {
     expect(result.every((q) => q.category === 'Science')).toBe(true);
   });
 
-  it('shuffles each question\'s options while keeping correctIndex accurate', () => {
+  it("shuffles each question's options while keeping correctIndex accurate", () => {
     const source: Question[] = [
       {
         id: 'shuffle-me',
@@ -189,7 +188,7 @@ describe('selectQuestions', () => {
     for (let i = 0; i < 50; i += 1) {
       const [picked] = selectQuestions(source, { count: 1 });
       expect(picked.options[picked.correctIndex]).toBe('Right');
-      expect([...picked.options].sort()).toEqual([...source[0].options].sort());
+      expect(picked.options.toSorted()).toEqual(source[0].options.toSorted());
     }
   });
 });
@@ -244,7 +243,11 @@ describe('normalizeQuestionText', () => {
 describe('dedupeByText', () => {
   it('removes later questions whose text duplicates an earlier one', () => {
     const first: Question = { ...sample[2], id: 'first' };
-    const dup: Question = { ...sample[2], id: 'second', text: 'capital of FRANCE?' };
+    const dup: Question = {
+      ...sample[2],
+      id: 'second',
+      text: 'capital of FRANCE?',
+    };
     const result = dedupeByText([first, dup, sample[0]]);
     expect(result.map((q) => q.id)).toEqual(['first', 'a']);
   });
@@ -287,7 +290,11 @@ describe('dropRewordedDuplicates', () => {
       question('a', 'What is the capital of Finland?', 'Helsinki'),
       question('b', 'What is the capital city of Finland?', 'Helsinki'),
       question('c', 'Who wrote "A Tale of Two Cities"?', 'Charles Dickens'),
-      question('d', "Which author wrote 'A Tale of Two Cities'?", 'Charles Dickens'),
+      question(
+        'd',
+        "Which author wrote 'A Tale of Two Cities'?",
+        'Charles Dickens',
+      ),
     ]);
     expect(result.map((q) => q.id)).toEqual(['a', 'c']);
   });

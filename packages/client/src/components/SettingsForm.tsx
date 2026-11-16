@@ -2,16 +2,85 @@ import {
   DEFAULT_SETTINGS,
   SETTINGS_LIMITS,
   WRONG_ANSWER_PENALTY,
-  type Difficulty,
-  type GameSettings,
 } from '@quiz/shared';
+import type { Difficulty, GameSettings } from '@quiz/shared';
+
 import type { SettingsErrors } from '../settingsValidation.js';
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 
+const NO_ERRORS: SettingsErrors = {};
+
+function NumberField({
+  id,
+  label,
+  value,
+  min,
+  max,
+  disabled,
+  error,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  disabled: boolean;
+  error?: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        className="input"
+        type="number"
+        min={min}
+        max={max}
+        value={Number.isNaN(value) ? '' : value}
+        disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        onChange={(e) =>
+          onChange(e.target.value === '' ? NaN : Number(e.target.value))
+        }
+      />
+      {error && <p className="field-error">{error}</p>}
+    </div>
+  );
+}
+
+function CheckboxField({
+  id,
+  label,
+  checked,
+  disabled,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  disabled: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="field field--inline">
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <label htmlFor={id}>{label}</label>
+    </div>
+  );
+}
+
 export function SettingsForm({
   settings,
-  errors = {},
+  errors = NO_ERRORS,
   disabled = false,
   onChange,
 }: {
@@ -156,73 +225,6 @@ export function SettingsForm({
           />
         </>
       )}
-    </div>
-  );
-}
-
-function NumberField({
-  id,
-  label,
-  value,
-  min,
-  max,
-  disabled,
-  error,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  disabled: boolean;
-  error?: string;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div className="field">
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        className="input"
-        type="number"
-        min={min}
-        max={max}
-        value={Number.isNaN(value) ? '' : value}
-        disabled={disabled}
-        aria-invalid={error ? true : undefined}
-        onChange={(e) =>
-          onChange(e.target.value === '' ? NaN : Number(e.target.value))
-        }
-      />
-      {error && <p className="field-error">{error}</p>}
-    </div>
-  );
-}
-
-function CheckboxField({
-  id,
-  label,
-  checked,
-  disabled,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  checked: boolean;
-  disabled: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <div className="field field--inline">
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <label htmlFor={id}>{label}</label>
     </div>
   );
 }

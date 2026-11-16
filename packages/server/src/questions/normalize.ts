@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+
 import type { Difficulty, Question } from '@quiz/shared';
 
 export interface OpenTdbResult {
@@ -10,7 +11,11 @@ export interface OpenTdbResult {
   incorrect_answers: string[];
 }
 
-const DIFFICULTIES: readonly Difficulty[] = ['easy', 'medium', 'hard'];
+const DIFFICULTIES: ReadonlySet<string> = new Set<Difficulty>([
+  'easy',
+  'medium',
+  'hard',
+]);
 
 export type Shuffle = <T>(items: T[]) => T[];
 
@@ -32,12 +37,15 @@ export function decodeApiText(value: string): string {
 }
 
 function questionId(decodedText: string): string {
-  const hash = createHash('sha1').update(decodedText).digest('hex').slice(0, 10);
+  const hash = createHash('sha1')
+    .update(decodedText)
+    .digest('hex')
+    .slice(0, 10);
   return `otdb-${hash}`;
 }
 
 function isDifficulty(value: string): value is Difficulty {
-  return DIFFICULTIES.includes(value as Difficulty);
+  return DIFFICULTIES.has(value);
 }
 
 export function normalizeResult(
@@ -46,7 +54,9 @@ export function normalizeResult(
 ): Question {
   const difficulty = decodeApiText(raw.difficulty);
   if (!isDifficulty(difficulty)) {
-    throw new Error(`Unexpected difficulty "${difficulty}" from Open Trivia DB.`);
+    throw new Error(
+      `Unexpected difficulty "${difficulty}" from Open Trivia DB.`,
+    );
   }
 
   const text = decodeApiText(raw.question);

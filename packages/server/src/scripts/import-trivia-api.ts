@@ -1,6 +1,9 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+
 import type { Question } from '@quiz/shared';
+
+import { writeQuestionPool } from '../questions/buildPool.js';
 import {
   CURATED_QUESTIONS_PATH,
   OPENTDB_QUESTIONS_PATH,
@@ -9,11 +12,8 @@ import {
   normalizeQuestionText,
   validateQuestionsData,
 } from '../questions/loader.js';
-import { writeQuestionPool } from '../questions/buildPool.js';
-import {
-  normalizeTriviaApiResults,
-  type TriviaApiResult,
-} from '../questions/triviaApi.js';
+import { normalizeTriviaApiResults } from '../questions/triviaApi.js';
+import type { TriviaApiResult } from '../questions/triviaApi.js';
 
 const API_URL = 'https://the-trivia-api.com/v2/questions';
 const MAX_PER_REQUEST = 50;
@@ -28,7 +28,9 @@ function parseArgs(argv: string[]): { count: number } {
     if (argv[i] === '--count') {
       const value = Number(argv[i + 1]);
       if (!Number.isInteger(value) || value < 0) {
-        throw new Error(`--count must be a non-negative integer (got "${argv[i + 1]}").`);
+        throw new Error(
+          `--count must be a non-negative integer (got "${argv[i + 1]}").`,
+        );
       }
       count = value;
       i += 1;
@@ -66,7 +68,9 @@ async function main(): Promise<void> {
   const existingTrivia = loadIfPresent(TRIVIA_API_QUESTIONS_PATH);
 
   const seenText = new Set<string>(
-    [...existingOther, ...existingTrivia].map((q) => normalizeQuestionText(q.text)),
+    [...existingOther, ...existingTrivia].map((q) =>
+      normalizeQuestionText(q.text),
+    ),
   );
   const seenId = new Set<string>(existingTrivia.map((q) => q.id));
   const collected: Question[] = [...existingTrivia];
@@ -77,7 +81,9 @@ async function main(): Promise<void> {
   let first = true;
 
   while (added < count && emptyStreak < MAX_EMPTY_STREAK) {
-    if (!first) await sleep(REQUEST_SPACING_MS);
+    if (!first) {
+      await sleep(REQUEST_SPACING_MS);
+    }
     first = false;
 
     console.log(`  Requesting ${MAX_PER_REQUEST} questions…`);
@@ -103,13 +109,17 @@ async function main(): Promise<void> {
     let newThisBatch = 0;
     for (const question of normalized) {
       const textKey = normalizeQuestionText(question.text);
-      if (seenId.has(question.id) || seenText.has(textKey)) continue;
+      if (seenId.has(question.id) || seenText.has(textKey)) {
+        continue;
+      }
       seenId.add(question.id);
       seenText.add(textKey);
       collected.push(question);
       newThisBatch += 1;
       added += 1;
-      if (added >= count) break;
+      if (added >= count) {
+        break;
+      }
     }
     emptyStreak = newThisBatch === 0 ? emptyStreak + 1 : 0;
     console.log(`    +${newThisBatch} new (${added}/${count})`);

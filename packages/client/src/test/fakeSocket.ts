@@ -51,7 +51,7 @@ export class FakeSocket {
   }
 
   serverEmit(event: string, ...args: unknown[]): void {
-    for (const handler of [...this.getSet(event)]) {
+    for (const handler of this.getSet(event)) {
       handler(...args);
     }
   }

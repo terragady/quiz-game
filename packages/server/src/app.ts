@@ -1,9 +1,8 @@
 import { existsSync } from 'node:fs';
+import { createServer } from 'node:http';
+import type { Server as HttpServer } from 'node:http';
 import { join } from 'node:path';
-import { createServer, type Server as HttpServer } from 'node:http';
-import express, { type Express } from 'express';
-import rateLimit from 'express-rate-limit';
-import { Server } from 'socket.io';
+
 import type {
   ClientToServerEvents,
   InterServerEvents,
@@ -11,6 +10,11 @@ import type {
   ServerToClientEvents,
   SocketData,
 } from '@quiz/shared';
+import express from 'express';
+import type { Express } from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { Server } from 'socket.io';
+
 import { GameService } from './game/GameService.js';
 
 export interface GameServerHandles {

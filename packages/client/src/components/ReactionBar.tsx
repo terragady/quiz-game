@@ -1,7 +1,7 @@
 import { REACTIONS } from '@quiz/shared';
+
 import { useSocket } from '../SocketContext.js';
 
-// Lets a player send an emoji to the big screen.
 export function ReactionBar() {
   const socket = useSocket();
   return (

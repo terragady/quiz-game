@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { useSocket } from '../SocketContext.js';
 
 const FLOAT_MS = 2600;
@@ -13,14 +14,19 @@ interface FloatingReaction {
 
 let nextId = 0;
 
-// Emojis sent from players' phones, drifting up the big screen.
 export function FloatingReactions() {
   const socket = useSocket();
   const [reactions, setReactions] = useState<FloatingReaction[]>([]);
 
   useEffect(() => {
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    const onReaction = ({ emoji, nickname }: { emoji: string; nickname: string }) => {
+    const onReaction = ({
+      emoji,
+      nickname,
+    }: {
+      emoji: string;
+      nickname: string;
+    }) => {
       const id = nextId++;
       const left = 6 + Math.random() * 88;
       setReactions((current) =>
@@ -35,7 +41,9 @@ export function FloatingReactions() {
     socket.on('reaction', onReaction);
     return () => {
       socket.off('reaction', onReaction);
-      for (const timer of timers) clearTimeout(timer);
+      for (const timer of timers) {
+        clearTimeout(timer);
+      }
     };
   }, [socket]);
 

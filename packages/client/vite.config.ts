@@ -1,9 +1,8 @@
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({ compiler: true })],
   server: {
     port: 5173,
     proxy: {

@@ -1,17 +1,24 @@
-import type { CSSProperties } from 'react';
 import type { LeaderboardRow } from '@quiz/shared';
-import { Leaderboard } from './Leaderboard.js';
+import type { CSSProperties } from 'react';
+
 import { pickAwards } from './awards.js';
+import { Leaderboard } from './Leaderboard.js';
 
 // Seconds after the final screen opens when each podium place appears.
 // Third place goes first so the winner is the last surprise.
 export const PODIUM_REVEAL_SECONDS = [2.6, 1.4, 0.2];
+
 // The awards and everyone below the podium appear after the winner.
 export const AFTER_PODIUM_SECONDS = 3.6;
 
 const MEDALS = ['🥇', '🥈', '🥉'];
+
 // Left to right on the podium: 2nd, 1st, 3rd.
 const PODIUM_ORDER = [1, 0, 2];
+
+function delay(seconds: number): CSSProperties {
+  return { animationDelay: `${seconds}s` };
+}
 
 export function FinalResults({ rows }: { rows: LeaderboardRow[] }) {
   if (rows.length === 0) {
@@ -66,8 +73,4 @@ export function FinalResults({ rows }: { rows: LeaderboardRow[] }) {
       )}
     </div>
   );
-}
-
-function delay(seconds: number): CSSProperties {
-  return { animationDelay: `${seconds}s` };
 }

@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
+
+import { validateQuestionsData } from './loader.js';
 import type { OpenTdbResult } from './normalize.js';
 import {
   decodeApiText,
   normalizeResult,
   normalizeResults,
 } from './normalize.js';
-import { validateQuestionsData } from './loader.js';
 
 const identity = <T>(items: T[]): T[] => [...items];
 
@@ -50,7 +51,7 @@ describe('normalizeResult', () => {
   });
 
   it('tracks the correct answer through shuffling', () => {
-    const reverse = <T>(items: T[]): T[] => [...items].reverse();
+    const reverse = <T>(items: T[]): T[] => items.toReversed();
     const question = normalizeResult(multipleResult(), reverse);
 
     expect(question.correctIndex).toBe(3);

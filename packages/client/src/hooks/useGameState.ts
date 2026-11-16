@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import type { GamePhase, PublicGameState } from '@quiz/shared';
+import { useEffect, useRef, useState } from 'react';
+
 import { useSocket } from '../SocketContext.js';
 
 export function useGameState() {

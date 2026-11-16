@@ -1,18 +1,27 @@
-import { useEffect, useState } from 'react';
 import QRCodeLib from 'qrcode';
+import { useEffect, useState } from 'react';
 
-export function QRCode({ value, size = 220 }: { value: string; size?: number }) {
+export function QRCode({
+  value,
+  size = 220,
+}: {
+  value: string;
+  size?: number;
+}) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    QRCodeLib.toDataURL(value, { width: size, margin: 1 })
-      .then((url) => {
-        if (active) setDataUrl(url);
-      })
-      .catch(() => {
-        if (active) setDataUrl(null);
-      });
+    const render = async () => {
+      const url = await QRCodeLib.toDataURL(value, {
+        width: size,
+        margin: 1,
+      }).catch(() => null);
+      if (active) {
+        setDataUrl(url);
+      }
+    };
+    void render();
     return () => {
       active = false;
     };

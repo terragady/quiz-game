@@ -1,4 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
+
 import type { QuizSocket } from './socket.js';
 
 const SocketContext = createContext<QuizSocket | null>(null);

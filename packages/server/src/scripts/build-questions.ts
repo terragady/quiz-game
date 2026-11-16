@@ -1,5 +1,5 @@
-import { POOL_QUESTIONS_PATH } from '../questions/loader.js';
 import { writeQuestionPool } from '../questions/buildPool.js';
+import { POOL_QUESTIONS_PATH } from '../questions/loader.js';
 
 function main(): void {
   const pool = writeQuestionPool();

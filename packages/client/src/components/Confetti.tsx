@@ -1,6 +1,13 @@
 import { useEffect, useRef } from 'react';
 
-const COLORS = ['#7c5cff', '#21d4fd', '#2ce38a', '#ffd15c', '#ff5b6e', '#a48bff'];
+const COLORS = [
+  '#7c5cff',
+  '#21d4fd',
+  '#2ce38a',
+  '#ffd15c',
+  '#ff5b6e',
+  '#a48bff',
+];
 
 interface Piece {
   x: number;
@@ -25,9 +32,13 @@ export function Confetti({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return undefined;
+    if (!canvas) {
+      return undefined;
+    }
     const context = canvas.getContext('2d');
-    if (!context) return undefined;
+    if (!context) {
+      return undefined;
+    }
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
@@ -72,7 +83,12 @@ export function Confetti({
         context.translate(piece.x, piece.y);
         context.rotate(piece.rotation);
         context.fillStyle = piece.color;
-        context.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.6);
+        context.fillRect(
+          -piece.size / 2,
+          -piece.size / 2,
+          piece.size,
+          piece.size * 0.6,
+        );
         context.restore();
       }
       frame = requestAnimationFrame(render);

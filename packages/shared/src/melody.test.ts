@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
+
 import { melodySeconds, parseMelody } from './melody.js';
 
 describe('parseMelody', () => {
   it('turns notes into frequencies and beats', () => {
-    const [a4, c4, rest, fSharp5, bFlat3] = parseMelody('A4:1 C4:0.5 R:2 F#5:1 Bb3:1');
+    const [a4, c4, rest, fSharp5, bFlat3] = parseMelody(
+      'A4:1 C4:0.5 R:2 F#5:1 Bb3:1',
+    );
     expect(a4).toEqual({ frequency: 440, beats: 1 });
     expect(c4.frequency).toBeCloseTo(261.63, 1);
     expect(c4.beats).toBe(0.5);

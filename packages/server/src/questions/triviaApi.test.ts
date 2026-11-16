@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
+
 import {
   formatCategory,
   normalizeTriviaApiResult,
   normalizeTriviaApiResults,
-  type TriviaApiResult,
 } from './triviaApi.js';
+import type { TriviaApiResult } from './triviaApi.js';
 
 const identityShuffle = <T>(items: T[]): T[] => [...items];
 
@@ -28,7 +29,7 @@ describe('normalizeTriviaApiResult', () => {
   });
 
   it('tracks the correct answer through shuffling', () => {
-    const reverse = <T>(items: T[]): T[] => [...items].reverse();
+    const reverse = <T>(items: T[]): T[] => items.toReversed();
     const q = normalizeTriviaApiResult(result(), reverse);
     expect(q.options[q.correctIndex]).toBe('Right');
     expect(q.correctIndex).toBe(3);
@@ -63,19 +64,28 @@ describe('normalizeTriviaApiResult', () => {
 
   it('throws on an unexpected difficulty', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ difficulty: 'impossible' }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ difficulty: 'impossible' }),
+        identityShuffle,
+      ),
     ).toThrow(/difficulty/i);
   });
 
   it('throws when the question text is empty', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ question: { text: '   ' } }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ question: { text: '   ' } }),
+        identityShuffle,
+      ),
     ).toThrow(/empty/i);
   });
 
   it('throws when answers are missing', () => {
     expect(() =>
-      normalizeTriviaApiResult(result({ incorrectAnswers: [] }), identityShuffle),
+      normalizeTriviaApiResult(
+        result({ incorrectAnswers: [] }),
+        identityShuffle,
+      ),
     ).toThrow(/answers/i);
   });
 });

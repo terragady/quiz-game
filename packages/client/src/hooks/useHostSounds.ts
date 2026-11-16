@@ -1,5 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { melodySeconds, type PublicGameState } from '@quiz/shared';
+import { melodySeconds } from '@quiz/shared';
+import type { PublicGameState } from '@quiz/shared';
+import { useEffect, useEffectEvent } from 'react';
+
 import { playMelody, sounds } from '../audio.js';
 import { REEL_SPIN_SECONDS } from '../components/CategoryReel.js';
 import { PODIUM_REVEAL_SECONDS } from '../components/FinalResults.js';
@@ -8,20 +10,17 @@ const TICK_FROM_SECONDS = 5;
 // Pause before a tune starts and before it plays the second time.
 const MELODY_GAP_SECONDS = 1.2;
 
-// Plays the host screen's sound effects as the game moves between phases.
 export function useHostSounds(state: PublicGameState | null): void {
   const phase = state?.phase;
   const questionNumber =
     state?.currentQuestion?.number ?? state?.upcoming?.number ?? 0;
   const endsAt = state?.endsAt ?? null;
-  const melodyRef = useRef(state?.currentQuestion?.melody);
-  melodyRef.current = state?.currentQuestion?.melody;
-  const placesRef = useRef(0);
-  placesRef.current = Math.min(3, state?.leaderboard.length ?? 0);
+  const melody = state?.currentQuestion?.melody;
+  const places = Math.min(3, state?.leaderboard.length ?? 0);
 
-  // One sound per phase change. State rebroadcasts within a phase don't
-  // retrigger it because the effect only depends on the phase and question.
-  useEffect(() => {
+  // Sees the latest melody and podium size without them being effect
+  // dependencies, so a state rebroadcast within a phase doesn't replay it.
+  const playPhaseSound = useEffectEvent(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const stops: (() => void)[] = [];
     switch (phase) {
@@ -31,7 +30,6 @@ export function useHostSounds(state: PublicGameState | null): void {
       case 'question': {
         sounds.questionStart();
         // Tunes play twice so everyone gets a proper listen.
-        const melody = melodyRef.current;
         if (melody) {
           const again = MELODY_GAP_SECONDS * 2 + melodySeconds(melody);
           stops.push(playMelody(melody, MELODY_GAP_SECONDS));
@@ -43,10 +41,10 @@ export function useHostSounds(state: PublicGameState | null): void {
         sounds.reveal();
         break;
       case 'ended':
-        for (let place = placesRef.current - 1; place >= 0; place -= 1) {
+        for (let place = places - 1; place >= 0; place -= 1) {
           timers.push(
             setTimeout(
-              place === 0 ? sounds.fanfare : sounds.podiumPlace,
+              place === 0 ? () => sounds.fanfare() : () => sounds.podiumPlace(),
               PODIUM_REVEAL_SECONDS[place] * 1000,
             ),
           );
@@ -59,7 +57,9 @@ export function useHostSounds(state: PublicGameState | null): void {
       timers.forEach(clearTimeout);
       stops.forEach((stop) => stop());
     };
-  }, [phase, questionNumber]);
+  });
+
+  useEffect(() => playPhaseSound(), [phase, questionNumber]);
 
   // Ticks through the start countdown and the last seconds of a question.
   useEffect(() => {
@@ -69,7 +69,9 @@ export function useHostSounds(state: PublicGameState | null): void {
     let lastSecond = Infinity;
     const timer = setInterval(() => {
       const secondsLeft = Math.ceil((endsAt - Date.now()) / 1000);
-      if (secondsLeft === lastSecond) return;
+      if (secondsLeft === lastSecond) {
+        return;
+      }
       lastSecond = secondsLeft;
       if (secondsLeft > 0 && secondsLeft <= TICK_FROM_SECONDS) {
         sounds.tick(phase === 'question' && secondsLeft <= 3);

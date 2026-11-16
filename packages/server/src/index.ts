@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+
 import { createGameServer } from './app.js';
 import { loadQuestionPool } from './questions/loader.js';
 

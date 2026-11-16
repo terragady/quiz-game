@@ -14,8 +14,16 @@ export interface MelodyNote {
 }
 
 const SEMITONES: Record<string, number> = {
-  C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2,
+  C: -9,
+  D: -7,
+  E: -5,
+  F: -4,
+  G: -2,
+  A: 0,
+  B: 2,
 };
+
+const ACCIDENTAL_SHIFT: Record<string, number> = { '#': 1, b: -1 };
 
 const NOTE_PATTERN = /^(?:R|([A-G])(#|b)?([0-8])):(\d+(?:\.\d+)?)$/;
 
@@ -23,18 +31,27 @@ export function parseMelody(notes: string): MelodyNote[] {
   const tokens = notes.trim().split(/\s+/);
   return tokens.map((token) => {
     const match = NOTE_PATTERN.exec(token);
-    if (!match) throw new Error(`Invalid melody note "${token}".`);
+    if (!match) {
+      throw new Error(`Invalid melody note "${token}".`);
+    }
     const [, letter, accidental, octave, beats] = match;
     const beatCount = Number(beats);
-    if (beatCount <= 0) throw new Error(`Invalid melody note "${token}".`);
-    if (!letter) return { frequency: null, beats: beatCount };
-    const shift = accidental === '#' ? 1 : accidental === 'b' ? -1 : 0;
+    if (beatCount <= 0) {
+      throw new Error(`Invalid melody note "${token}".`);
+    }
+    if (!letter) {
+      return { frequency: null, beats: beatCount };
+    }
+    const shift = ACCIDENTAL_SHIFT[accidental] ?? 0;
     const fromA4 = SEMITONES[letter] + shift + (Number(octave) - 4) * 12;
     return { frequency: 440 * 2 ** (fromA4 / 12), beats: beatCount };
   });
 }
 
 export function melodySeconds(melody: Melody): number {
-  const beats = parseMelody(melody.notes).reduce((sum, note) => sum + note.beats, 0);
+  const beats = parseMelody(melody.notes).reduce(
+    (sum, note) => sum + note.beats,
+    0,
+  );
   return (beats * 60) / melody.bpm;
 }
